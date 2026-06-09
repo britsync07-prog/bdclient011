@@ -21,7 +21,6 @@ import {
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000/api";
 
-/* ─── Floating blob ───────────────────────────────────────────────────────── */
 function FloatingBlob({
   className,
   delay = "0s",
@@ -31,13 +30,12 @@ function FloatingBlob({
 }) {
   return (
     <div
-      className={`absolute rounded-full opacity-20 blur-3xl animate-pulse ${className}`}
+      className={`absolute rounded-full opacity-10 blur-3xl animate-pulse ${className}`}
       style={{ animationDelay: delay, animationDuration: "4s" }}
     />
   );
 }
 
-/* ─── Benefit row ─────────────────────────────────────────────────────────── */
 function Benefit({
   icon: Icon,
   title,
@@ -53,21 +51,20 @@ function Benefit({
 }) {
   return (
     <div
-      className="flex items-center gap-4 bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl px-5 py-4 shadow-md"
+      className="flex items-center gap-4 bg-slate-900/40 backdrop-blur-md border border-slate-800 rounded-2xl px-5 py-4 shadow-md"
       style={{ animation: `floatBadge 3.5s ease-in-out infinite`, animationDelay: delay }}
     >
       <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${color}`}>
         <Icon size={18} className="text-white" />
       </div>
       <div className="text-left">
-        <p className="text-white font-bold text-sm leading-tight">{title}</p>
-        <p className="text-white/60 text-xs">{subtitle}</p>
+        <p className="text-slate-100 font-bold text-sm leading-tight">{title}</p>
+        <p className="text-slate-400 text-xs">{subtitle}</p>
       </div>
     </div>
   );
 }
 
-/* ─── Password strength bar ───────────────────────────────────────────────── */
 function PasswordStrength({ password }: { password: string }) {
   const checks = [
     password.length >= 8,
@@ -77,7 +74,7 @@ function PasswordStrength({ password }: { password: string }) {
   ];
   const strength = checks.filter(Boolean).length;
   const labels = ["", "Weak", "Fair", "Good", "Strong"];
-  const colors = ["", "bg-red-400", "bg-amber-400", "bg-lime-500", "bg-emerald-500"];
+  const colors = ["", "bg-red-500", "bg-amber-500", "bg-lime-500", "bg-emerald-500"];
 
   if (!password) return null;
 
@@ -88,12 +85,12 @@ function PasswordStrength({ password }: { password: string }) {
           <div
             key={i}
             className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-              i <= strength ? colors[strength] : "bg-slate-200"
+              i <= strength ? colors[strength] : "bg-slate-800"
             }`}
           />
         ))}
       </div>
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-slate-500">
         Strength:{" "}
         <span
           className={`font-semibold ${
@@ -102,8 +99,8 @@ function PasswordStrength({ password }: { password: string }) {
               : strength === 2
               ? "text-amber-500"
               : strength === 3
-              ? "text-lime-600"
-              : "text-emerald-600"
+              ? "text-lime-500"
+              : "text-emerald-500"
           }`}
         >
           {labels[strength]}
@@ -113,7 +110,6 @@ function PasswordStrength({ password }: { password: string }) {
   );
 }
 
-/* ─── Main Page ───────────────────────────────────────────────────────────── */
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -134,7 +130,6 @@ export default function RegisterPage() {
     password.length >= 6 &&
     confirmPassword === password;
 
-  /* ── Preserved API logic ── */
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -200,8 +195,8 @@ export default function RegisterPage() {
         .success-ring { animation: successPulse 2s ease-in-out infinite; }
         input:-webkit-autofill,
         input:-webkit-autofill:focus {
-          -webkit-box-shadow: 0 0 0 1000px white inset !important;
-          -webkit-text-fill-color: #0F172A !important;
+          -webkit-box-shadow: 0 0 0 1000px #0b1329 inset !important;
+          -webkit-text-fill-color: #f8fafc !important;
         }
       `}</style>
 
@@ -209,42 +204,42 @@ export default function RegisterPage() {
         className="min-h-screen flex"
         style={{
           background:
-            "linear-gradient(135deg, #F8FAFC 0%, #FFF1F2 50%, #EFF6FF 100%)",
+            "linear-gradient(135deg, #020617 0%, #0b1329 50%, #0f172a 100%)",
         }}
       >
         {/* LEFT BRANDING PANEL */}
-        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center">
+        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center border-r border-slate-800/50">
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(145deg, #2563EB 0%, #1D4ED8 40%, #1E40AF 65%, #9F1239 100%)",
+                "linear-gradient(145deg, #1e3a8a 0%, #0f172a 40%, #0b1329 70%, #020617 100%)",
             }}
           />
 
           <FloatingBlob
-            className="w-96 h-96 bg-blue-300 top-[-80px] right-[-60px]"
+            className="w-96 h-96 bg-blue-600 top-[-80px] right-[-60px]"
             delay="0s"
           />
           <FloatingBlob
-            className="w-72 h-72 bg-rose-400 bottom-[-60px] left-[-40px]"
+            className="w-72 h-72 bg-cyan-600 bottom-[-60px] left-[-40px]"
             delay="1.5s"
           />
           <FloatingBlob
-            className="w-48 h-48 bg-indigo-300 top-1/3 left-1/4"
+            className="w-48 h-48 bg-indigo-600 top-1/3 left-1/4"
             delay="0.7s"
           />
 
-          <div className="absolute w-[520px] h-[520px] rounded-full border border-white/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute w-[390px] h-[390px] rounded-full border border-white/15 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute w-[520px] h-[520px] rounded-full border border-slate-800/30 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute w-[390px] h-[390px] rounded-full border border-slate-800/40 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 
           <div
             className={`relative z-10 text-center px-12 ${mounted ? "animate-slide-left" : "opacity-0"}`}
           >
             {/* Logo */}
             <div className="mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-white/15 backdrop-blur rounded-3xl border border-white/25 mb-6 shadow-2xl">
-                <span className="text-white font-black text-3xl italic tracking-tight">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-950/40 backdrop-blur rounded-3xl border border-blue-500/30 mb-6 shadow-2xl">
+                <span className="text-blue-400 font-black text-3xl italic tracking-tight">
                   PB
                 </span>
               </div>
@@ -257,9 +252,9 @@ export default function RegisterPage() {
             </div>
 
             <div className="flex items-center gap-4 mb-8 px-8">
-              <div className="flex-1 h-px bg-white/20" />
-              <Zap size={16} className="text-white/50" />
-              <div className="flex-1 h-px bg-white/20" />
+              <div className="flex-1 h-px bg-slate-800" />
+              <Zap size={16} className="text-blue-500/50" />
+              <div className="flex-1 h-px bg-slate-800" />
             </div>
 
             {/* Benefits */}
@@ -268,70 +263,70 @@ export default function RegisterPage() {
                 icon={Wallet}
                 title="Instant Deposits & Withdrawals"
                 subtitle="BDT, USD & Crypto accepted"
-                color="bg-emerald-500"
+                color="bg-blue-600"
                 delay="0s"
               />
               <Benefit
                 icon={Gamepad2}
                 title="500+ Premium Games"
                 subtitle="Slots, Live Casino, Sports & more"
-                color="bg-violet-500"
+                color="bg-indigo-600"
                 delay="0.35s"
               />
               <Benefit
                 icon={Headphones}
                 title="24/7 Live Support"
                 subtitle="Always here to help you"
-                color="bg-amber-500"
+                color="bg-cyan-600"
                 delay="0.7s"
               />
               <Benefit
                 icon={Gift}
                 title="Exclusive Welcome Bonus"
                 subtitle="Up to ৳10,000 on first deposit"
-                color="bg-rose-500"
+                color="bg-emerald-600"
                 delay="1.05s"
               />
             </div>
 
-            <p className="text-white/40 text-xs mt-8 tracking-widest uppercase">
+            <p className="text-slate-500 text-xs mt-8 tracking-widest uppercase">
               Licensed · Secured · Trusted
             </p>
           </div>
         </div>
 
         {/* RIGHT REGISTER CARD */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 bg-[#020617]">
           <div
             className={`w-full max-w-md ${mounted ? "animate-slide-right" : "opacity-0"}`}
           >
             <div
-              className={`bg-white rounded-3xl shadow-2xl border transition-all duration-500 p-8 lg:p-10 ${
+              className={`bg-[#0f172a] rounded-3xl shadow-2xl border transition-all duration-500 p-8 lg:p-10 text-white ${
                 allFilled
-                  ? "border-blue-200 success-ring"
-                  : "border-rose-100"
+                  ? "border-blue-500/40 success-ring"
+                  : "border-slate-800"
               }`}
             >
               {/* Mobile logo */}
               <div className="flex lg:hidden flex-col items-center mb-8">
-                <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-50 rounded-2xl border border-blue-100 mb-3">
-                  <span className="text-[#2563EB] font-black text-xl italic">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-950/60 rounded-2xl border border-blue-900/30 mb-3">
+                  <span className="text-[#3b82f6] font-black text-xl italic">
                     PB
                   </span>
                 </div>
-                <span className="text-[#E11D48] font-black text-3xl italic tracking-tight">
+                <span className="text-[#3b82f6] font-black text-3xl italic tracking-tight">
                   PBBET
                 </span>
               </div>
 
               {/* Desktop logo mark */}
               <div className="hidden lg:flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-rose-50 border border-rose-100 rounded-xl flex items-center justify-center">
-                  <span className="text-[#E11D48] font-black text-sm italic">
+                <div className="w-10 h-10 bg-blue-950/60 border border-blue-900/30 rounded-xl flex items-center justify-center">
+                  <span className="text-[#3b82f6] font-black text-sm italic">
                     PB
                   </span>
                 </div>
-                <span className="text-[#E11D48] font-black text-2xl italic tracking-tight">
+                <span className="text-[#3b82f6] font-black text-2xl italic tracking-tight">
                   PBBET
                 </span>
               </div>
@@ -339,16 +334,16 @@ export default function RegisterPage() {
               <div className="mb-8">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-3xl font-black text-[#0F172A] tracking-tight">
+                    <h2 className="text-3xl font-black text-white tracking-tight">
                       Create Account
                     </h2>
-                    <p className="text-slate-500 mt-1 text-sm">
+                    <p className="text-slate-400 mt-1 text-sm">
                       Start your iGaming journey today
                     </p>
                   </div>
                   {allFilled && (
-                    <div className="flex-shrink-0 w-10 h-10 bg-blue-50 border border-blue-200 rounded-full flex items-center justify-center animate-fade-up">
-                      <CheckCircle2 size={20} className="text-[#2563EB]" />
+                    <div className="flex-shrink-0 w-10 h-10 bg-blue-950/60 border border-blue-900/30 rounded-full flex items-center justify-center animate-fade-up">
+                      <CheckCircle2 size={20} className="text-[#3b82f6]" />
                     </div>
                   )}
                 </div>
@@ -359,7 +354,7 @@ export default function RegisterPage() {
                 <div>
                   <label
                     htmlFor="reg-username"
-                    className="block text-sm font-semibold text-[#0F172A] mb-2"
+                    className="block text-sm font-semibold text-slate-200 mb-2"
                   >
                     Choose Username
                   </label>
@@ -368,7 +363,7 @@ export default function RegisterPage() {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full bg-white border-2 border-slate-200 focus:border-[#2563EB] rounded-xl px-4 py-3.5 text-[#0F172A] placeholder-slate-400 outline-none transition-all duration-200 text-sm"
+                    className="w-full bg-[#0b1329] border-2 border-slate-800 focus:border-[#3b82f6] rounded-xl px-4 py-3.5 text-white placeholder-slate-500 outline-none transition-all duration-200 text-sm"
                     placeholder="e.g. lucky_player1"
                     aria-label="Choose a username"
                     required
@@ -384,7 +379,7 @@ export default function RegisterPage() {
                 <div>
                   <label
                     htmlFor="reg-password"
-                    className="block text-sm font-semibold text-[#0F172A] mb-2"
+                    className="block text-sm font-semibold text-slate-200 mb-2"
                   >
                     Create Password
                   </label>
@@ -394,7 +389,7 @@ export default function RegisterPage() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-white border-2 border-slate-200 focus:border-[#2563EB] rounded-xl px-4 py-3.5 pr-12 text-[#0F172A] placeholder-slate-400 outline-none transition-all duration-200 text-sm"
+                      className="w-full bg-[#0b1329] border-2 border-slate-800 focus:border-[#3b82f6] rounded-xl px-4 py-3.5 pr-12 text-white placeholder-slate-500 outline-none transition-all duration-200 text-sm"
                       placeholder="••••••••"
                       aria-label="Create a password"
                       required
@@ -402,7 +397,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#2563EB] transition-colors cursor-pointer"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-[#3b82f6] transition-colors cursor-pointer"
                       aria-label={
                         showPassword ? "Hide password" : "Show password"
                       }
@@ -417,7 +412,7 @@ export default function RegisterPage() {
                 <div>
                   <label
                     htmlFor="reg-confirm"
-                    className="block text-sm font-semibold text-[#0F172A] mb-2"
+                    className="block text-sm font-semibold text-slate-200 mb-2"
                   >
                     Confirm Password
                   </label>
@@ -427,12 +422,12 @@ export default function RegisterPage() {
                       type={showConfirm ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className={`w-full bg-white border-2 rounded-xl px-4 py-3.5 pr-12 text-[#0F172A] placeholder-slate-400 outline-none transition-all duration-200 text-sm ${
+                      className={`w-full bg-[#0b1329] border-2 rounded-xl px-4 py-3.5 pr-12 text-white placeholder-slate-500 outline-none transition-all duration-200 text-sm ${
                         confirmPassword.length > 0
                           ? passwordsMatch
-                            ? "border-emerald-400 focus:border-emerald-500"
-                            : "border-red-300 focus:border-red-400"
-                          : "border-slate-200 focus:border-[#2563EB]"
+                            ? "border-emerald-500/50 focus:border-emerald-500"
+                            : "border-red-500/50 focus:border-red-400"
+                          : "border-slate-800 focus:border-[#3b82f6]"
                       }`}
                       placeholder="••••••••"
                       aria-label="Confirm your password"
@@ -445,7 +440,7 @@ export default function RegisterPage() {
                       <button
                         type="button"
                         onClick={() => setShowConfirm(!showConfirm)}
-                        className="text-slate-400 hover:text-[#2563EB] transition-colors cursor-pointer"
+                        className="text-slate-500 hover:text-[#3b82f6] transition-colors cursor-pointer"
                         aria-label={
                           showConfirm
                             ? "Hide confirm password"
@@ -470,7 +465,7 @@ export default function RegisterPage() {
                 {/* Error */}
                 {error && (
                   <div
-                    className="flex items-center gap-2.5 bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm font-medium animate-fade-up"
+                    className="flex items-center gap-2.5 bg-red-950/20 border border-red-900/50 text-red-400 rounded-xl px-4 py-3 text-sm font-medium animate-fade-up"
                     role="alert"
                   >
                     <AlertCircle size={16} className="shrink-0" />
@@ -482,7 +477,7 @@ export default function RegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full flex items-center justify-center gap-2 bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all duration-300 cursor-pointer text-sm uppercase tracking-widest mt-2 ${
+                  className={`w-full flex items-center justify-center gap-2 bg-[#3b82f6] hover:bg-[#1d4ed8] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all duration-300 cursor-pointer text-sm uppercase tracking-widest mt-2 ${
                     allFilled ? "glow-blue" : ""
                   }`}
                   aria-label="Create your account"
@@ -502,26 +497,26 @@ export default function RegisterPage() {
               </form>
 
               {/* Terms */}
-              <p className="text-center text-slate-400 text-xs mt-5 leading-relaxed px-2">
+              <p className="text-center text-slate-500 text-xs mt-5 leading-relaxed px-2">
                 By signing up, you confirm you are 18+ and agree to our{" "}
-                <span className="text-slate-500 font-medium">Terms</span>{" "}
+                <span className="text-slate-400 font-medium">Terms</span>{" "}
                 &amp;{" "}
-                <span className="text-slate-500 font-medium">
+                <span className="text-slate-400 font-medium">
                   Privacy Policy
                 </span>
               </p>
 
               <div className="flex items-center gap-4 my-5">
-                <div className="flex-1 h-px bg-slate-100" />
-                <span className="text-slate-400 text-xs font-medium">OR</span>
-                <div className="flex-1 h-px bg-slate-100" />
+                <div className="flex-1 h-px bg-slate-800" />
+                <span className="text-slate-500 text-xs font-medium">OR</span>
+                <div className="flex-1 h-px bg-slate-800" />
               </div>
 
-              <p className="text-center text-slate-500 text-sm">
+              <p className="text-center text-slate-400 text-sm">
                 Already have an account?{" "}
                 <Link
                   href="/login"
-                  className="text-[#E11D48] hover:text-[#BE123C] font-bold transition-colors cursor-pointer underline underline-offset-2"
+                  className="text-[#3b82f6] hover:text-[#1d4ed8] font-bold transition-colors cursor-pointer underline underline-offset-2"
                   aria-label="Go to Login page"
                 >
                   Log In

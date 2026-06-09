@@ -104,11 +104,11 @@ const CategoryChip: React.FC<CategoryChipProps> = ({
     aria-pressed={active}
     className={`flex flex-col items-center justify-center gap-2 w-28 h-20 shrink-0 rounded-2xl text-[10px] font-extrabold uppercase tracking-wider select-none cursor-pointer transition-all duration-300 border ${
       active
-        ? "bg-gradient-to-br from-[#E11D48] to-[#BE123C] text-white border-transparent shadow-lg shadow-[#E11D48]/25 scale-[1.02]"
-        : "bg-white text-slate-600 border-slate-100 shadow-sm hover:border-[#E11D48]/30 hover:text-[#E11D48] hover:-translate-y-0.5"
+        ? "bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white border-transparent shadow-lg shadow-[#2563EB]/25 scale-[1.02]"
+        : "bg-[#0f172a]/80 text-slate-300 border-slate-800 shadow-sm hover:border-[#3b82f6]/30 hover:text-[#3b82f6] hover:-translate-y-0.5"
     }`}
   >
-    <span className={`transition-transform duration-300 ${active ? "scale-110 text-white" : "text-slate-400 group-hover:text-[#E11D48]"}`}>
+    <span className={`transition-transform duration-300 ${active ? "scale-110 text-white" : "text-slate-400 group-hover:text-[#3b82f6]"}`}>
       {icon}
     </span>
     <span className="text-center">{label}</span>
@@ -525,18 +525,18 @@ const CasinoGameLobby: React.FC = () => {
       : personalBets;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F8FAFC] to-[#FFF5F5] text-[#0F172A] flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-[#0b1329] to-[#020617] text-[#f8fafc] flex flex-col">
       {/* ── REDESIGNED TOP HEADER (PBC88 STYLE - TWO ROWS) ──────────────── */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm transition-all">
+      <header className="sticky top-0 z-30 bg-[#0f172a]/95 backdrop-blur-md border-b border-slate-800 shadow-sm transition-all">
         {/* Row 1: Logo, Language Select & User Actions */}
         <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 gap-4">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E11D48] to-[#FB7185] flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] flex items-center justify-center shadow-md">
               <Dices size={22} className="text-white animate-pulse-glow" />
             </div>
             <div className="flex flex-col">
-              <span className="text-2xl font-extrabold tracking-tight text-[#E11D48] leading-none">
+              <span className="text-2xl font-extrabold tracking-tight text-[#3b82f6] leading-none">
                 PBBET
               </span>
               <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-0.5">
@@ -548,13 +548,13 @@ const CasinoGameLobby: React.FC = () => {
           {/* Center/Right: Language Selector & Auth/Wallet */}
           <div className="flex items-center gap-4 shrink-0">
             {/* Language Dropdown Select */}
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+            <div className="flex items-center gap-1 bg-[#0b1329] p-1 rounded-xl border border-slate-800">
               <button
                 onClick={() => setCurrentLanguage("BN")}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer select-none ${
                   currentLanguage === "BN"
-                    ? "bg-[#E11D48] text-white shadow-sm"
-                    : "text-slate-500 hover:text-slate-900"
+                    ? "bg-[#3b82f6] text-white shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
                 }`}
               >
                 <span>🇧🇩</span> বাংলা
@@ -563,8 +563,8 @@ const CasinoGameLobby: React.FC = () => {
                 onClick={() => setCurrentLanguage("EN")}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer select-none ${
                   currentLanguage === "EN"
-                    ? "bg-[#E11D48] text-white shadow-sm"
-                    : "text-slate-500 hover:text-slate-900"
+                    ? "bg-[#3b82f6] text-white shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
                 }`}
               >
                 <span>🇺🇸</span> EN
@@ -575,19 +575,19 @@ const CasinoGameLobby: React.FC = () => {
             {user ? (
               <div className="flex items-center gap-3">
                 {/* Wallet Balance Card */}
-                 <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-slate-100 bg-white shadow-sm">
-                   <Wallet size={14} className="text-[#E11D48]" />
+                 <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-slate-800 bg-[#0f172a] shadow-sm">
+                   <Wallet size={14} className="text-[#3b82f6]" />
                    <div className="flex flex-col leading-tight">
                      <span className="text-[8px] text-slate-400 uppercase tracking-widest font-bold">
                        {currentLanguage === "BN" ? "ক্যাশ ব্যালেন্স" : "Cash Balance"}
                      </span>
-                     <span className="text-xs font-extrabold text-[#0F172A]">
+                     <span className="text-xs font-extrabold text-white">
                        ${user.balance}
                      </span>
                    </div>
                    <button
                      onClick={refreshBalance}
-                     className="text-slate-400 hover:text-[#E11D48] cursor-pointer transition-colors"
+                     className="text-slate-400 hover:text-[#3b82f6] cursor-pointer transition-colors"
                      title="Sync wallet"
                    >
                      <RefreshCw size={12} className="hover:rotate-180 transition-transform duration-300" />
@@ -597,7 +597,7 @@ const CasinoGameLobby: React.FC = () => {
                  {/* Deposit button */}
                  <button
                    onClick={() => setDepositModalOpen(true)}
-                   className="px-4 py-2 rounded-xl text-xs font-extrabold bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors shadow-md shadow-[#2563EB]/15 cursor-pointer flex items-center gap-1"
+                   className="px-4 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white hover:from-[#3B82F6] hover:to-[#2563EB] transition-colors shadow-md shadow-[#2563EB]/15 cursor-pointer flex items-center gap-1"
                  >
                    <CircleDollarSign size={14} />
                    {currentLanguage === "BN" ? "ডিপোজিট" : "Deposit"}
@@ -606,7 +606,7 @@ const CasinoGameLobby: React.FC = () => {
                  {/* User Profile Action */}
                  <button
                    onClick={() => setProfileModalOpen(true)}
-                   className="p-2.5 rounded-xl border border-slate-100 text-slate-500 hover:bg-slate-50 hover:text-[#0F172A] transition-all cursor-pointer"
+                   className="p-2.5 rounded-xl border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
                    title="My Profile Account"
                  >
                    <UserIcon size={16} />
@@ -615,7 +615,7 @@ const CasinoGameLobby: React.FC = () => {
                  {/* Support Chat Action */}
                  <button
                    onClick={() => setChatOpen(true)}
-                   className="p-2.5 rounded-xl border border-slate-100 text-emerald-600 hover:bg-emerald-50 transition-all cursor-pointer"
+                   className="p-2.5 rounded-xl border border-slate-800 text-emerald-400 hover:bg-slate-800 transition-all cursor-pointer"
                    title="Live Support Support"
                  >
                    <MessageSquare size={16} />
@@ -624,7 +624,7 @@ const CasinoGameLobby: React.FC = () => {
                  {/* FAQ Help Action */}
                  <button
                    onClick={() => setFaqModalOpen(true)}
-                   className="p-2.5 rounded-xl border border-slate-100 text-[#2563EB] hover:bg-blue-50 transition-all cursor-pointer"
+                   className="p-2.5 rounded-xl border border-slate-800 text-[#3b82f6] hover:bg-slate-800 transition-all cursor-pointer"
                    title="Help & FAQ Info"
                  >
                    <HelpCircle size={16} />
@@ -633,7 +633,7 @@ const CasinoGameLobby: React.FC = () => {
                  {/* Disconnect logout */}
                  <button
                    onClick={handleLogout}
-                   className="p-2.5 rounded-xl border border-slate-100 text-slate-400 hover:bg-red-50 hover:text-[#E11D48] transition-all cursor-pointer"
+                   className="p-2.5 rounded-xl border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-[#3b82f6] transition-all cursor-pointer"
                    title="Disconnect Session"
                  >
                    <LogOut size={16} />
@@ -644,14 +644,14 @@ const CasinoGameLobby: React.FC = () => {
                  {/* Live Support and FAQ even when logged out */}
                  <button
                    onClick={() => setChatOpen(true)}
-                   className="p-2.5 rounded-xl border border-slate-100 text-emerald-600 hover:bg-emerald-50 transition-all cursor-pointer"
+                   className="p-2.5 rounded-xl border border-slate-800 text-emerald-400 hover:bg-slate-800 transition-all cursor-pointer"
                    title="Live Support Support"
                  >
                    <MessageSquare size={15} />
                  </button>
                  <button
                    onClick={() => setFaqModalOpen(true)}
-                   className="p-2.5 rounded-xl border border-slate-100 text-[#2563EB] hover:bg-blue-50 transition-all cursor-pointer"
+                   className="p-2.5 rounded-xl border border-slate-800 text-[#3b82f6] hover:bg-slate-800 transition-all cursor-pointer"
                    title="Help & FAQ Info"
                  >
                    <HelpCircle size={15} />
@@ -659,13 +659,13 @@ const CasinoGameLobby: React.FC = () => {
 
                  <button
                    onClick={() => router.push("/login")}
-                   className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#0F172A] hover:bg-slate-100 transition-all cursor-pointer"
+                   className="px-4 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
                  >
                    {currentLanguage === "BN" ? "লগইন" : "Login"}
                  </button>
                  <button
                    onClick={() => router.push("/register")}
-                   className="px-4 py-2 rounded-xl text-xs font-bold bg-[#E11D48] text-white hover:bg-[#BE123C] transition-colors shadow-md shadow-[#E11D48]/25 cursor-pointer"
+                   className="px-4 py-2 rounded-xl text-xs font-bold bg-[#3b82f6] text-white hover:bg-[#1d4ed8] transition-colors shadow-md shadow-[#3b82f6]/25 cursor-pointer"
                  >
                    {currentLanguage === "BN" ? "নিবন্ধন" : "Sign Up"}
                  </button>
@@ -678,12 +678,12 @@ const CasinoGameLobby: React.FC = () => {
        {/* ── MAIN CONTENT AREA ────────────────────────────────────────────── */}
        <main className="flex-1 flex flex-col min-w-0">
          {/* ── ANNOUNCEMENT MARQUEE TICKER ────────────────────────────────── */}
-         <section className="px-4 sm:px-6 lg:px-8 py-2.5 bg-white border-b border-slate-100 shadow-sm" aria-label="Announcement banner">
-           <div className="max-w-7xl mx-auto flex items-center gap-3 px-4 py-2 rounded-2xl bg-gradient-to-r from-rose-50/50 via-slate-50 to-slate-100/50 border border-slate-150 backdrop-blur-md">
-             <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#E11D48] text-white text-[10px] font-bold uppercase tracking-widest shrink-0 shadow-md shadow-[#E11D48]/15 animate-pulse">
+          <section className="px-4 sm:px-6 lg:px-8 py-2.5 bg-[#0b1329] border-b border-slate-800 shadow-sm" aria-label="Announcement banner">
+            <div className="max-w-7xl mx-auto flex items-center gap-3 px-4 py-2 rounded-2xl bg-gradient-to-r from-blue-950/20 via-slate-900/50 to-slate-900/20 border border-slate-800 backdrop-blur-md">
+              <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#3b82f6] text-white text-[10px] font-bold uppercase tracking-widest shrink-0 shadow-md shadow-[#3b82f6]/15 animate-pulse">
                Notice
              </span>
-             <div className="marquee-container text-xs text-slate-600 font-semibold overflow-hidden">
+             <div className="marquee-container text-xs text-slate-300 font-semibold overflow-hidden">
                <div className="marquee-content whitespace-nowrap">
                  {currentLanguage === "BN"
                    ? "Welcome to PBBET -- Bangladesh's leading online casino & sportsbook! Get a 100% welcome bonus on your first deposit! Play verified Slots and Live dealer casino tables under OroPlay integration! Secure payments via Bkash, Nagad, Rocket!"

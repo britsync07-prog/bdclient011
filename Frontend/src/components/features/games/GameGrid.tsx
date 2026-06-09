@@ -49,10 +49,10 @@ export const GameGrid: React.FC<GameGridProps> = ({
   return (
     <div className="space-y-5">
       {games.length > 0 && (
-        <div className="bg-white rounded-xl px-4 py-3 border border-slate-100 shadow-sm flex items-center justify-between">
+        <div className="bg-[#0f172a]/80 rounded-xl px-4 py-3 border border-slate-800 shadow-sm flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Gamepad2 className="w-4 h-4 text-rose-500" aria-hidden="true" />
-            <span className="text-slate-600 text-sm font-medium">
+            <Gamepad2 className="w-4 h-4 text-blue-500" aria-hidden="true" />
+            <span className="text-slate-300 text-sm font-medium">
               {formatMessage(GAME_GRID_MESSAGES.SHOWING_GAMES, {
                 gamesLength: visibleGames.length,
                 totalGames: games.length,
@@ -62,7 +62,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
           {games.length !== totalGames && (
             <button
               onClick={onClearFilters}
-              className="flex items-center gap-1.5 text-rose-500 hover:text-rose-700 text-sm font-600 transition-colors duration-200 cursor-pointer"
+              className="flex items-center gap-1.5 text-blue-500 hover:text-blue-400 text-sm font-600 transition-colors duration-200 cursor-pointer"
             >
               <X className="w-3.5 h-3.5" aria-hidden="true" />
               {GAME_GRID_MESSAGES.SHOW_ALL_GAMES}
@@ -92,7 +92,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
           <button
             onClick={loadMoreGames}
             disabled={loadingMore}
-            className="flex items-center justify-center gap-2 px-8 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs tracking-wider uppercase rounded-xl border border-slate-800 transition-all shadow-md shadow-black/15 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer disabled:opacity-50 select-none min-w-[160px]"
+            className="flex items-center justify-center gap-2 px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs tracking-wider uppercase rounded-xl border border-blue-600 transition-all shadow-md shadow-blue/15 hover:shadow-blue/35 hover:-translate-y-0.5 cursor-pointer disabled:opacity-50 select-none min-w-[160px]"
           >
             {loadingMore ? (
               <>

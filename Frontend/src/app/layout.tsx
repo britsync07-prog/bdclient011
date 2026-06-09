@@ -29,7 +29,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#E11D48",
+  themeColor: "#3b82f6",
 };
 
 export default function RootLayout({
@@ -39,7 +39,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={dmSans.variable}>
-      <body suppressHydrationWarning={true} className="bg-[#F8FAFC] text-slate-900 font-sans">
+      <body suppressHydrationWarning={true} className="bg-[#020617] text-slate-100 font-sans">
         <ErrorBoundary>
           <AppProviders>{children}</AppProviders>
         </ErrorBoundary>

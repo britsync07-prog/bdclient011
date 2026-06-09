@@ -43,7 +43,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
   const [imageError, setImageError] = React.useState(false);
 
   return (
-    <div className="relative h-48 overflow-hidden bg-slate-100">
+    <div className="relative h-48 overflow-hidden bg-slate-900 border-b border-slate-800">
       {/* Game background */}
       {game.thumbnail && !imageError ? (
         <img
@@ -78,7 +78,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
       {/* Badges */}
       <div className="absolute top-3 left-3 flex flex-col gap-1.5">
         <span
-          className="px-2.5 py-1 rounded-full text-[10px] font-700 uppercase tracking-wider bg-white/90 text-slate-700 border border-white/50 shadow-sm"
+          className="px-2.5 py-1 rounded-full text-[10px] font-700 uppercase tracking-wider bg-slate-950/80 text-slate-300 border border-slate-800 shadow-sm"
           role="img"
           aria-label={`Category: ${game.category}`}
         >
@@ -100,7 +100,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
 
         {game.isPopular && (
           <span
-            className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white border border-rose-400 shadow-sm flex items-center gap-1"
+            className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-600 text-white border border-blue-500 shadow-sm flex items-center gap-1"
             role="img"
             aria-label="Popular game"
           >
@@ -115,10 +115,10 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
       {/* Favorite Button */}
       <button
         onClick={handleFavoriteClick}
-        className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all duration-200 z-20 cursor-pointer border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-1 ${
+        className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all duration-200 z-20 cursor-pointer border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-1 ${
           isFavorite
-            ? "bg-rose-500 border-rose-400 shadow-lg text-white"
-            : "bg-white/90 border-white/60 hover:bg-rose-50 hover:border-rose-200 text-slate-400 hover:text-rose-500"
+            ? "bg-blue-600 border-blue-500 shadow-lg text-white"
+            : "bg-slate-950/80 border-slate-800 hover:bg-blue-950 hover:border-blue-900 text-slate-400 hover:text-blue-500"
         }`}
         aria-label={favoriteAriaLabel}
         aria-pressed={isFavorite}
@@ -139,7 +139,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
       <div className="absolute inset-0 items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 hidden md:flex">
         <button
           onClick={handlePlayClick}
-          className="bg-white text-rose-600 p-4 rounded-full shadow-xl hover:bg-rose-600 hover:text-white transition-all duration-200 cursor-pointer transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="bg-white text-blue-600 p-4 rounded-full shadow-xl hover:bg-blue-600 hover:text-white transition-all duration-200 cursor-pointer transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           aria-label={playAriaLabel}
           type="button"
         >

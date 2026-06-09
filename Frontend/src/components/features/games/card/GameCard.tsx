@@ -49,7 +49,7 @@ export const GameCard = memo<GameCardProps>(
     }, [game.rating]);
 
     return (
-      <article className="group cursor-pointer relative rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:border-rose-100 transition-all duration-300 hover:-translate-y-1">
+      <article className="group cursor-pointer relative rounded-2xl overflow-hidden bg-[#0f172a] border border-slate-800 shadow-sm hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 hover:-translate-y-1">
         <GameCardHeader
           game={game}
           categoryIcon={categoryIcon}

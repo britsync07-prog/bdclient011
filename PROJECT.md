@@ -47,3 +47,8 @@
 - `server/src/controllers` -> Route logic controllers
 - `server/src/routes` -> Express route definitions
 - `server/src/utils/oroplayApi.js` -> OroPlay backend client wrapper
+
+
+backend hosted on vps its api:https://game.mayfairmarketing.online/api
+
+frontend hosted itts url:https://bdclient011.pages.dev/

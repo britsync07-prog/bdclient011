@@ -186,7 +186,7 @@ async function startServers() {
         return;
       }
     } catch (e) {
-      // ignore, wait next loop
+      console.log('Boot check attempt failed with error:', e.message || e);
     }
     await sleep(200);
     attempts++;

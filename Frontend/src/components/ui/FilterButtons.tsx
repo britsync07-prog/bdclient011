@@ -13,8 +13,8 @@ export const FilterButton: React.FC<FilterButtonProps> = ({
       onClick={onClick}
       className={`group relative px-4 py-2.5 rounded-xl text-sm font-600 transition-all duration-200 cursor-pointer border flex items-center gap-2 ${
         active
-          ? "bg-[#E11D48] text-white border-[#E11D48] shadow-lg shadow-rose-200"
-          : "bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:border-rose-200 hover:shadow-sm hover:bg-rose-50/50"
+          ? "bg-[#3b82f6] text-white border-[#3b82f6] shadow-lg shadow-blue-900/30"
+          : "bg-[#0f172a]/80 border-slate-800 text-slate-300 hover:text-white hover:border-[#3b82f6]/30 hover:shadow-sm hover:bg-slate-800"
       }`}
       style={{ transitionDuration: `${ANIMATION_DURATION.MEDIUM}ms` }}
     >
@@ -25,7 +25,7 @@ export const FilterButton: React.FC<FilterButtonProps> = ({
           className={`text-xs px-2 py-0.5 rounded-full font-700 ${
             active
               ? "bg-white/20 text-white"
-              : "bg-slate-100 text-slate-500 group-hover:bg-rose-100 group-hover:text-rose-600"
+              : "bg-slate-900 text-slate-400 group-hover:bg-slate-800 group-hover:text-[#3b82f6]"
           }`}
         >
           {count}
