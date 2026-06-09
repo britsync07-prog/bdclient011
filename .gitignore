@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Next.js / Build
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# Misc
+.DS_Store
+*.pem
+*.log
+.vercel
+.turbo
+
+# Environment
+.env*
+!.env.example
+
+# IDEs
+.vscode/
+.idea/
+
+# Local cache
+.cache/
