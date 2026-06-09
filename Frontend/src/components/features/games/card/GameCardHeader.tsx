@@ -50,6 +50,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
           src={game.thumbnail}
           alt={game.name}
           onError={() => setImageError(true)}
+          loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
       ) : (
