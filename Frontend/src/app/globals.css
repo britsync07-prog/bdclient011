@@ -368,3 +368,30 @@ input, textarea, select {
 .casino-glow-red {
   box-shadow: 0 0 15px rgba(225, 29, 72, 0.4);
 }
+
+/* Announcement Marquee Ticker styling */
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.marquee-content {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee-anim 35s linear infinite;
+  padding-left: 50px;
+}
+
+@keyframes marquee-anim {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+

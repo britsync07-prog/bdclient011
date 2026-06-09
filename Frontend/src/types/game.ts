@@ -13,7 +13,7 @@ export interface Game {
   vendorCode?: string;
 }
 
-export type Category = "all" | "slots" | "table" | "live";
+export type Category = "all" | "slots" | "table" | "live" | "fishing" | "crash";
 
 export interface FilterState {
   searchTerm: string;

@@ -17,13 +17,14 @@ import {
   Dices,
   Spade,
   CircleDollarSign,
-  Menu,
   X,
   Clock,
   Sparkles,
   MessageSquare,
   HelpCircle,
   Shield,
+  Anchor,
+  Zap,
 } from "lucide-react";
 
 import { Footer } from "@/components/layout/footer/Footer";
@@ -101,14 +102,16 @@ const CategoryChip: React.FC<CategoryChipProps> = ({
   <button
     onClick={onClick}
     aria-pressed={active}
-    className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap cursor-pointer transition-all duration-200 select-none ${
+    className={`flex flex-col items-center justify-center gap-2 w-28 h-20 shrink-0 rounded-2xl text-[10px] font-extrabold uppercase tracking-wider select-none cursor-pointer transition-all duration-300 border ${
       active
-        ? "bg-[#E11D48] text-white shadow-lg shadow-[#E11D48]/25"
-        : "bg-white text-slate-600 border border-slate-200 hover:border-[#E11D48]/40 hover:text-[#E11D48]"
+        ? "bg-gradient-to-br from-[#E11D48] to-[#BE123C] text-white border-transparent shadow-lg shadow-[#E11D48]/25 scale-[1.02]"
+        : "bg-white text-slate-600 border-slate-100 shadow-sm hover:border-[#E11D48]/30 hover:text-[#E11D48] hover:-translate-y-0.5"
     }`}
   >
-    <span>{icon}</span>
-    {label}
+    <span className={`transition-transform duration-300 ${active ? "scale-110 text-white" : "text-slate-400 group-hover:text-[#E11D48]"}`}>
+      {icon}
+    </span>
+    <span className="text-center">{label}</span>
   </button>
 );
 
@@ -120,7 +123,7 @@ const CasinoGameLobby: React.FC = () => {
     username: string;
     balance: number | string;
   } | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const [depositModalOpen, setDepositModalOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState("");
   const [depositing, setDepositing] = useState(false);
@@ -148,6 +151,7 @@ const CasinoGameLobby: React.FC = () => {
   ]);
   const [userChatMessage, setUserChatMessage] = useState("");
   const [botTyping, setBotTyping] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState<"EN" | "BN">("EN");
 
   // Load player transaction history when profile is opened
   useEffect(() => {
@@ -490,63 +494,23 @@ const CasinoGameLobby: React.FC = () => {
     return <LoadingSpinner />;
   }
 
-  const navItems = [
-    { name: "Lobby Dashboard", icon: <LayoutDashboard size={18} />, view: "dashboard" },
-    { name: "Live Casino", icon: <Gamepad2 size={18} />, view: "live" },
-    { name: "Slots", icon: <Cherry size={18} />, view: "slots" },
-    { name: "Sports Betting", icon: <Trophy size={18} />, view: "sports" },
-    { name: "Promotions & Offers", icon: <Gift size={18} />, view: "promotions" },
-    { name: "VIP Club Rewards", icon: <Crown size={18} />, view: "vip" },
-    { name: "My Profile Account", icon: <UserIcon size={18} />, view: "account" },
-  ];
 
-  const handleNavItemClick = (item: typeof navItems[0]) => {
-    if (item.view === "dashboard") {
-      setCategory("all");
-      if (state.showFavoritesOnly) toggleFavoritesOnly();
-    } else if (item.view === "live") {
-      setCategory("live");
-      if (state.showFavoritesOnly) toggleFavoritesOnly();
-    } else if (item.view === "slots") {
-      setCategory("slots");
-      if (state.showFavoritesOnly) toggleFavoritesOnly();
-    } else if (item.view === "sports") {
-      setSportsModalOpen(true);
-    } else if (item.view === "promotions") {
-      setPromotionsModalOpen(true);
-    } else if (item.view === "vip") {
-      setVipModalOpen(true);
-    } else if (item.view === "account") {
-      if (user) {
-        setProfileModalOpen(true);
-      } else {
-        router.push("/login");
-      }
-    }
-  };
-
-  const isItemActive = (view: string) => {
-    if (state.showFavoritesOnly) return false;
-    if (view === "dashboard" && state.selectedCategory === "all") return true;
-    if (view === "live" && state.selectedCategory === "live") return true;
-    if (view === "slots" && state.selectedCategory === "slots") return true;
-    return false;
-  };
 
   const categoryChips: {
     label: string;
     icon: React.ReactNode;
-    value: Category | "favorites";
+    value: Category | "favorites" | "sports" | "promotions" | "vip";
   }[] = [
-    { label: "All Games", icon: <Dices size={14} />, value: "all" },
-    { label: "Live Casino", icon: <Gamepad2 size={14} />, value: "live" },
-    { label: "Slots", icon: <Cherry size={14} />, value: "slots" },
-    { label: "Table Games", icon: <Spade size={14} />, value: "table" },
-    {
-      label: `Favorites (${favoritesCount})`,
-      icon: <Star size={14} />,
-      value: "favorites",
-    },
+    { label: currentLanguage === "BN" ? "লবি" : "All Lobby", icon: <LayoutDashboard size={18} />, value: "all" },
+    { label: currentLanguage === "BN" ? "স্পোর্টস" : "Sports Book", icon: <Trophy size={18} />, value: "sports" },
+    { label: currentLanguage === "BN" ? "লাইভ ক্যাসিনো" : "Live Casino", icon: <Gamepad2 size={18} />, value: "live" },
+    { label: currentLanguage === "BN" ? "স্লট" : "Slots Engine", icon: <Cherry size={18} />, value: "slots" },
+    { label: currentLanguage === "BN" ? "টেবিল গেম" : "Table Games", icon: <Spade size={18} />, value: "table" },
+    { label: currentLanguage === "BN" ? "ফিশিং" : "Fishing", icon: <Anchor size={18} />, value: "fishing" },
+    { label: currentLanguage === "BN" ? "ক্র্যাশ গেম" : "Crash Games", icon: <Zap size={18} />, value: "crash" },
+    { label: currentLanguage === "BN" ? "অফার ও প্রমো" : "Promotions", icon: <Gift size={18} />, value: "promotions" },
+    { label: currentLanguage === "BN" ? "ভিআইপি ক্লাব" : "VIP Club", icon: <Crown size={18} />, value: "vip" },
+    { label: currentLanguage === "BN" ? "ফেভারিটস" : "Favorites", icon: <Star size={18} />, value: "favorites" },
   ];
 
   const activeChip = state.showFavoritesOnly
@@ -561,300 +525,173 @@ const CasinoGameLobby: React.FC = () => {
       : personalBets;
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-[#F8FAFC] to-[#FFF5F5] text-[#0F172A]">
-      {/* ── SLEEK SIDEBAR NAVIGATION (STAKE STYLE) ───────────────────────── */}
-      <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-white border-r border-slate-100 shadow-sm sticky top-0 h-screen z-20 transition-all duration-300">
-        {/* Logo */}
-        <div className="px-6 pt-6 pb-6 border-b border-slate-100">
-          <div className="flex items-center gap-2">
+    <div className="min-h-screen bg-gradient-to-b from-[#F8FAFC] to-[#FFF5F5] text-[#0F172A] flex flex-col">
+      {/* ── REDESIGNED TOP HEADER (PBC88 STYLE - TWO ROWS) ──────────────── */}
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm transition-all">
+        {/* Row 1: Logo, Language Select & User Actions */}
+        <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 gap-4">
+          {/* Left: Logo */}
+          <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E11D48] to-[#FB7185] flex items-center justify-center shadow-md">
-              <Dices size={22} className="text-white" />
+              <Dices size={22} className="text-white animate-pulse-glow" />
             </div>
             <div className="flex flex-col">
               <span className="text-2xl font-extrabold tracking-tight text-[#E11D48] leading-none">
                 PBBET
               </span>
               <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-0.5">
-                Next-Gen Casino
+                Premium iGaming
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Nav Links Grouped */}
-        <div className="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
-          {/* Main Games Categories */}
-          <div>
-            <span className="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">
-              Casino Navigation
-            </span>
-            <div className="space-y-1">
-              {navItems.slice(0, 3).map((item) => {
-                const active = isItemActive(item.view);
-                return (
-                  <button
-                    key={item.name}
-                    onClick={() => handleNavItemClick(item)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                      active
-                        ? "bg-[#E11D48]/10 text-[#E11D48] border-l-4 border-[#E11D48]"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-[#0F172A]"
-                    }`}
-                  >
-                    <span className={active ? "text-[#E11D48]" : "text-slate-400"}>
-                      {item.icon}
-                    </span>
-                    <span className="truncate">{item.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Socials & VIP */}
-          <div>
-            <span className="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">
-              Rewards & Sports
-            </span>
-            <div className="space-y-1">
-              {navItems.slice(3).map((item) => {
-                const active = isItemActive(item.view);
-                return (
-                  <button
-                    key={item.name}
-                    onClick={() => handleNavItemClick(item)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                      active
-                        ? "bg-[#E11D48]/10 text-[#E11D48] border-l-4 border-[#E11D48]"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-[#0F172A]"
-                    }`}
-                  >
-                    <span className={active ? "text-[#E11D48]" : "text-slate-400"}>
-                      {item.icon}
-                    </span>
-                    <span className="truncate">{item.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Live Support shortcut */}
-          <div className="pt-2 border-t border-slate-100">
-            <button
-              onClick={() => setChatOpen(true)}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all cursor-pointer"
-            >
-              <MessageSquare size={16} className="text-emerald-500" />
-              Live Casino Support
-            </button>
-            <button
-              onClick={() => setFaqModalOpen(true)}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition-all cursor-pointer"
-            >
-              <HelpCircle size={16} className="text-[#2563EB]" />
-              Help & FAQ Info
-            </button>
-          </div>
-        </div>
-
-        {/* User profile card or login container at bottom */}
-        <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-          {user ? (
-            <div className="space-y-3">
-              {/* Wallet Info */}
-              <div className="rounded-2xl bg-gradient-to-br from-[#F59E0B]/10 via-amber-50 to-[#F59E0B]/5 border border-amber-100 p-3.5 shadow-sm">
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1.5">
-                    <CircleDollarSign size={15} className="text-[#F59E0B]" />
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                      Wallet Gold Card
-                    </span>
-                  </div>
-                  <span className="text-[9px] bg-[#F59E0B]/20 text-[#D97706] font-bold px-1.5 py-0.5 rounded-full">
-                    VIP GOLD
-                  </span>
-                </div>
-                <div className="text-lg font-extrabold text-[#0F172A] flex items-baseline gap-1">
-                  ${user.balance}
-                  <span className="text-[10px] font-normal text-slate-400">USD</span>
-                </div>
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-amber-100/50">
-                  <button
-                    onClick={refreshBalance}
-                    className="flex items-center gap-1 text-[11px] text-[#F59E0B] hover:text-[#E11D48] font-bold transition-colors cursor-pointer"
-                  >
-                    <RefreshCw size={11} className="animate-[spin_10s_linear_infinite]" />
-                    Sync balance
-                  </button>
-                </div>
-              </div>
-              
-              {/* Sign out */}
+          {/* Center/Right: Language Selector & Auth/Wallet */}
+          <div className="flex items-center gap-4 shrink-0">
+            {/* Language Dropdown Select */}
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
               <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-rose-50 hover:text-[#E11D48] border border-slate-100 hover:border-rose-100 transition-all cursor-pointer"
+                onClick={() => setCurrentLanguage("BN")}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer select-none ${
+                  currentLanguage === "BN"
+                    ? "bg-[#E11D48] text-white shadow-sm"
+                    : "text-slate-500 hover:text-slate-900"
+                }`}
               >
-                <LogOut size={14} />
-                Disconnect Session
+                <span>🇧🇩</span> বাংলা
+              </button>
+              <button
+                onClick={() => setCurrentLanguage("EN")}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer select-none ${
+                  currentLanguage === "EN"
+                    ? "bg-[#E11D48] text-white shadow-sm"
+                    : "text-slate-500 hover:text-slate-900"
+                }`}
+              >
+                <span>🇺🇸</span> EN
               </button>
             </div>
-          ) : (
-            <div className="space-y-2">
-              <button
-                onClick={() => router.push("/login")}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-[#E11D48] text-white hover:bg-[#BE123C] transition-colors shadow-md shadow-[#E11D48]/10 cursor-pointer"
-              >
-                <UserIcon size={15} />
-                Access Dashboard
-              </button>
-            </div>
-          )}
-        </div>
-      </aside>
 
-      {/* ── MAIN CONTENT AREA ────────────────────────────────────────────── */}
-      <main className="flex-1 flex flex-col min-w-0">
-        {/* ── GLASSMORPHIC TOP HEADER ────────────────────────────────────── */}
-        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-slate-100 shadow-sm transition-all">
-          <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 gap-4">
-            
-            {/* Left: Mobile Menu Trigger + Categories Tab Bar */}
-            <div className="flex items-center gap-4 min-w-0">
-              <div className="lg:hidden flex items-center gap-2 shrink-0">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E11D48] to-[#FB7185] flex items-center justify-center shadow-md">
-                  <Dices size={16} className="text-white" />
-                </div>
-                <span className="text-xl font-extrabold text-[#E11D48] tracking-tight">
-                  PBBET
-                </span>
-              </div>
+            {/* User Wallet Info and Modals or Auth Actions */}
+            {user ? (
+              <div className="flex items-center gap-3">
+                {/* Wallet Balance Card */}
+                 <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-slate-100 bg-white shadow-sm">
+                   <Wallet size={14} className="text-[#E11D48]" />
+                   <div className="flex flex-col leading-tight">
+                     <span className="text-[8px] text-slate-400 uppercase tracking-widest font-bold">
+                       {currentLanguage === "BN" ? "ক্যাশ ব্যালেন্স" : "Cash Balance"}
+                     </span>
+                     <span className="text-xs font-extrabold text-[#0F172A]">
+                       ${user.balance}
+                     </span>
+                   </div>
+                   <button
+                     onClick={refreshBalance}
+                     className="text-slate-400 hover:text-[#E11D48] cursor-pointer transition-colors"
+                     title="Sync wallet"
+                   >
+                     <RefreshCw size={12} className="hover:rotate-180 transition-transform duration-300" />
+                   </button>
+                 </div>
 
-              {/* Horizontal Tabs */}
-              <nav className="hidden md:flex items-center gap-1 bg-slate-100/70 p-1 rounded-xl" aria-label="Category tabs">
-                {[
-                  { label: "Live Lobby", cat: "live" as Category },
-                  { label: "Slots Engine", cat: "slots" as Category },
-                  { label: "Promotions & Offers", cat: null },
-                  { label: "VIP Club", cat: null },
-                ].map(({ label, cat }) => (
-                  <button
-                    key={label}
-                    onClick={() => {
-                      if (cat) {
-                        setCategory(cat);
-                        if (state.showFavoritesOnly) toggleFavoritesOnly();
-                      } else {
-                        if (label.includes("VIP")) {
-                          setVipModalOpen(true);
-                        } else {
-                          setPromotionsModalOpen(true);
-                        }
-                      }
-                    }}
-                    className={`px-4 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-all duration-200 ${
-                      cat && state.selectedCategory === cat && !state.showFavoritesOnly
-                        ? "bg-white text-[#E11D48] shadow-sm"
-                        : "text-slate-600 hover:text-[#0F172A]"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </nav>
-            </div>
+                 {/* Deposit button */}
+                 <button
+                   onClick={() => setDepositModalOpen(true)}
+                   className="px-4 py-2 rounded-xl text-xs font-extrabold bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors shadow-md shadow-[#2563EB]/15 cursor-pointer flex items-center gap-1"
+                 >
+                   <CircleDollarSign size={14} />
+                   {currentLanguage === "BN" ? "ডিপোজিট" : "Deposit"}
+                 </button>
 
-            {/* Right: Wallet Details & Deposit Trigger */}
-            <div className="flex items-center gap-3 shrink-0">
-              {user ? (
-                <>
-                  <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-slate-100 bg-white shadow-sm">
-                    <Wallet size={14} className="text-[#E11D48]" />
-                    <div className="flex flex-col leading-tight">
-                      <span className="text-[8px] text-slate-400 uppercase tracking-widest font-bold">
-                        Cash Balance
-                      </span>
-                      <span className="text-xs font-extrabold text-[#0F172A]">
-                        ${user.balance}
-                      </span>
-                    </div>
-                    <button
-                      onClick={refreshBalance}
-                      className="text-slate-400 hover:text-[#E11D48] cursor-pointer transition-colors"
-                      title="Sync wallet"
-                    >
-                      <RefreshCw size={12} className="hover:rotate-180 transition-transform duration-300" />
-                    </button>
-                  </div>
-                  
-                  <button
-                    onClick={() => setDepositModalOpen(true)}
-                    className="px-4 py-2 rounded-xl text-xs font-extrabold bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors shadow-md shadow-[#2563EB]/15 cursor-pointer flex items-center gap-1"
-                  >
-                    <CircleDollarSign size={14} />
-                    Deposit Funds
-                  </button>
-                  
-                  <button
-                    onClick={handleLogout}
-                    className="hidden sm:flex p-2 rounded-xl border border-slate-100 text-slate-400 hover:bg-red-50 hover:text-[#E11D48] transition-all cursor-pointer"
-                  >
-                    <LogOut size={16} />
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => router.push("/login")}
-                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#0F172A] hover:bg-slate-100 transition-all cursor-pointer"
-                  >
-                    Login
-                  </button>
-                  <button
-                    onClick={() => router.push("/register")}
-                    className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors shadow-md shadow-[#2563EB]/25 cursor-pointer"
-                  >
-                    Sign Up
-                  </button>
-                </>
-              )}
+                 {/* User Profile Action */}
+                 <button
+                   onClick={() => setProfileModalOpen(true)}
+                   className="p-2.5 rounded-xl border border-slate-100 text-slate-500 hover:bg-slate-50 hover:text-[#0F172A] transition-all cursor-pointer"
+                   title="My Profile Account"
+                 >
+                   <UserIcon size={16} />
+                 </button>
 
-              {/* Mobile hamburger menu */}
-              <button
-                className="lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 cursor-pointer transition-all"
-                onClick={() => setMobileMenuOpen((v) => !v)}
-              >
-                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-              </button>
-            </div>
-          </div>
+                 {/* Support Chat Action */}
+                 <button
+                   onClick={() => setChatOpen(true)}
+                   className="p-2.5 rounded-xl border border-slate-100 text-emerald-600 hover:bg-emerald-50 transition-all cursor-pointer"
+                   title="Live Support Support"
+                 >
+                   <MessageSquare size={16} />
+                 </button>
 
-          {/* Drawer for mobile view */}
-          {mobileMenuOpen && (
-            <div className="lg:hidden border-t border-slate-100 bg-white px-4 py-3 space-y-1 shadow-inner">
-              {navItems.map((item) => {
-                const active = isItemActive(item.view);
-                return (
-                  <button
-                    key={item.name}
-                    onClick={() => {
-                      handleNavItemClick(item);
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold cursor-pointer transition-all ${
-                      active
-                        ? "bg-[#E11D48]/10 text-[#E11D48]"
-                        : "text-slate-500 hover:bg-slate-50"
-                    }`}
-                  >
-                    <span>{item.icon}</span>
-                    {item.name}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </header>
+                 {/* FAQ Help Action */}
+                 <button
+                   onClick={() => setFaqModalOpen(true)}
+                   className="p-2.5 rounded-xl border border-slate-100 text-[#2563EB] hover:bg-blue-50 transition-all cursor-pointer"
+                   title="Help & FAQ Info"
+                 >
+                   <HelpCircle size={16} />
+                 </button>
+
+                 {/* Disconnect logout */}
+                 <button
+                   onClick={handleLogout}
+                   className="p-2.5 rounded-xl border border-slate-100 text-slate-400 hover:bg-red-50 hover:text-[#E11D48] transition-all cursor-pointer"
+                   title="Disconnect Session"
+                 >
+                   <LogOut size={16} />
+                 </button>
+               </div>
+             ) : (
+               <div className="flex items-center gap-2">
+                 {/* Live Support and FAQ even when logged out */}
+                 <button
+                   onClick={() => setChatOpen(true)}
+                   className="p-2.5 rounded-xl border border-slate-100 text-emerald-600 hover:bg-emerald-50 transition-all cursor-pointer"
+                   title="Live Support Support"
+                 >
+                   <MessageSquare size={15} />
+                 </button>
+                 <button
+                   onClick={() => setFaqModalOpen(true)}
+                   className="p-2.5 rounded-xl border border-slate-100 text-[#2563EB] hover:bg-blue-50 transition-all cursor-pointer"
+                   title="Help & FAQ Info"
+                 >
+                   <HelpCircle size={15} />
+                 </button>
+
+                 <button
+                   onClick={() => router.push("/login")}
+                   className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#0F172A] hover:bg-slate-100 transition-all cursor-pointer"
+                 >
+                   {currentLanguage === "BN" ? "লগইন" : "Login"}
+                 </button>
+                 <button
+                   onClick={() => router.push("/register")}
+                   className="px-4 py-2 rounded-xl text-xs font-bold bg-[#E11D48] text-white hover:bg-[#BE123C] transition-colors shadow-md shadow-[#E11D48]/25 cursor-pointer"
+                 >
+                   {currentLanguage === "BN" ? "নিবন্ধন" : "Sign Up"}
+                 </button>
+               </div>
+             )}
+           </div>
+         </div>
+       </header>
+
+       {/* ── MAIN CONTENT AREA ────────────────────────────────────────────── */}
+       <main className="flex-1 flex flex-col min-w-0">
+         {/* ── ANNOUNCEMENT MARQUEE TICKER ────────────────────────────────── */}
+         <section className="px-4 sm:px-6 lg:px-8 py-2.5 bg-white border-b border-slate-100 shadow-sm" aria-label="Announcement banner">
+           <div className="max-w-7xl mx-auto flex items-center gap-3 px-4 py-2 rounded-2xl bg-gradient-to-r from-rose-50/50 via-slate-50 to-slate-100/50 border border-slate-150 backdrop-blur-md">
+             <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#E11D48] text-white text-[10px] font-bold uppercase tracking-widest shrink-0 shadow-md shadow-[#E11D48]/15 animate-pulse">
+               Notice
+             </span>
+             <div className="marquee-container text-xs text-slate-600 font-semibold overflow-hidden">
+               <div className="marquee-content whitespace-nowrap">
+                 {currentLanguage === "BN"
+                   ? "Welcome to PBBET -- Bangladesh's leading online casino & sportsbook! Get a 100% welcome bonus on your first deposit! Play verified Slots and Live dealer casino tables under OroPlay integration! Secure payments via Bkash, Nagad, Rocket!"
+                   : "Welcome to PBBET -- the premium iGaming platform in Bangladesh! Get a 100% welcome bonus on your first deposit! Join our VIP club and win weekly cashbacks! Experience the top-rated slot engines and live casino tables under OroPlay integration! Fair play & RNG certified payouts guaranteed!"}
+               </div>
+             </div>
+           </div>
+         </section>
 
         {/* ── BANNERS SLIDER (IMAGE ONLY BANNERS AT THE VERY TOP) ── */}
         <section className="px-4 sm:px-6 lg:px-8 pt-6 pb-2" aria-label="Campaign Banners">
@@ -939,10 +776,26 @@ const CasinoGameLobby: React.FC = () => {
                 key={value}
                 label={label}
                 icon={icon}
-                active={activeChip === value}
+                active={
+                  value === "favorites"
+                    ? activeChip === "favorites"
+                    : value === "sports"
+                    ? sportsModalOpen
+                    : value === "promotions"
+                    ? promotionsModalOpen
+                    : value === "vip"
+                    ? vipModalOpen
+                    : activeChip === value
+                }
                 onClick={() => {
                   if (value === "favorites") {
                     if (!state.showFavoritesOnly) toggleFavoritesOnly();
+                  } else if (value === "sports") {
+                    setSportsModalOpen(true);
+                  } else if (value === "promotions") {
+                    setPromotionsModalOpen(true);
+                  } else if (value === "vip") {
+                    setVipModalOpen(true);
                   } else {
                     if (state.showFavoritesOnly) toggleFavoritesOnly();
                     setCategory(value as Category);

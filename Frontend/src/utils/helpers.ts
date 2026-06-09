@@ -22,6 +22,16 @@ const CATEGORY_CONFIG = {
     color: "bg-gray-500/20 text-gray-300 border-gray-500/30",
     label: "All Games",
   },
+  fishing: {
+    icon: "⚓",
+    color: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+    label: "Fishing",
+  },
+  crash: {
+    icon: "⚡",
+    color: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
+    label: "Crash Games",
+  },
 } as const;
 
 const DEFAULT_CONFIG = {

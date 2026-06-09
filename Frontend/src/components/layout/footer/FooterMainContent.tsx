@@ -221,6 +221,57 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
         links={supportLinks}
         onOpenPolicy={onOpenPolicy}
       />
+
+      {/* Payment Partners & Game Providers Section (Stake / PBC88 style) */}
+      <div className="col-span-1 md:col-span-2 lg:col-span-4 border-t border-slate-200/60 pt-8 mt-4 space-y-6">
+        {/* Payment Methods */}
+        <div>
+          <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5">Accepted Payment Methods</h5>
+          <div className="flex flex-wrap items-center gap-4 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+            {/* bKash */}
+            <div className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#E11D48] select-none">
+              <span className="w-2 h-2 rounded-full bg-[#E11D48]" />
+              bKash
+            </div>
+            {/* Nagad */}
+            <div className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#EA580C] select-none">
+              <span className="w-2 h-2 rounded-full bg-[#EA580C]" />
+              Nagad
+            </div>
+            {/* Rocket */}
+            <div className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#8B5CF6] select-none">
+              <span className="w-2 h-2 rounded-full bg-[#8B5CF6]" />
+              Rocket
+            </div>
+            {/* Astropay */}
+            <div className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#0369A1] select-none">
+              Astropay
+            </div>
+            {/* USDT Tether */}
+            <div className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#0F766E] select-none">
+              USDT (Tether)
+            </div>
+            {/* Visa/Mastercard */}
+            <div className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-slate-700 select-none">
+              Visa / MasterCard
+            </div>
+          </div>
+        </div>
+
+        {/* Game Providers */}
+        <div>
+          <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5">Software Game Providers</h5>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 grayscale opacity-45 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">PRAGMATIC PLAY</span>
+            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">PG SOFT</span>
+            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">EVOLUTION</span>
+            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">JILI GAMES</span>
+            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">SPRIBE</span>
+            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">JDB</span>
+            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">HACKSAW</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

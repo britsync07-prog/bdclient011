@@ -25,7 +25,23 @@ export const useFilteredGames = () => {
     }
 
     if (selectedCategory !== "all") {
-      filtered = filtered.filter((game) => game.category === selectedCategory);
+      if (selectedCategory === "fishing") {
+        filtered = filtered.filter(
+          (game) =>
+            (game.vendorCode && game.vendorCode.toLowerCase().startsWith("fishing-")) ||
+            game.name.toLowerCase().includes("fish")
+        );
+      } else if (selectedCategory === "crash") {
+        filtered = filtered.filter(
+          (game) =>
+            (game.vendorCode && game.vendorCode.toLowerCase().startsWith("mini-")) ||
+            ["crash", "plinko", "aviator", "dice", "mines", "limbo"].some(
+              (kw) => game.name.toLowerCase().includes(kw)
+            )
+        );
+      } else {
+        filtered = filtered.filter((game) => game.category === selectedCategory);
+      }
     }
 
     if (showFavoritesOnly) {
