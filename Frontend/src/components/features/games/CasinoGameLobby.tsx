@@ -445,6 +445,62 @@ const CasinoGameLobby: React.FC = () => {
         showToastMessage(`Launching ${game.name}...`);
         logClientAction("Click Play Game", { gameId, gameName: game.name, vendorCode, gameCode });
 
+        // Open a blank tab immediately to avoid popup blockers and make launching feel instant
+        const gameWin = window.open("about:blank", "_blank");
+        if (gameWin) {
+          gameWin.document.write(`
+            <html>
+              <head>
+                <title>Loading ${game.name}...</title>
+                <style>
+                  body {
+                    background-color: #0b1329;
+                    color: #f8fafc;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    margin: 0;
+                    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                  }
+                  .spinner {
+                    border: 4px solid rgba(59, 130, 246, 0.1);
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    border-left-color: #3b82f6;
+                    animation: spin 1s linear infinite;
+                    margin-bottom: 24px;
+                  }
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                  .title {
+                    font-size: 18px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    color: #3b82f6;
+                  }
+                  .subtitle {
+                    color: #94a3b8;
+                    font-size: 12px;
+                    margin-top: 8px;
+                    font-weight: 500;
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="spinner"></div>
+                <div class="title">Launching ${game.name}...</div>
+                <div class="subtitle">Securing game session connection. Please wait...</div>
+              </body>
+            </html>
+          `);
+        }
+
         try {
           const res = await fetch(`${BACKEND_URL}/user/launch`, {
             method: "POST",
@@ -478,17 +534,39 @@ const CasinoGameLobby: React.FC = () => {
             };
             setPersonalBets((prev) => [newPersonal, ...prev]);
 
-            window.open(data.launchUrl, "_blank");
+            // Redirect the already-open window to the launch URL
+            if (gameWin) {
+              gameWin.location.href = data.launchUrl;
+            }
           } else {
             logClientAction("Game Launch Fail", { gameId, gameName: game.name, error: data.message || "Failed to launch game" });
-            showToastMessage(
-              `Error: ${data.message || "Failed to launch game"}`
-            );
+            showToastMessage(`Error: ${data.message || "Failed to launch game"}`);
+            
+            // Show error in the open window
+            if (gameWin) {
+              gameWin.document.body.innerHTML = `
+                <div style="background-color: #0b1329; color: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: system-ui, sans-serif; text-align: center; padding: 24px;">
+                  <div style="color: #ef4444; font-size: 20px; font-weight: 800; text-transform: uppercase;">Launch Failed</div>
+                  <div style="color: #cbd5e1; font-size: 14px; margin-top: 12px; max-width: 400px; line-height: 1.5;">${data.message || "Failed to launch game session. Please check your account status or balance."}</div>
+                  <button onclick="window.close()" style="margin-top: 24px; padding: 10px 20px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Close Window</button>
+                </div>
+              `;
+            }
           }
         } catch (err) {
           const errMsg = err instanceof Error ? err.message : String(err);
           logClientAction("Game Launch Error", { gameId, gameName: game.name, error: errMsg });
           showToastMessage("Error launching game");
+          
+          if (gameWin) {
+            gameWin.document.body.innerHTML = `
+              <div style="background-color: #0b1329; color: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: system-ui, sans-serif; text-align: center; padding: 24px;">
+                <div style="color: #ef4444; font-size: 20px; font-weight: 800; text-transform: uppercase;">Connection Error</div>
+                <div style="color: #cbd5e1; font-size: 14px; margin-top: 12px;">Failed to connect to the operator server.</div>
+                <button onclick="window.close()" style="margin-top: 24px; padding: 10px 20px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Close Window</button>
+              </div>
+            `;
+          }
         }
       }
     },
