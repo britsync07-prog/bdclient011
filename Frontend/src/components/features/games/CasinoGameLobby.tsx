@@ -438,7 +438,7 @@ const CasinoGameLobby: React.FC = () => {
             body: JSON.stringify({
               vendorCode:
                 (game as Game & { vendorCode: string }).vendorCode || "",
-              gameCode: game.id,
+              gameCode: (game as Game).gameCode || game.id,
             }),
           });
           const data = await res.json();

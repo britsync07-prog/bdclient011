@@ -1,5 +1,8 @@
+
+
 export interface Game {
   id: string;
+  gameCode?: string;
   name: string;
   provider: string;
   category: "slots" | "table" | "live";
