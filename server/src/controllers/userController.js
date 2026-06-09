@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const oroplayApi = require('../utils/oroplayApi');
 const SettingService = require('../services/SettingService');
 
@@ -28,6 +30,26 @@ let activeCachePromise = null;
 
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour TTL
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const CACHE_FILE = path.join(__dirname, '../config/games-cache.json');
+
+// Attempt to load initial cache from disk on startup
+try {
+  const dir = path.dirname(CACHE_FILE);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  if (fs.existsSync(CACHE_FILE)) {
+    const rawData = fs.readFileSync(CACHE_FILE, 'utf8');
+    if (rawData) {
+      cachedGames = JSON.parse(rawData);
+      lastCacheFetchTime = Date.now();
+      console.log(`[INFO] Loaded ${cachedGames.length} games from local cache file.`);
+    }
+  }
+} catch (err) {
+  console.error('Failed to load local games cache file on startup:', err);
+}
 
 function updateGamesCache() {
   if (activeCachePromise) {
@@ -42,31 +64,47 @@ function updateGamesCache() {
         const vendors = vendorsResult.data.message;
         let allGames = [];
 
-        for (const vendor of vendors) {
-          // Sleep a tiny bit (50ms) to prevent absolute flooding
+        // Parallel fetching in batches of 10 concurrent requests
+        const batchSize = 10;
+        for (let i = 0; i < vendors.length; i += batchSize) {
+          const batch = vendors.slice(i, i + batchSize);
+          
+          await Promise.all(batch.map(async (vendor) => {
+            try {
+              const result = await oroplayApi.getGames(vendor.vendorCode, 'en');
+              if (result.status === 200 && result.data?.success) {
+                const category = vendor.type === 1 ? 'live' : ((vendor.type === 3 || vendor.type === 6) ? 'table' : 'slots');
+                const games = result.data.message.map(game => ({
+                  gameCode: game.gameCode,
+                  gameName: game.gameName,
+                  provider: vendor.name || vendor.vendorCode,
+                  thumbnail: game.thumbnail,
+                  vendorCode: vendor.vendorCode,
+                  category: category
+                }));
+                allGames = allGames.concat(games);
+              } else {
+                console.error(`Fetch failed for vendor ${vendor.vendorCode}:`, result.data);
+              }
+            } catch (err) {
+              console.error(`Exception during games fetch for vendor ${vendor.vendorCode}:`, err);
+            }
+          }));
+
+          // Small delay between batches to respect vendor rate limits slightly
           await sleep(50);
-          console.log(`Fetching games for vendor: ${vendor.vendorCode}...`);
-          const result = await oroplayApi.getGames(vendor.vendorCode, 'en');
-          if (result.status === 200 && result.data?.success) {
-            const category = vendor.type === 1 ? 'live' : ((vendor.type === 3 || vendor.type === 6) ? 'table' : 'slots');
-            const games = result.data.message.map(game => ({
-              gameCode: game.gameCode,
-              gameName: game.gameName,
-              provider: vendor.name || vendor.vendorCode,
-              thumbnail: game.thumbnail,
-              vendorCode: vendor.vendorCode,
-              category: category
-            }));
-            allGames = allGames.concat(games);
-          } else {
-            console.error(`Fetch failed for vendor ${vendor.vendorCode}:`, result.data);
-          }
         }
 
         if (allGames.length > 0) {
           cachedGames = allGames;
           lastCacheFetchTime = Date.now();
           console.log(`Games cache updated successfully with ${allGames.length} games.`);
+          
+          // Write updated cache to file asynchronously
+          fs.writeFile(CACHE_FILE, JSON.stringify(allGames), 'utf8', (err) => {
+            if (err) console.error('Failed to write games cache file:', err);
+            else console.log('Games cache file updated on disk.');
+          });
         }
       } else {
         console.error('Fetch vendors failed:', vendorsResult.data);

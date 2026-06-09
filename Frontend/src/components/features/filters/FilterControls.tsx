@@ -37,8 +37,8 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <SlidersHorizontal className="w-4 h-4 text-rose-500" aria-hidden="true" />
-        <span className="text-slate-700 font-600 text-sm">
+        <SlidersHorizontal className="w-4 h-4 text-blue-400" aria-hidden="true" />
+        <span className="text-slate-300 font-semibold text-sm">
           {FILTER_CONTROLS.FILTER_GAMES}
         </span>
       </div>

@@ -847,9 +847,9 @@ const CasinoGameLobby: React.FC = () => {
           </div>
 
           {/* Section title & count */}
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="text-lg font-extrabold text-[#0F172A] uppercase tracking-wider flex items-center gap-2">
-              <span className="w-1.5 h-6 rounded-full bg-[#E11D48]" />
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h3 className="text-lg font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="w-1.5 h-6 rounded-full bg-[#2563EB]" />
               {state.selectedCategory !== "all"
                 ? state.selectedCategory === "live"
                   ? "Live Casino Games"
@@ -858,7 +858,7 @@ const CasinoGameLobby: React.FC = () => {
                   : state.selectedCategory.toUpperCase()
                 : "Standard Platform Grid"}
             </h3>
-            <span className="text-xs bg-slate-100 text-slate-500 font-bold px-2.5 py-1 rounded-full">
+            <span className="text-xs bg-[#0f172a]/80 text-[#3b82f6] border border-[#3b82f6]/30 font-bold px-2.5 py-1 rounded-full">
               {filteredGames.length} Available
             </span>
           </div>
@@ -875,14 +875,14 @@ const CasinoGameLobby: React.FC = () => {
         </section>
 
         {/* ── STAKE.COM LIVE LEADERBOARD / BET HISTORY FEED ─────────────────── */}
-        <section className="px-4 sm:px-6 lg:px-8 py-8 bg-[#F8FAFC] border-t border-b border-slate-100">
+        <section className="px-4 sm:px-6 lg:px-8 py-8 bg-[#0f172a]/20 border-t border-b border-slate-800">
           <div className="max-w-7xl mx-auto space-y-6">
             
             {/* Headers and Switcher Tabs */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h3 className="text-lg font-extrabold text-[#0F172A] uppercase tracking-wider flex items-center gap-2">
-                  <span className="w-1.5 h-6 rounded-full bg-[#F59E0B]" />
+                <h3 className="text-lg font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+                  <span className="w-1.5 h-6 rounded-full bg-[#2563EB]" />
                   Live Platform Activity
                 </h3>
                 <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -891,7 +891,7 @@ const CasinoGameLobby: React.FC = () => {
               </div>
 
               {/* Toggle switch */}
-              <div className="flex p-1 bg-slate-200/60 rounded-xl max-w-sm self-start">
+              <div className="flex p-1 bg-[#0b1329] border border-slate-800 rounded-xl max-w-sm self-start">
                 {[
                   { id: "recent", name: "Recent Bets" },
                   { id: "high", name: "High Rollers" },
@@ -902,8 +902,8 @@ const CasinoGameLobby: React.FC = () => {
                     onClick={() => setActiveLeaderboardTab(tab.id as "recent" | "high" | "personal")}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       activeLeaderboardTab === tab.id
-                        ? "bg-white text-[#E11D48] shadow-sm"
-                        : "text-slate-500 hover:text-slate-900"
+                        ? "bg-[#2563EB] text-white shadow-md shadow-blue-600/20"
+                        : "text-slate-400 hover:text-white"
                     }`}
                   >
                     {tab.name}
@@ -913,10 +913,10 @@ const CasinoGameLobby: React.FC = () => {
             </div>
 
             {/* Leaderboard Table Feed */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="bg-[#0f172a]/40 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden backdrop-blur-md">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                  <thead className="bg-[#0b1329] text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-800">
                     <tr>
                       <th className="py-4.5 px-5">Game</th>
                       <th className="py-4.5 px-5">Player Account</th>
@@ -926,38 +926,38 @@ const CasinoGameLobby: React.FC = () => {
                       <th className="py-4.5 px-5 text-right">Payout Cash</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
+                  <tbody className="divide-y divide-slate-800 font-semibold text-slate-300">
                     {currentLeaderboardList.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="py-10 text-center text-slate-400 font-medium">
+                        <td colSpan={6} className="py-10 text-center text-slate-500 font-medium">
                           No recent activities logged in this view. Launches will appear here!
                         </td>
                       </tr>
                     ) : (
                       currentLeaderboardList.map((bet) => (
-                        <tr key={bet.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="py-4.5 px-5 font-bold text-slate-900 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#E11D48]" />
+                        <tr key={bet.id} className="hover:bg-slate-800/30 transition-colors">
+                          <td className="py-4.5 px-5 font-bold text-white flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                             {bet.game}
                           </td>
-                          <td className="py-4.5 px-5 text-slate-500">{bet.user}</td>
-                          <td className="py-4.5 px-5 text-slate-400 flex items-center gap-1 font-normal">
+                          <td className="py-4.5 px-5 text-slate-400">{bet.user}</td>
+                          <td className="py-4.5 px-5 text-slate-500 flex items-center gap-1 font-normal">
                             <Clock size={11} />
                             {bet.time}
                           </td>
-                          <td className="py-4.5 px-5 text-right text-slate-900">
+                          <td className="py-4.5 px-5 text-right text-slate-200">
                             ${bet.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </td>
                           <td className="py-4.5 px-5 text-center">
                             {bet.isWin ? (
-                              <span className="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md text-[11px] font-bold">
+                              <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md text-[11px] font-bold">
                                 {bet.multiplier}x
                               </span>
                             ) : (
-                              <span className="text-slate-400 font-normal">-</span>
+                              <span className="text-slate-500 font-normal">-</span>
                             )}
                           </td>
-                          <td className={`py-4.5 px-5 text-right font-extrabold ${bet.isWin ? "text-emerald-600" : "text-slate-400 font-normal"}`}>
+                          <td className={`py-4.5 px-5 text-right font-extrabold ${bet.isWin ? "text-emerald-400" : "text-slate-500 font-normal"}`}>
                             {bet.isWin ? (
                               `+$${bet.payout.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                             ) : (
@@ -970,7 +970,7 @@ const CasinoGameLobby: React.FC = () => {
                   </tbody>
                 </table>
               </div>
-              <div className="bg-slate-50 px-5 py-3 text-center border-t border-slate-100">
+              <div className="bg-[#0b1329] px-5 py-3 text-center border-t border-slate-800">
                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center justify-center gap-1.5">
                   <Shield size={11} className="text-emerald-500" />
                   RNG CERTIFIED ORACLE PAYOUTS & FAIR PLAY GUARANTEED
@@ -995,16 +995,16 @@ const CasinoGameLobby: React.FC = () => {
 
       {/* Deposit Request Modal */}
       {depositModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
+          <div className="bg-[#0f172a] rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-800">
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-2">
                 <Wallet size={20} className="text-[#2563EB]" />
-                <h3 className="text-lg font-bold text-slate-900">Request Deposit Credit</h3>
+                <h3 className="text-lg font-bold text-white">Request Deposit Credit</h3>
               </div>
               <button
                 onClick={() => setDepositModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -1027,7 +1027,7 @@ const CasinoGameLobby: React.FC = () => {
                     value={depositAmount}
                     onChange={(e) => setDepositAmount(e.target.value)}
                     placeholder="Minimum amount $10"
-                    className="w-full pl-8 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E11D48] focus:border-transparent font-bold text-slate-800"
+                    className="w-full pl-8 pr-4 py-3 rounded-xl border border-slate-800 bg-[#0b1329] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent font-bold text-white placeholder-slate-500"
                   />
                 </div>
                 <span className="text-[10px] text-slate-400 mt-1 block">
@@ -1049,22 +1049,22 @@ const CasinoGameLobby: React.FC = () => {
 
       {/* Policy View Modal */}
       {policyModal && policyModal.isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-white rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl border border-slate-100 flex flex-col max-h-[85vh]">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-              <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <Shield size={20} className="text-[#E11D48]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
+          <div className="bg-[#0f172a] rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl border border-slate-800 flex flex-col max-h-[85vh]">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <Shield size={20} className="text-[#2563EB]" />
                 {policyModal.title}
               </h3>
               <button
                 onClick={() => setPolicyModal(null)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
               >
                 <X size={20} />
               </button>
             </div>
             
-            <div className="flex-1 overflow-y-auto pr-2 text-slate-600 text-sm leading-relaxed whitespace-pre-line space-y-4">
+            <div className="flex-1 overflow-y-auto pr-2 text-slate-350 text-sm leading-relaxed whitespace-pre-line space-y-4">
               {policyLoading ? (
                 <div className="py-12 flex justify-center">
                   <LoadingSpinner />
@@ -1074,10 +1074,10 @@ const CasinoGameLobby: React.FC = () => {
               )}
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+            <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end">
               <button
                 onClick={() => setPolicyModal(null)}
-                className="px-6 py-2.5 rounded-xl font-bold text-white bg-[#E11D48] hover:bg-[#BE123C] text-xs shadow-md transition-all cursor-pointer"
+                className="px-6 py-2.5 rounded-xl font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] text-xs shadow-md transition-all cursor-pointer"
               >
                 Acknowledge & Close
               </button>
@@ -1088,16 +1088,16 @@ const CasinoGameLobby: React.FC = () => {
 
       {/* Premium Profile Modal */}
       {profileModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-white rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-slate-100 flex flex-col max-h-[85vh]">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-              <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <UserIcon size={20} className="text-[#E11D48]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
+          <div className="bg-[#0f172a] rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-slate-800 flex flex-col max-h-[85vh]">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <UserIcon size={20} className="text-[#2563EB]" />
                 Player Profile Account
               </h3>
               <button
                 onClick={() => setProfileModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -1105,14 +1105,14 @@ const CasinoGameLobby: React.FC = () => {
             
             <div className="flex-1 overflow-y-auto pr-2 space-y-6">
               {/* Account Overview Card */}
-              <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-2xl p-5 border border-slate-150 flex flex-col gap-3">
+              <div className="bg-gradient-to-br from-[#0f172a] to-[#0b1329] rounded-2xl p-5 border border-slate-800 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Username</span>
-                  <span className="text-sm font-extrabold text-slate-800">{user?.username}</span>
+                  <span className="text-sm font-extrabold text-white">{user?.username}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">KYC Status</span>
-                  <span className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">APPROVED</span>
+                  <span className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">APPROVED</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Wallet Balance</span>
@@ -1120,7 +1120,7 @@ const CasinoGameLobby: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">VIP Level</span>
-                  <span className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#F59E0B]/20 text-[#D97706]">GOLD VIP</span>
+                  <span className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">GOLD VIP</span>
                 </div>
               </div>
 
@@ -1136,18 +1136,18 @@ const CasinoGameLobby: React.FC = () => {
                 ) : (
                   <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
                     {userTransactions.map((tx) => (
-                      <div key={tx.id} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold">
+                      <div key={tx.id} className="flex items-center justify-between p-3 bg-[#0b1329] border border-slate-800 rounded-xl text-xs font-semibold">
                         <div className="flex flex-col gap-0.5">
-                          <span className={`inline-block w-fit px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase ${tx.type === 'DEPOSIT' ? 'bg-blue-50 text-blue-600' : 'bg-rose-50 text-rose-600'}`}>
+                          <span className={`inline-block w-fit px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase ${tx.type === 'DEPOSIT' ? 'bg-blue-500/10 text-blue-450 border border-blue-500/20' : 'bg-rose-500/10 text-rose-450 border border-rose-500/20'}`}>
                             {tx.type}
                           </span>
                           <span className="text-[10px] text-slate-400">{new Date(tx.createdAt).toLocaleString()}</span>
                         </div>
                         <div className="flex flex-col items-end gap-0.5">
-                          <span className={`font-extrabold ${tx.type === 'DEPOSIT' || tx.type === 'WIN' ? 'text-emerald-600' : 'text-slate-705'}`}>
+                          <span className={`font-extrabold ${tx.type === 'DEPOSIT' || tx.type === 'WIN' ? 'text-emerald-400' : 'text-slate-300'}`}>
                             {tx.type === 'DEPOSIT' || tx.type === 'WIN' ? `+$${tx.amount}` : `-$${Math.abs(tx.amount)}`}
                           </span>
-                          <span className="text-[9px] text-slate-400 uppercase font-mono">{tx.status}</span>
+                          <span className="text-[9px] text-slate-500 uppercase font-mono">{tx.status}</span>
                         </div>
                       </div>
                     ))}
@@ -1156,10 +1156,10 @@ const CasinoGameLobby: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+            <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end">
               <button
                 onClick={() => setProfileModalOpen(false)}
-                className="px-6 py-2.5 rounded-xl font-bold text-white bg-[#E11D48] hover:bg-[#BE123C] text-xs shadow-md transition-all cursor-pointer"
+                className="px-6 py-2.5 rounded-xl font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] text-xs shadow-md transition-all cursor-pointer"
               >
                 Close Profile
               </button>
@@ -1170,16 +1170,16 @@ const CasinoGameLobby: React.FC = () => {
 
       {/* Premium VIP Club Modal */}
       {vipModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
+          <div className="bg-[#0f172a] rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-800">
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-2">
                 <Crown size={20} className="text-[#F59E0B]" />
-                <h3 className="text-lg font-bold text-slate-900">PBBET VIP Club</h3>
+                <h3 className="text-lg font-bold text-white">PBBET VIP Club</h3>
               </div>
               <button
                 onClick={() => setVipModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -1187,56 +1187,56 @@ const CasinoGameLobby: React.FC = () => {
 
             <div className="space-y-6">
               {/* Rank Detail Card */}
-              <div className="bg-gradient-to-br from-[#F59E0B]/20 via-amber-50 to-[#F59E0B]/10 rounded-2xl p-5 border border-amber-200 flex flex-col items-center text-center">
-                <span className="text-[9px] bg-[#F59E0B]/20 text-[#D97706] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest mb-2">
+              <div className="bg-gradient-to-br from-amber-500/10 to-[#0b1329] rounded-2xl p-5 border border-amber-900/30 flex flex-col items-center text-center">
+                <span className="text-[9px] bg-amber-500/20 text-[#D97706] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest mb-2">
                   Current Rank
                 </span>
-                <span className="text-2xl font-black text-amber-900 tracking-tight">GOLD VIP MEMBER</span>
-                <p className="text-xs text-amber-700/80 mt-1 max-w-xs leading-relaxed">
+                <span className="text-2xl font-black text-amber-400 tracking-tight">GOLD VIP MEMBER</span>
+                <p className="text-xs text-slate-300 mt-1 max-w-xs leading-relaxed">
                   Congratulations! You are on our premier VIP Gold rank. Enjoy exclusive rebate wagers and higher withdrawal limits.
                 </p>
               </div>
 
               {/* Progress bar */}
               <div>
-                <div className="flex justify-between items-center mb-2 text-xs font-bold text-slate-500">
+                <div className="flex justify-between items-center mb-2 text-xs font-bold text-slate-400">
                   <span>Progress to PLATINUM VIP</span>
                   <span>75%</span>
                 </div>
-                <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-[#0b1329] rounded-full h-3 overflow-hidden border border-slate-800">
                   <div className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] h-full" style={{ width: "75%" }} />
                 </div>
-                <span className="text-[10px] text-slate-400 mt-1 block">Accumulate $2,500 more in wagers to level up!</span>
+                <span className="text-[10px] text-slate-550 mt-1 block">Accumulate $2,500 more in wagers to level up!</span>
               </div>
 
               {/* VIP Benefits List */}
               <div className="space-y-2">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Exclusive Gold Benefits</h4>
-                <div className="grid grid-cols-2 gap-3 text-xs font-semibold text-slate-700">
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <div className="text-[#F59E0B] font-bold">1.2% Rebate</div>
-                    <div className="text-[10px] text-slate-400 font-medium">On every slot wager</div>
+                <div className="grid grid-cols-2 gap-3 text-xs font-semibold text-slate-300">
+                  <div className="p-3 bg-[#0b1329] rounded-xl border border-slate-800">
+                    <div className="text-amber-400 font-bold">1.2% Rebate</div>
+                    <div className="text-[10px] text-slate-500 font-medium">On every slot wager</div>
                   </div>
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <div className="text-[#F59E0B] font-bold">Priority Support</div>
-                    <div className="text-[10px] text-slate-400 font-medium">Direct live chat assistance</div>
+                  <div className="p-3 bg-[#0b1329] rounded-xl border border-slate-800">
+                    <div className="text-amber-400 font-bold">Priority Support</div>
+                    <div className="text-[10px] text-slate-500 font-medium">Direct live chat assistance</div>
                   </div>
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <div className="text-[#F59E0B] font-bold">Weekly Bonus</div>
-                    <div className="text-[10px] text-slate-400 font-medium">Free $100 loyalty chip</div>
+                  <div className="p-3 bg-[#0b1329] rounded-xl border border-slate-800">
+                    <div className="text-amber-400 font-bold">Weekly Bonus</div>
+                    <div className="text-[10px] text-slate-500 font-medium">Free $100 loyalty chip</div>
                   </div>
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <div className="text-[#F59E0B] font-bold">Fast Cashouts</div>
-                    <div className="text-[10px] text-slate-400 font-medium">Reviewed under 10 minutes</div>
+                  <div className="p-3 bg-[#0b1329] rounded-xl border border-slate-800">
+                    <div className="text-amber-400 font-bold">Fast Cashouts</div>
+                    <div className="text-[10px] text-slate-500 font-medium">Reviewed under 10 minutes</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+            <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end">
               <button
                 onClick={() => setVipModalOpen(false)}
-                className="w-full py-3 rounded-xl text-xs font-bold text-white bg-[#F59E0B] hover:bg-[#D97706] shadow-md transition-all cursor-pointer"
+                className="w-full py-3 rounded-xl text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-md transition-all cursor-pointer"
               >
                 Close VIP Dashboard
               </button>
@@ -1247,16 +1247,16 @@ const CasinoGameLobby: React.FC = () => {
 
       {/* Premium Promotions Modal */}
       {promotionsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-white rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-slate-100 flex flex-col max-h-[80vh]">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-              <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <Gift size={20} className="text-[#E11D48]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
+          <div className="bg-[#0f172a] rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-slate-800 flex flex-col max-h-[80vh]">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <Gift size={20} className="text-[#2563EB]" />
                 Active Promotions & Events
               </h3>
               <button
                 onClick={() => setPromotionsModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -1264,30 +1264,30 @@ const CasinoGameLobby: React.FC = () => {
 
             <div className="flex-1 overflow-y-auto pr-2 space-y-4">
               {dynamicEvents.length === 0 ? (
-                <div className="py-12 text-center text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                <div className="py-12 text-center text-xs text-slate-500 font-semibold uppercase tracking-wider">
                   No active custom promotions configured at this moment.
                 </div>
               ) : (
                 dynamicEvents.map((evt) => {
                   const [title, desc] = (evt.title || "").split(":::");
                   return (
-                    <div key={evt.id} className="relative overflow-hidden rounded-2xl border border-slate-150 p-5 bg-gradient-to-r from-slate-50 to-rose-50/20 hover:border-rose-200 transition-all">
+                    <div key={evt.id} className="relative overflow-hidden rounded-2xl border border-slate-800 p-5 bg-gradient-to-r from-[#0b1329] to-blue-950/10 hover:border-blue-500/30 transition-all">
                       <div className="flex justify-between items-start gap-4">
                         <div className="space-y-1.5">
-                          <span className="text-[8px] font-black uppercase tracking-wider bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Active Event</span>
-                          <h4 className="text-sm font-bold text-slate-800 uppercase leading-snug">{title}</h4>
-                          <p className="text-xs text-slate-500 leading-relaxed max-w-sm">{desc || "Participate and secure leaderboard points on this live lobby event."}</p>
+                          <span className="text-[8px] font-black uppercase tracking-wider bg-blue-500/20 text-[#3b82f6] px-2 py-0.5 rounded-full">Active Event</span>
+                          <h4 className="text-sm font-bold text-white uppercase leading-snug">{title}</h4>
+                          <p className="text-xs text-slate-400 leading-relaxed max-w-sm">{desc || "Participate and secure leaderboard points on this live lobby event."}</p>
                         </div>
                         {evt.imageUrl && (
-                          <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-slate-200">
+                          <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-slate-800">
                             <img src={evt.imageUrl} alt={title} className="w-full h-full object-cover" />
                           </div>
                         )}
                       </div>
-                      <div className="mt-4 pt-3 border-t border-slate-150 flex items-center justify-between">
-                        <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1"><Clock size={11} /> Limited Time</span>
+                      <div className="mt-4 pt-3 border-t border-slate-850 flex items-center justify-between">
+                        <span className="text-[10px] text-slate-550 font-semibold flex items-center gap-1"><Clock size={11} /> Limited Time</span>
                         {evt.linkUrl ? (
-                          <a href={evt.linkUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-rose-600 hover:text-rose-800 font-bold">Explore rules &rarr;</a>
+                          <a href={evt.linkUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-[#3b82f6] hover:text-blue-400 font-bold">Explore rules &rarr;</a>
                         ) : (
                           <button onClick={() => { setPromotionsModalOpen(false); setDepositModalOpen(true); }} className="text-xs text-[#2563EB] hover:underline font-bold">Deposit to participate</button>
                         )}
@@ -1298,10 +1298,10 @@ const CasinoGameLobby: React.FC = () => {
               )}
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+            <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end">
               <button
                 onClick={() => setPromotionsModalOpen(false)}
-                className="px-6 py-2.5 rounded-xl font-bold text-white bg-[#E11D48] hover:bg-[#BE123C] text-xs shadow-md transition-all cursor-pointer"
+                className="px-6 py-2.5 rounded-xl font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] text-xs shadow-md transition-all cursor-pointer"
               >
                 Close Promotions
               </button>
@@ -1312,55 +1312,55 @@ const CasinoGameLobby: React.FC = () => {
 
       {/* FAQ & Help Center Modal */}
       {faqModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-white rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-slate-100 flex flex-col max-h-[80vh]">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-              <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
+          <div className="bg-[#0f172a] rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-slate-800 flex flex-col max-h-[80vh]">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <HelpCircle size={20} className="text-[#2563EB]" />
                 Help Center & FAQs
               </h3>
               <button
                 onClick={() => setFaqModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto pr-2 space-y-4 text-xs font-semibold text-slate-700">
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
-                <div className="text-[#0F172A] font-bold">How do I credit my balance?</div>
-                <p className="text-slate-500 font-medium leading-relaxed">
+            <div className="flex-1 overflow-y-auto pr-2 space-y-4 text-xs font-semibold text-slate-350">
+              <div className="p-4 bg-[#0b1329] rounded-2xl border border-slate-800 space-y-1">
+                <div className="text-white font-bold">How do I credit my balance?</div>
+                <p className="text-slate-400 font-medium leading-relaxed">
                   Click on the &quot;Deposit Funds&quot; button in the top header, input the amount you want to request (minimum $10), and submit. Once submitted, our administrators will approve your pending credit transaction from the admin financial desk.
                 </p>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
-                <div className="text-[#0F172A] font-bold">How do I launch a game?</div>
-                <p className="text-slate-500 font-medium leading-relaxed">
+              <div className="p-4 bg-[#0b1329] rounded-2xl border border-slate-800 space-y-1">
+                <div className="text-white font-bold">How do I launch a game?</div>
+                <p className="text-slate-400 font-medium leading-relaxed">
                   Make sure you have registered and are logged in. Browse the games catalog, filter by vendor or search for name, and click &apos;PLAY NOW&apos;. The secure game window will launch inside a new tab utilizing our OroPlay v2 client integration.
                 </p>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
-                <div className="text-[#0F172A] font-bold">Are the transactions secure?</div>
-                <p className="text-slate-500 font-medium leading-relaxed">
+              <div className="p-4 bg-[#0b1329] rounded-2xl border border-slate-800 space-y-1">
+                <div className="text-white font-bold">Are the transactions secure?</div>
+                <p className="text-slate-400 font-medium leading-relaxed">
                   Yes. All wagers, wagers callbacks, bets, wins, and batch updates from the OroPlay engine to the PBBET server are protected by end-to-end Basic Authentication and database level idempotency logs.
                 </p>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
-                <div className="text-[#0F172A] font-bold">What is KYC status verification?</div>
-                <p className="text-slate-500 font-medium leading-relaxed">
+              <div className="p-4 bg-[#0b1329] rounded-2xl border border-slate-800 space-y-1">
+                <div className="text-white font-bold">What is KYC status verification?</div>
+                <p className="text-slate-400 font-medium leading-relaxed">
                   All new signups start with PENDING KYC. In order to initiate withdrawals, administrators review profile verification and approve KYC status. You can view your current KYC status inside the profile modal.
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+            <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end">
               <button
                 onClick={() => setFaqModalOpen(false)}
-                className="px-6 py-2.5 rounded-xl font-bold text-white bg-[#2563EB] hover:bg-blue-700 text-xs shadow-md transition-all cursor-pointer"
+                className="px-6 py-2.5 rounded-xl font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] text-xs shadow-md transition-all cursor-pointer"
               >
                 Close FAQ Center
               </button>
@@ -1371,16 +1371,16 @@ const CasinoGameLobby: React.FC = () => {
 
       {/* Sports Book Betting Modal */}
       {sportsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-white rounded-3xl p-8 max-w-xl w-full mx-4 shadow-2xl border border-slate-100 flex flex-col max-h-[85vh]">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-              <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <Trophy size={20} className="text-[#E11D48]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
+          <div className="bg-[#0f172a] rounded-3xl p-8 max-w-xl w-full mx-4 shadow-2xl border border-slate-800 flex flex-col max-h-[85vh]">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <Trophy size={20} className="text-[#2563EB]" />
                 Sportsbook Lobby
               </h3>
               <button
                 onClick={() => { setSportsModalOpen(false); setSelectedMatch(null); setSportsWager(""); }}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -1389,37 +1389,37 @@ const CasinoGameLobby: React.FC = () => {
             <div className="flex-1 overflow-y-auto pr-2 space-y-5">
               {/* Match Card Grid */}
               <div className="space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Live & Upcoming Match Odds</h4>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-450">Live & Upcoming Match Odds</h4>
                 {[
                   { id: 1, home: "Real Madrid", away: "Barcelona", league: "La Liga (Spain)", oddsHome: 1.85, oddsDraw: 3.40, oddsAway: 4.10, date: "Live Now - 2nd Half" },
                   { id: 2, home: "Manchester City", away: "Liverpool", league: "Premier League (England)", oddsHome: 2.10, oddsDraw: 3.25, oddsAway: 3.10, date: "Today 22:45" },
                   { id: 3, home: "Golden State Warriors", away: "Los Angeles Lakers", league: "NBA Basketball", oddsHome: 1.70, oddsDraw: 9.00, oddsAway: 2.30, date: "Tomorrow 06:00" },
                 ].map((match) => (
-                  <div key={match.id} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-3">
-                    <div className="flex items-center justify-between text-[10px] text-slate-400 font-bold">
+                  <div key={match.id} className="p-4 bg-[#0b1329] border border-slate-800 rounded-2xl flex flex-col gap-3">
+                    <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold">
                       <span className="uppercase">{match.league}</span>
                       <span className="text-rose-500 flex items-center gap-1 font-extrabold">{match.date}</span>
                     </div>
-                    <div className="flex justify-between items-center font-bold text-sm text-slate-800">
+                    <div className="flex justify-between items-center font-bold text-sm text-white">
                       <span>{match.home} vs {match.away}</span>
                     </div>
                     {/* Odds Selector buttons */}
                     <div className="grid grid-cols-3 gap-2">
                       <button
                         onClick={() => setSelectedMatch({ match, choice: "Home", team: match.home, odds: match.oddsHome })}
-                        className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Home" ? "bg-[#E11D48] text-white" : "bg-white border border-slate-200 text-slate-600 hover:border-[#E11D48] hover:text-[#E11D48]"}`}
+                        className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Home" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
                       >
                         1 ({match.oddsHome})
                       </button>
                       <button
                         onClick={() => setSelectedMatch({ match, choice: "Draw", team: "Draw Match", odds: match.oddsDraw })}
-                        className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Draw" ? "bg-[#E11D48] text-white" : "bg-white border border-slate-200 text-slate-600 hover:border-[#E11D48] hover:text-[#E11D48]"}`}
+                        className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Draw" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
                       >
                         X ({match.oddsDraw})
                       </button>
                       <button
                         onClick={() => setSelectedMatch({ match, choice: "Away", team: match.away, odds: match.oddsAway })}
-                        className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Away" ? "bg-[#E11D48] text-white" : "bg-white border border-slate-200 text-slate-600 hover:border-[#E11D48] hover:text-[#E11D48]"}`}
+                        className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Away" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
                       >
                         2 ({match.oddsAway})
                       </button>
@@ -1430,33 +1430,33 @@ const CasinoGameLobby: React.FC = () => {
 
               {/* Betslip details */}
               {selectedMatch && (
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-2xl p-5 border border-slate-200 space-y-4">
-                  <div className="flex justify-between items-center text-xs font-bold text-slate-600 border-b border-slate-200 pb-2">
+                <div className="bg-[#0b1329] rounded-2xl p-5 border border-slate-800 space-y-4">
+                  <div className="flex justify-between items-center text-xs font-bold text-slate-400 border-b border-slate-800 pb-2">
                     <span>Selected Betslip</span>
-                    <button onClick={() => setSelectedMatch(null)} className="text-slate-400 hover:text-slate-600">Remove</button>
+                    <button onClick={() => setSelectedMatch(null)} className="text-slate-500 hover:text-slate-300">Remove</button>
                   </div>
                   <div className="text-xs font-semibold space-y-1">
-                    <div className="text-slate-800 font-extrabold">{selectedMatch.match.home} vs {selectedMatch.match.away}</div>
-                    <div className="text-slate-400">Choice: <span className="text-slate-700 font-bold">{selectedMatch.team}</span> @ <span className="text-[#E11D48] font-black">{selectedMatch.odds}</span></div>
+                    <div className="text-white font-extrabold">{selectedMatch.match.home} vs {selectedMatch.match.away}</div>
+                    <div className="text-slate-450">Choice: <span className="text-slate-200 font-bold">{selectedMatch.team}</span> @ <span className="text-[#2563EB] font-black">{selectedMatch.odds}</span></div>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2">Wager Amount (USD)</label>
+                    <label className="block text-[10px] font-bold text-slate-450 uppercase mb-2">Wager Amount (USD)</label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-extrabold">$</div>
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-450 font-extrabold">$</div>
                       <input
                         type="number"
                         min="1"
                         value={sportsWager}
                         onChange={(e) => setSportsWager(e.target.value)}
                         placeholder="Enter wager amount"
-                        className="w-full pl-7 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E11D48] font-bold text-slate-800 text-xs"
+                        className="w-full pl-7 pr-4 py-2.5 bg-[#0f172a] border border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] font-bold text-white text-xs"
                       />
                     </div>
                   </div>
                   {sportsWager && !isNaN(parseFloat(sportsWager)) && (
-                    <div className="flex justify-between items-center text-xs font-bold text-slate-600">
+                    <div className="flex justify-between items-center text-xs font-bold text-slate-400">
                       <span>Est. Return payout:</span>
-                      <span className="text-emerald-600 font-extrabold">${(parseFloat(sportsWager) * selectedMatch.odds).toFixed(2)} USD</span>
+                      <span className="text-emerald-400 font-extrabold">${(parseFloat(sportsWager) * selectedMatch.odds).toFixed(2)} USD</span>
                     </div>
                   )}
                   <button
@@ -1475,7 +1475,7 @@ const CasinoGameLobby: React.FC = () => {
                       setSportsWager("");
                       setSportsModalOpen(false);
                     }}
-                    className="w-full py-3 rounded-xl text-xs font-bold text-white bg-[#E11D48] hover:bg-[#BE123C] shadow-md transition-all cursor-pointer uppercase tracking-wider"
+                    className="w-full py-3 rounded-xl text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-md transition-all cursor-pointer uppercase tracking-wider"
                   >
                     Confirm Bet Slip
                   </button>
@@ -1483,10 +1483,10 @@ const CasinoGameLobby: React.FC = () => {
               )}
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+            <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end">
               <button
                 onClick={() => { setSportsModalOpen(false); setSelectedMatch(null); setSportsWager(""); }}
-                className="px-6 py-2.5 rounded-xl font-bold text-slate-500 hover:text-slate-800 text-xs cursor-pointer border border-slate-200"
+                className="px-6 py-2.5 rounded-xl font-bold text-slate-400 hover:text-white text-xs cursor-pointer border border-slate-800 hover:bg-slate-800 transition-colors"
               >
                 Close Sportsbook
               </button>
@@ -1497,39 +1497,39 @@ const CasinoGameLobby: React.FC = () => {
 
       {/* Floating Live Support Widget */}
       {chatOpen && (
-        <div className="fixed bottom-6 right-6 z-[60] w-80 sm:w-96 h-[480px] bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-[fadeIn_0.2s_ease-out]">
+        <div className="fixed bottom-6 right-6 z-[60] w-80 sm:w-96 h-[480px] bg-[#0f172a] rounded-3xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col animate-[fadeIn_0.2s_ease-out]">
           {/* Header */}
-          <div className="bg-[#E11D48] p-4 text-white flex justify-between items-center">
+          <div className="bg-[#2563EB] p-4 text-white flex justify-between items-center">
             <div className="flex items-center gap-2.5">
               <div className="relative">
                 <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold text-xs">CS</div>
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#E11D48]" />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#2563EB]" />
               </div>
               <div className="flex flex-col">
                 <span className="text-xs font-bold leading-none">24/7 Agent Chat</span>
-                <span className="text-[10px] text-rose-200 mt-1 font-semibold">Online & ready</span>
+                <span className="text-[10px] text-blue-200 mt-1 font-semibold">Online & ready</span>
               </div>
             </div>
             <button
               onClick={() => setChatOpen(false)}
-              className="p-1 rounded-lg text-rose-200 hover:bg-white/10 hover:text-white transition-all cursor-pointer"
+              className="p-1 rounded-lg text-blue-200 hover:bg-white/10 hover:text-white transition-all cursor-pointer"
             >
               <X size={18} />
             </button>
           </div>
 
           {/* Messages screen */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-slate-50">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-[#0b1329]">
             {chatMessages.map((msg, idx) => (
               <div key={idx} className={`flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"}`}>
-                <div className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-xs font-semibold ${msg.sender === "user" ? "bg-[#E11D48] text-white rounded-tr-none" : "bg-white text-slate-700 rounded-tl-none border border-slate-200"}`}>
+                <div className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-xs font-semibold ${msg.sender === "user" ? "bg-[#2563EB] text-white rounded-tr-none" : "bg-[#0f172a] text-slate-200 rounded-tl-none border border-slate-800"}`}>
                   {msg.text}
                 </div>
                 <span className="text-[9px] text-slate-400 mt-1 px-1 font-medium">{msg.time}</span>
               </div>
             ))}
             {botTyping && (
-              <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-2xl px-4 py-3 w-fit rounded-tl-none">
+              <div className="flex items-center gap-1 bg-[#0f172a] border border-slate-800 rounded-2xl px-4 py-3 w-fit rounded-tl-none">
                 <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                 <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                 <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -1538,17 +1538,17 @@ const CasinoGameLobby: React.FC = () => {
           </div>
 
           {/* Input form */}
-          <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-150 bg-white flex items-center gap-2">
+          <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-800 bg-[#0f172a] flex items-center gap-2">
             <input
               type="text"
               value={userChatMessage}
               onChange={(e) => setUserChatMessage(e.target.value)}
               placeholder="Ask about deposits, KYC, games..."
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 placeholder-slate-400 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#E11D48] focus:border-transparent"
+              className="flex-1 bg-[#0b1329] border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#2563EB] focus:border-transparent"
             />
             <button
               type="submit"
-              className="px-4 py-2.5 rounded-xl font-bold bg-[#E11D48] text-white hover:bg-[#BE123C] text-xs transition-colors cursor-pointer"
+              className="px-4 py-2.5 rounded-xl font-bold bg-[#2563EB] text-white hover:bg-[#1D4ED8] text-xs transition-colors cursor-pointer"
             >
               Send
             </button>
