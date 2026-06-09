@@ -1,3 +1,8 @@
+const dns = require('dns');
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
 const API_BASE_URL = process.env.OROPLAY_BASE_URL || 'https://bs.sxvwlkohlv.com/api/v2';
 const CLIENT_ID = process.env.OROPLAY_CLIENT_ID;
 const CLIENT_SECRET = process.env.OROPLAY_CLIENT_SECRET;
