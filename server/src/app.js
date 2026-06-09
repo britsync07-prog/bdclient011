@@ -8,10 +8,12 @@ const walletRoutes = require('./routes/walletRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
+const requestLogger = require('./middleware/requestLogger');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(requestLogger);
 
 // Routes
 app.use('/api/auth', authRoutes);

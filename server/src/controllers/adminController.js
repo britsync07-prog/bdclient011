@@ -67,11 +67,14 @@ exports.updateUserKYC = async (req, res, next) => {
       data: { kycStatus },
     });
 
+    console.log(`[ADMIN_KYC_UPDATE] [Admin: ${req.user.username}] Updated User ${user.username} (ID: ${userId}) KYC status to ${kycStatus}`);
     res.json({ message: `KYC status updated to ${kycStatus}`, user: { id: user.id, username: user.username, kycStatus: user.kycStatus } });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.warn(`[ADMIN_KYC_UPDATE_FAIL] [Admin: ${req.user.username}] Validation failed for user ${req.params.userId} KYC update`);
       return res.status(400).json({ errors: error.errors });
     }
+    console.error(`[ADMIN_KYC_UPDATE_ERROR] [Admin: ${req.user.username}] Exception updating KYC for user ${req.params.userId} - Error: ${error.message}`);
     next(error);
   }
 };
@@ -116,6 +119,7 @@ exports.approveFinancialRequest = async (req, res, next) => {
     });
 
     if (!transaction || transaction.status !== 'PENDING') {
+      console.warn(`[ADMIN_FINANCIAL_APPROVE_FAIL] [Admin: ${req.user.username}] Transaction ID ${transactionId} is invalid or not PENDING`);
       return res.status(400).json({ message: 'Invalid or already processed transaction' });
     }
 
@@ -142,8 +146,10 @@ exports.approveFinancialRequest = async (req, res, next) => {
       return { updatedTransaction, updatedUser };
     });
 
+    console.log(`[ADMIN_FINANCIAL_APPROVE_SUCCESS] [Admin: ${req.user.username}] Approved ${transaction.type} transaction ID ${transactionId} for User ${transaction.user.username}. Amount: ${transaction.amount}`);
     res.json({ message: 'Request approved successfully', result });
   } catch (error) {
+    console.error(`[ADMIN_FINANCIAL_APPROVE_ERROR] [Admin: ${req.user.username}] Exception approving financial request ID ${req.params.transactionId} - Error: ${error.message}`);
     next(error);
   }
 };
@@ -158,14 +164,18 @@ exports.setGameRTP = async (req, res, next) => {
     const result = await oroplayApi.setUserRTP(vendorCode, username, rtp);
 
     if (result.status !== 200) {
+      console.error(`[ADMIN_RTP_SET_FAIL] [Admin: ${req.user.username}] Failed to set RTP for user ${username} on vendor ${vendorCode} to ${rtp}%. Status: ${result.status} | Details: ${JSON.stringify(result.data)}`);
       return res.status(result.status).json({ message: 'Failed to set RTP via OroPlay', details: result.data });
     }
 
+    console.log(`[ADMIN_RTP_SET_SUCCESS] [Admin: ${req.user.username}] Successfully set RTP for user ${username} on vendor ${vendorCode} to ${rtp}%`);
     res.json({ message: 'RTP set successfully', data: result.data });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.warn(`[ADMIN_RTP_SET_FAIL] [Admin: ${req.user.username}] Validation failed for set RTP request`);
       return res.status(400).json({ errors: error.errors });
     }
+    console.error(`[ADMIN_RTP_SET_ERROR] [Admin: ${req.user.username}] Exception setting game RTP - Error: ${error.message}`);
     next(error);
   }
 };

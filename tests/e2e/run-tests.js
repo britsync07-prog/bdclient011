@@ -168,10 +168,24 @@ async function startServers() {
     stdio: 'inherit' // set to 'inherit' for debugging
   });
 
+  mockProcess.on('error', (err) => {
+    console.error('Failed to start mock process:', err);
+  });
+  mockProcess.on('exit', (code, signal) => {
+    console.log(`Mock process exited with code ${code} and signal ${signal}`);
+  });
+
   // Spawn PBBET Backend Server
   backendProcess = spawn('node', [path.resolve(__dirname, '../../server/src/server.js')], {
     env: { ...commonEnv, PORT: String(BACKEND_PORT) },
     stdio: 'inherit' // set to 'inherit' for debugging
+  });
+
+  backendProcess.on('error', (err) => {
+    console.error('Failed to start backend process:', err);
+  });
+  backendProcess.on('exit', (code, signal) => {
+    console.log(`Backend process exited with code ${code} and signal ${signal}`);
   });
 
   // Wait for servers to be online

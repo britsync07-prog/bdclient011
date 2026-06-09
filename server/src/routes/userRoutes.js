@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getProfile, getGames, launchGame, getPublicSettings, getPublicBanners, createDepositRequest, getUserTransactions } = require('../controllers/userController');
+const { getProfile, getGames, launchGame, getPublicSettings, getPublicBanners, createDepositRequest, getUserTransactions, logAction } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 
 router.get('/profile', protect, getProfile);
@@ -10,5 +10,6 @@ router.post('/deposit-request', protect, createDepositRequest);
 router.get('/transactions', protect, getUserTransactions);
 router.get('/settings', getPublicSettings);
 router.get('/banners', getPublicBanners);
+router.post('/log-action', logAction);
 
 module.exports = router;

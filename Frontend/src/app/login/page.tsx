@@ -15,6 +15,7 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
+import { logClientAction } from "@/lib/logger";
 
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000/api";
@@ -78,6 +79,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    logClientAction("Click Login Submit", { username });
     try {
       const res = await fetch(`${BACKEND_URL}/auth/login`, {
         method: "POST",
@@ -88,11 +90,15 @@ export default function LoginPage() {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+        logClientAction("Login Success", { username });
         router.push("/");
       } else {
+        logClientAction("Login Fail", { username, error: data.message || "Login failed" });
         setError(data.message || "Login failed");
       }
-    } catch {
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logClientAction("Login Error", { username, error: errMsg });
       setError("Server connection failed");
     } finally {
       setLoading(false);

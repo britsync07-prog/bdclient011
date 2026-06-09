@@ -30,6 +30,8 @@ import {
   Edit,
 } from "lucide-react";
 
+import { logClientAction } from "@/lib/logger";
+
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000/api";
 
@@ -187,6 +189,7 @@ export default function AdminDashboard() {
   const handleSetRTP = async (e: React.FormEvent) => {
     e.preventDefault();
     setRtpLoading(true);
+    logClientAction("Admin Set RTP Submit", rtpData);
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${BACKEND_URL}/admin/game/set-rtp`, {
@@ -198,8 +201,16 @@ export default function AdminDashboard() {
         body: JSON.stringify(rtpData),
       });
       const data = await res.json();
-      showToast(data.message || "RTP updated successfully", true);
-    } catch {
+      if (res.ok) {
+        logClientAction("Admin Set RTP Success", rtpData);
+        showToast(data.message || "RTP updated successfully", true);
+      } else {
+        logClientAction("Admin Set RTP Fail", { ...rtpData, error: data.message });
+        showToast("Failed to update RTP", false);
+      }
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logClientAction("Admin Set RTP Error", { ...rtpData, error: errMsg });
       showToast("Failed to update RTP", false);
     } finally {
       setRtpLoading(false);
@@ -207,6 +218,7 @@ export default function AdminDashboard() {
   };
 
   const handleUpdateKYC = async (userId: string, status: string) => {
+    logClientAction("Admin Update KYC Submit", { userId, status });
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${BACKEND_URL}/admin/users/${userId}/kyc`, {
@@ -218,11 +230,18 @@ export default function AdminDashboard() {
         body: JSON.stringify({ kycStatus: status }),
       });
       if (res.ok) {
+        logClientAction("Admin Update KYC Success", { userId, status });
         fetchData();
         showToast(`KYC ${status.toLowerCase()} successfully`, true);
+      } else {
+        const data = await res.json();
+        logClientAction("Admin Update KYC Fail", { userId, status, error: data.message });
+        showToast("Failed to update KYC", false);
       }
     } catch (err) {
       console.error(err);
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logClientAction("Admin Update KYC Error", { userId, status, error: errMsg });
       showToast("Failed to update KYC", false);
     }
   };
@@ -230,6 +249,7 @@ export default function AdminDashboard() {
   const handleUpdateSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     setSettingsLoading(true);
+    logClientAction("Admin Update Settings Submit", settingsData);
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${BACKEND_URL}/admin/settings`, {
@@ -242,11 +262,15 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (data.success) {
+        logClientAction("Admin Update Settings Success", settingsData);
         showToast("Settings updated successfully", true);
       } else {
+        logClientAction("Admin Update Settings Fail", { ...settingsData, error: data.message });
         showToast("Failed to update settings", false);
       }
-    } catch {
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logClientAction("Admin Update Settings Error", { ...settingsData, error: errMsg });
       showToast("Error updating settings", false);
     } finally {
       setSettingsLoading(false);
@@ -254,6 +278,7 @@ export default function AdminDashboard() {
   };
 
   const handleApproveFinance = async (id: string) => {
+    logClientAction("Admin Approve Finance Submit", { id });
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
@@ -264,11 +289,18 @@ export default function AdminDashboard() {
         }
       );
       if (res.ok) {
+        logClientAction("Admin Approve Finance Success", { id });
         fetchData();
         showToast("Request approved successfully", true);
+      } else {
+        const data = await res.json();
+        logClientAction("Admin Approve Finance Fail", { id, error: data.message });
+        showToast("Failed to approve request", false);
       }
     } catch (err) {
       console.error(err);
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logClientAction("Admin Approve Finance Error", { id, error: errMsg });
       showToast("Failed to approve request", false);
     }
   };
@@ -280,6 +312,7 @@ export default function AdminDashboard() {
       return;
     }
     setBannerLoading(true);
+    logClientAction("Admin Add/Update Banner Submit", { editingBannerId, newBanner });
     try {
       const token = localStorage.getItem("token");
       const url = editingBannerId 
@@ -302,19 +335,22 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (data.success) {
+        logClientAction("Admin Add/Update Banner Success", { editingBannerId, newBanner });
         showToast(editingBannerId ? "Banner updated successfully" : "Banner created successfully", true);
         setNewBanner({ imageUrl: "", linkUrl: "", order: 0 });
         setEditingBannerId(null);
-        // Refresh banners list
         const bannersRes = await fetch(`${BACKEND_URL}/admin/banners`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const bannersJson = await bannersRes.json();
         if (bannersJson.success) setBanners(bannersJson.data || []);
       } else {
+        logClientAction("Admin Add/Update Banner Fail", { editingBannerId, newBanner, error: data.message });
         showToast(data.message || (editingBannerId ? "Failed to update banner" : "Failed to add banner"), false);
       }
-    } catch {
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logClientAction("Admin Add/Update Banner Error", { editingBannerId, newBanner, error: errMsg });
       showToast(editingBannerId ? "Error updating banner" : "Error adding banner", false);
     } finally {
       setBannerLoading(false);
@@ -332,6 +368,7 @@ export default function AdminDashboard() {
       return;
     }
     setBannerLoading(true);
+    logClientAction("Admin Add/Update Event Submit", { editingEventId, newEvent });
     try {
       const token = localStorage.getItem("token");
       const url = editingEventId 
@@ -356,19 +393,22 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (data.success) {
+        logClientAction("Admin Add/Update Event Success", { editingEventId, newEvent });
         showToast(editingEventId ? "Event updated successfully" : "Event created successfully", true);
         setNewEvent({ title: "", description: "", imageUrl: "", linkUrl: "", order: 0 });
         setEditingEventId(null);
-        // Refresh banners list
         const bannersRes = await fetch(`${BACKEND_URL}/admin/banners`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const bannersJson = await bannersRes.json();
         if (bannersJson.success) setBanners(bannersJson.data || []);
       } else {
+        logClientAction("Admin Add/Update Event Fail", { editingEventId, newEvent, error: data.message });
         showToast(data.message || (editingEventId ? "Failed to update event" : "Failed to add event"), false);
       }
-    } catch {
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logClientAction("Admin Add/Update Event Error", { editingEventId, newEvent, error: errMsg });
       showToast(editingEventId ? "Error updating event" : "Error adding event", false);
     } finally {
       setBannerLoading(false);
@@ -376,6 +416,7 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteBanner = async (id: number) => {
+    logClientAction("Admin Delete Banner Submit", { id });
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${BACKEND_URL}/admin/banners/${id}`, {
@@ -383,17 +424,22 @@ export default function AdminDashboard() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
+        logClientAction("Admin Delete Banner Success", { id });
         showToast("Banner deleted successfully", true);
         setBanners((prev) => prev.filter((b) => b.id !== id));
       } else {
+        logClientAction("Admin Delete Banner Fail", { id });
         showToast("Failed to delete banner", false);
       }
-    } catch {
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logClientAction("Admin Delete Banner Error", { id, error: errMsg });
       showToast("Error deleting banner", false);
     }
   };
 
   const handleLogout = () => {
+    logClientAction("Admin Logout");
     localStorage.removeItem("isAdmin");
     localStorage.removeItem("token");
     localStorage.removeItem("user");

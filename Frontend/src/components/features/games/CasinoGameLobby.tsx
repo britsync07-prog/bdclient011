@@ -37,6 +37,7 @@ import { FilterControls } from "../filters/FilterControls";
 import { SearchBar } from "../search/SearchBar";
 import { GameGrid } from "./GameGrid";
 import { Banners } from "../banners/Banners";
+import { logClientAction } from "@/lib/logger";
 
 import { TOAST_DURATION } from "@/constants";
 import { Game, Category } from "@/types/game";
@@ -363,6 +364,7 @@ const CasinoGameLobby: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
+    logClientAction("User Logout");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
@@ -371,6 +373,7 @@ const CasinoGameLobby: React.FC = () => {
 
   const handleDepositSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    logClientAction("Submit Deposit Request", { amount: depositAmount });
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/login");
@@ -395,14 +398,18 @@ const CasinoGameLobby: React.FC = () => {
       });
       const data = await res.json();
       if (res.ok) {
+        logClientAction("Deposit Request Success", { amount });
         showToastMessage("Deposit request submitted successfully! Pending admin approval.");
         setDepositModalOpen(false);
         setDepositAmount("");
         refreshBalance();
       } else {
+        logClientAction("Deposit Request Fail", { amount, error: data.message });
         showToastMessage(`Error: ${data.message || "Failed to submit deposit"}`);
       }
-    } catch {
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logClientAction("Deposit Request Error", { amount, error: errMsg });
       showToastMessage("Error submitting deposit request");
     } finally {
       setDepositing(false);
@@ -427,11 +434,17 @@ const CasinoGameLobby: React.FC = () => {
       if (game) {
         const token = localStorage.getItem("token");
         if (!token) {
+          logClientAction("Play Game Redirect to Login", { gameId, gameName: game.name });
           router.push("/login");
           return;
         }
 
+        const vendorCode = (game as Game & { vendorCode: string }).vendorCode || "";
+        const gameCode = (game as Game).gameCode || game.id;
+
         showToastMessage(`Launching ${game.name}...`);
+        logClientAction("Click Play Game", { gameId, gameName: game.name, vendorCode, gameCode });
+
         try {
           const res = await fetch(`${BACKEND_URL}/user/launch`, {
             method: "POST",
@@ -440,13 +453,14 @@ const CasinoGameLobby: React.FC = () => {
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-              vendorCode:
-                (game as Game & { vendorCode: string }).vendorCode || "",
-              gameCode: (game as Game).gameCode || game.id,
+              vendorCode,
+              gameCode,
             }),
           });
           const data = await res.json();
           if (res.ok && data.launchUrl) {
+            logClientAction("Game Launch Success", { gameId, gameName: game.name, launchUrl: data.launchUrl });
+            
             // Track in personal bets history mock
             const betAmt = Math.floor(Math.random() * 40) + 10;
             const mult = parseFloat((Math.random() * 3.5 + 0.2).toFixed(2));
@@ -466,11 +480,14 @@ const CasinoGameLobby: React.FC = () => {
 
             window.open(data.launchUrl, "_blank");
           } else {
+            logClientAction("Game Launch Fail", { gameId, gameName: game.name, error: data.message || "Failed to launch game" });
             showToastMessage(
               `Error: ${data.message || "Failed to launch game"}`
             );
           }
-        } catch {
+        } catch (err) {
+          const errMsg = err instanceof Error ? err.message : String(err);
+          logClientAction("Game Launch Error", { gameId, gameName: game.name, error: errMsg });
           showToastMessage("Error launching game");
         }
       }
@@ -482,6 +499,7 @@ const CasinoGameLobby: React.FC = () => {
     (gameId: string) => {
       const game = state.games.find((g) => g.id === gameId);
       const wasFavorite = favorites.includes(gameId);
+      logClientAction("Toggle Favorite Game", { gameId, gameName: game?.name || "unknown", action: wasFavorite ? "remove" : "add" });
       toggleFavorite(gameId);
       if (game) {
         showToastMessage(createFavoriteMessage(game.name, !wasFavorite));
@@ -788,6 +806,7 @@ const CasinoGameLobby: React.FC = () => {
                     : activeChip === value
                 }
                 onClick={() => {
+                  logClientAction("Click Category Chip", { category: value });
                   if (value === "favorites") {
                     if (!state.showFavoritesOnly) toggleFavoritesOnly();
                   } else if (value === "sports") {

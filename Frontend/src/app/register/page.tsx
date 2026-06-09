@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   Check,
 } from "lucide-react";
+import { logClientAction } from "@/lib/logger";
 
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000/api";
@@ -138,6 +139,7 @@ export default function RegisterPage() {
     }
     setLoading(true);
     setError("");
+    logClientAction("Click Register Submit", { username });
     try {
       const res = await fetch(`${BACKEND_URL}/auth/register`, {
         method: "POST",
@@ -148,11 +150,15 @@ export default function RegisterPage() {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+        logClientAction("Register Success", { username });
         router.push("/");
       } else {
+        logClientAction("Register Fail", { username, error: data.message || "Registration failed" });
         setError(data.message || "Registration failed");
       }
-    } catch {
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logClientAction("Register Error", { username, error: errMsg });
       setError("Server connection failed");
     } finally {
       setLoading(false);

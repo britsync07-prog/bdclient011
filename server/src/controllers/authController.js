@@ -23,6 +23,7 @@ exports.register = async (req, res, next) => {
     });
 
     if (userExists) {
+      console.warn(`[AUTH_REGISTER_FAIL] Registration failed for username: ${username} - Reason: User already exists`);
       return res.status(400).json({ message: 'User already exists' });
     }
 
@@ -40,6 +41,7 @@ exports.register = async (req, res, next) => {
       },
     });
 
+    console.log(`[AUTH_REGISTER_SUCCESS] User registered successfully: ${username}`);
     res.status(201).json({
       user: {
         id: user.id,
@@ -51,8 +53,10 @@ exports.register = async (req, res, next) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.warn(`[AUTH_REGISTER_FAIL] Registration input validation failed for: ${req.body?.username || 'unknown'}`);
       return res.status(400).json({ errors: error.errors });
     }
+    console.error(`[AUTH_REGISTER_ERROR] Exception during registration: ${error.message}`);
     next(error);
   }
 };
@@ -66,9 +70,11 @@ exports.login = async (req, res, next) => {
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
+      console.warn(`[AUTH_LOGIN_FAIL] Login failed for username: ${username} - Reason: Invalid credentials`);
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
+    console.log(`[AUTH_LOGIN_SUCCESS] User logged in: ${username}`);
     res.json({
       user: {
         id: user.id,
@@ -80,8 +86,10 @@ exports.login = async (req, res, next) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.warn(`[AUTH_LOGIN_FAIL] Login input validation failed for: ${req.body?.username || 'unknown'}`);
       return res.status(400).json({ errors: error.errors });
     }
+    console.error(`[AUTH_LOGIN_ERROR] Exception during login: ${error.message}`);
     next(error);
   }
 };

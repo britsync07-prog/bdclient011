@@ -118,10 +118,10 @@ exports.launchGame = async (req, res, next) => {
     const { vendorCode, gameCode, language = 'en', lobbyUrl, theme = 1 } = req.body;
     
     if (!vendorCode || !gameCode) {
+      console.error(`[LAUNCH_GAME_FAIL] [User: ${req.user.username}] Missing vendorCode or gameCode`);
       return res.status(400).json({ message: 'vendorCode and gameCode are required' });
     }
 
-    // Per instruction: userCode MUST be the username of the logged-in user
     const payload = {
       vendorCode,
       gameCode,
@@ -134,14 +134,17 @@ exports.launchGame = async (req, res, next) => {
     const result = await oroplayApi.getLaunchUrl(payload);
 
     if (result.status !== 200 || !result.data.success) {
+      console.error(`[LAUNCH_GAME_FAIL] [User: ${req.user.username}] Failed to get launch URL for ${vendorCode}/${gameCode}. OroPlay status: ${result.status} | Details: ${JSON.stringify(result.data)}`);
       return res.status(result.status || 500).json({ 
         message: 'Failed to get launch URL from OroPlay', 
         details: result.data 
       });
     }
 
+    console.log(`[LAUNCH_GAME_SUCCESS] [User: ${req.user.username}] Launch URL retrieved successfully for ${vendorCode}/${gameCode}`);
     res.json({ launchUrl: result.data.message });
   } catch (error) {
+    console.error(`[LAUNCH_GAME_ERROR] [User: ${req.user.username}] Exception during launch for ${vendorCode}/${gameCode} - Error: ${error.message}`);
     next(error);
   }
 };
@@ -153,6 +156,7 @@ exports.createDepositRequest = async (req, res, next) => {
   try {
     const { amount } = req.body;
     if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+      console.error(`[DEPOSIT_REQUEST_FAIL] [User: ${req.user.username}] Invalid deposit amount requested: ${amount}`);
       return res.status(400).json({ message: 'Valid deposit amount is required' });
     }
 
@@ -168,8 +172,10 @@ exports.createDepositRequest = async (req, res, next) => {
       }
     });
 
+    console.log(`[DEPOSIT_REQUEST_SUCCESS] [User: ${req.user.username}] Created deposit request for amount ${amount}. TransactionCode: ${transactionCode}`);
     res.status(201).json({ success: true, message: 'Deposit request created successfully', transaction });
   } catch (error) {
+    console.error(`[DEPOSIT_REQUEST_ERROR] [User: ${req.user.username}] Exception during deposit request - Error: ${error.message}`);
     next(error);
   }
 };
@@ -181,6 +187,32 @@ exports.getUserTransactions = async (req, res, next) => {
       orderBy: { createdAt: 'desc' }
     });
     res.json({ success: true, data: transactions });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.logAction = async (req, res, next) => {
+  try {
+    const { action, details } = req.body;
+    let username = 'GUEST';
+    
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      const token = req.headers.authorization.split(' ')[1];
+      try {
+        const { verifyToken } = require('../utils/jwt');
+        const decoded = verifyToken(token);
+        const user = await prisma.user.findUnique({ where: { id: decoded.id }, select: { username: true } });
+        if (user) {
+          username = user.username;
+        }
+      } catch (err) {
+        // Ignore token errors
+      }
+    }
+    
+    console.log(`[CLIENT_ACTION] [User: ${username}] Action: ${action} - Details: ${JSON.stringify(details || {})}`);
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }
