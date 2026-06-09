@@ -21,7 +21,8 @@ async function createToken() {
 
   const data = await response.json();
   if (!data?.token || !data?.expiration) {
-    throw new Error('CreateToken returned invalid payload.');
+    console.error('OroPlay CreateToken failed. Response payload:', data);
+    throw new Error(`CreateToken returned invalid payload: ${data?.message || JSON.stringify(data)}`);
   }
 
   tokenCache = {
