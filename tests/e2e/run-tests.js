@@ -2,6 +2,12 @@ const { spawn } = require('child_process');
 const path = require('path');
 const assert = require('assert');
 const bcrypt = require('bcryptjs');
+const dns = require('dns');
+
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
 
 // Set default DATABASE_URL for SQLite local environment
 process.env.DATABASE_URL = process.env.DATABASE_URL || 'file:' + path.resolve(__dirname, '../../server/prisma/dev.db');
@@ -165,7 +171,14 @@ async function startServers() {
   // Spawn Mock OroPlay Server
   mockProcess = spawn('node', [path.join(__dirname, 'mockOroPlayServer.js')], {
     env: { ...commonEnv, PORT: String(MOCK_PORT) },
-    stdio: 'inherit' // set to 'inherit' for debugging
+    stdio: 'pipe'
+  });
+
+  mockProcess.stdout.on('data', (data) => {
+    console.log(`[MOCK] ${data.toString().trim()}`);
+  });
+  mockProcess.stderr.on('data', (data) => {
+    console.error(`[MOCK ERROR] ${data.toString().trim()}`);
   });
 
   mockProcess.on('error', (err) => {
@@ -178,7 +191,14 @@ async function startServers() {
   // Spawn PBBET Backend Server
   backendProcess = spawn('node', [path.resolve(__dirname, '../../server/src/server.js')], {
     env: { ...commonEnv, PORT: String(BACKEND_PORT) },
-    stdio: 'inherit' // set to 'inherit' for debugging
+    stdio: 'pipe'
+  });
+
+  backendProcess.stdout.on('data', (data) => {
+    console.log(`[BACKEND] ${data.toString().trim()}`);
+  });
+  backendProcess.stderr.on('data', (data) => {
+    console.error(`[BACKEND ERROR] ${data.toString().trim()}`);
   });
 
   backendProcess.on('error', (err) => {

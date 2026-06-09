@@ -62,21 +62,47 @@ function updateGamesCache() {
       const vendorsResult = await oroplayApi.getVendors();
       if (vendorsResult.status === 200 && vendorsResult.data?.success) {
         const vendors = vendorsResult.data.message;
-        let allGames = [];
+        const existingGamesByVendor = {};
+        if (cachedGames && Array.isArray(cachedGames)) {
+          for (const game of cachedGames) {
+            const vcode = game.vendorCode;
+            if (!existingGamesByVendor[vcode]) {
+              existingGamesByVendor[vcode] = [];
+            }
+            existingGamesByVendor[vcode].push(game);
+          }
+        }
 
-        // Fetch all vendors in parallel with a strict 1200ms timeout per vendor
-        await Promise.all(vendors.map(async (vendor) => {
+        const mapLimit = async (array, limit, fn) => {
+          const results = [];
+          const executing = new Set();
+          for (const item of array) {
+            const p = Promise.resolve().then(() => fn(item));
+            results.push(p);
+            executing.add(p);
+            const clean = () => executing.delete(p);
+            p.then(clean, clean);
+            if (executing.size >= limit) {
+              await Promise.race(executing);
+            }
+          }
+          return Promise.all(results);
+        };
+
+        const vendorGamesResults = await mapLimit(vendors, 5, async (vendor) => {
           try {
             const fetchPromise = oroplayApi.getGames(vendor.vendorCode, 'en');
+            // Timeout of 15000ms ensures slow vendors don't block requests indefinitely,
+            // while giving them a healthy window to respond under concurrent production load.
             const timeoutPromise = new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('OroPlay fetch timed out')), 1200)
+              setTimeout(() => reject(new Error('OroPlay fetch timed out')), 15000)
             );
             
             const result = await Promise.race([fetchPromise, timeoutPromise]);
             
             if (result.status === 200 && result.data?.success) {
               const category = vendor.type === 1 ? 'live' : ((vendor.type === 3 || vendor.type === 6) ? 'table' : 'slots');
-              const games = result.data.message.map(game => ({
+              return result.data.message.map(game => ({
                 gameCode: game.gameCode,
                 gameName: game.gameName,
                 provider: vendor.name || vendor.vendorCode,
@@ -84,14 +110,17 @@ function updateGamesCache() {
                 vendorCode: vendor.vendorCode,
                 category: category
               }));
-              allGames = allGames.concat(games);
             } else {
               console.error(`Fetch failed for vendor ${vendor.vendorCode}:`, result.data);
+              return existingGamesByVendor[vendor.vendorCode] || [];
             }
           } catch (err) {
             console.error(`Exception or timeout during games fetch for vendor ${vendor.vendorCode}:`, err.message || err);
+            return existingGamesByVendor[vendor.vendorCode] || [];
           }
-        }));
+        });
+
+        const allGames = vendorGamesResults.flat();
 
         if (allGames.length > 0) {
           cachedGames = allGames;
