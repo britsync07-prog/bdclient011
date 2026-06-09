@@ -52,12 +52,14 @@ const SocialLink: React.FC<SocialLinkProps> = ({ href, label, icon }) => (
 interface FooterLinkColumnProps {
   title: string;
   icon: React.ReactNode;
-  links: { label: string; href?: string }[];
+  links: { label: string; href?: string; key?: string }[];
+  onOpenPolicy: (title: string, contentKey: string) => void;
 }
 const FooterLinkColumn: React.FC<FooterLinkColumnProps> = ({
   title,
   icon,
   links,
+  onOpenPolicy,
 }) => (
   <div>
     <h4 className="flex items-center gap-2 text-xs font-bold text-[#0F172A] uppercase tracking-widest mb-4">
@@ -65,21 +67,36 @@ const FooterLinkColumn: React.FC<FooterLinkColumnProps> = ({
       {title}
     </h4>
     <ul className="space-y-2.5">
-      {links.map(({ label, href }) => (
+      {links.map(({ label, href, key }) => (
         <li key={label}>
-          <a
-            href={href || "#"}
-            className="text-sm text-slate-500 hover:text-[#E11D48] cursor-pointer transition-colors duration-200 font-medium"
-          >
-            {label}
-          </a>
+          {key ? (
+            <button
+              onClick={() => onOpenPolicy(label, key)}
+              className="text-sm text-slate-500 hover:text-[#E11D48] cursor-pointer transition-colors duration-200 font-medium bg-transparent border-none p-0 text-left"
+            >
+              {label}
+            </button>
+          ) : (
+            <a
+              href={href || "#"}
+              className="text-sm text-slate-500 hover:text-[#E11D48] cursor-pointer transition-colors duration-200 font-medium"
+            >
+              {label}
+            </a>
+          )}
         </li>
       ))}
     </ul>
   </div>
 );
 
-export const FooterMainContent: React.FC = () => {
+interface FooterMainContentProps {
+  onOpenPolicy: (title: string, contentKey: string) => void;
+}
+
+export const FooterMainContent: React.FC<FooterMainContentProps> = ({
+  onOpenPolicy,
+}) => {
   const [estYear, setEstYear] = useState(2024);
   const [settings, setSettings] = useState<Record<string, string>>({});
 
@@ -102,15 +119,15 @@ export const FooterMainContent: React.FC = () => {
   }, []);
 
   const gameLinks = [
-    { label: "Casino Games" },
-    { label: "Live Dealers" },
-    { label: "Slot Machines" },
+    { label: "Casino Games", href: "/#games" },
+    { label: "Live Dealers", href: "/#games" },
+    { label: "Slot Machines", href: "/#games" },
     { label: "Tournaments" },
     { label: "VIP Club" },
   ];
 
   const companyLinks = [
-    { label: "About PBBET" },
+    { label: "About PBBET", key: "about_us" },
     { label: "Blog & News" },
     { label: "Careers" },
     { label: "Affiliate Program" },
@@ -118,7 +135,7 @@ export const FooterMainContent: React.FC = () => {
 
   const supportLinks = [
     { label: "24/7 Live Support" },
-    { label: "Responsible Gaming" },
+    { label: "Responsible Gaming", key: "responsible_gaming" },
     { label: "Security Center" },
     { label: "FAQ" },
   ];
@@ -190,16 +207,19 @@ export const FooterMainContent: React.FC = () => {
         title="Games"
         icon={<Gamepad2 size={13} />}
         links={gameLinks}
+        onOpenPolicy={onOpenPolicy}
       />
       <FooterLinkColumn
         title="Company"
         icon={<Building2 size={13} />}
         links={companyLinks}
+        onOpenPolicy={onOpenPolicy}
       />
       <FooterLinkColumn
         title="Support"
         icon={<HeadphonesIcon size={13} />}
         links={supportLinks}
+        onOpenPolicy={onOpenPolicy}
       />
     </div>
   );

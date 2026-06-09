@@ -3,6 +3,9 @@ const path = require('path');
 const assert = require('assert');
 const bcrypt = require('bcryptjs');
 
+// Set default DATABASE_URL for SQLite local environment
+process.env.DATABASE_URL = process.env.DATABASE_URL || 'file:' + path.resolve(__dirname, '../../server/prisma/dev.db');
+
 let PrismaClient;
 try {
   PrismaClient = require(path.resolve(__dirname, '../../server/node_modules/@prisma/client')).PrismaClient;
@@ -85,21 +88,20 @@ async function put(url, body, headers = {}) {
   };
 }
 
-// Database isolation: truncate tables and seed default admin
+// Database isolation: clear tables and seed default admin
 async function resetDatabaseState() {
   console.log('\n--- Resetting Database & Mock Server State ---');
   
-  // Truncate MySQL tables using Prisma
-  await prisma.$executeRawUnsafe('SET FOREIGN_KEY_CHECKS = 0;');
-  const tablenames = ['Transaction', 'GameSession', 'User', 'Banner', 'SiteSetting'];
-  for (const name of tablenames) {
-    try {
-      await prisma.$executeRawUnsafe(`TRUNCATE TABLE \`${name}\`;`);
-    } catch (e) {
-      console.log(`Warning: Failed to truncate ${name}: ${e.message}`);
-    }
+  // Clean tables using database-agnostic deleteMany()
+  try {
+    await prisma.transaction.deleteMany();
+    await prisma.gameSession.deleteMany();
+    await prisma.user.deleteMany();
+    await prisma.banner.deleteMany();
+    await prisma.siteSetting.deleteMany();
+  } catch (e) {
+    console.log(`Warning: Failed to clean database tables: ${e.message}`);
   }
-  await prisma.$executeRawUnsafe('SET FOREIGN_KEY_CHECKS = 1;');
 
   // Seed default admin
   const hashedPassword = await bcrypt.hash('admin123', 10);
@@ -163,13 +165,13 @@ async function startServers() {
   // Spawn Mock OroPlay Server
   mockProcess = spawn('node', [path.join(__dirname, 'mockOroPlayServer.js')], {
     env: { ...commonEnv, PORT: String(MOCK_PORT) },
-    stdio: 'ignore' // set to 'inherit' for debugging
+    stdio: 'inherit' // set to 'inherit' for debugging
   });
 
   // Spawn PBBET Backend Server
   backendProcess = spawn('node', [path.resolve(__dirname, '../../server/src/server.js')], {
     env: { ...commonEnv, PORT: String(BACKEND_PORT) },
-    stdio: 'ignore' // set to 'inherit' for debugging
+    stdio: 'inherit' // set to 'inherit' for debugging
   });
 
   // Wait for servers to be online
@@ -437,6 +439,10 @@ async function runAllTiers() {
   console.log('TIER 4: Real-World Application Workloads');
   console.log('==================================================');
   await resetDatabaseState();
+
+  // Re-login to get a fresh admin token after database reset
+  const loginRes4 = await post(`${BACKEND_URL}/api/auth/login`, { username: 'admin', password: 'admin123' });
+  adminToken = loginRes4.data?.token;
 
   // 1. User Signup
   const signupRes = await post(`${BACKEND_URL}/api/auth/register`, { username: 'realuser', password: 'password123' });

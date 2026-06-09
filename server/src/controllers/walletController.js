@@ -1,5 +1,17 @@
 const prisma = require('../config/db');
 
+const findUserByCode = async (client, userCode) => {
+  const parsedId = parseInt(userCode, 10);
+  if (!isNaN(parsedId) && String(parsedId) === String(userCode)) {
+    return await client.user.findUnique({
+      where: { id: parsedId }
+    });
+  }
+  return await client.user.findUnique({
+    where: { username: String(userCode) }
+  });
+};
+
 /**
  * OroPlay Error Codes:
  * 0: NO_ERROR
@@ -32,9 +44,7 @@ exports.getBalance = async (req, res) => {
       });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: parseInt(userCode) }
-    });
+    const user = await findUserByCode(prisma, userCode);
 
     if (!user) {
       return res.json({
@@ -82,9 +92,7 @@ exports.handleTransaction = async (req, res) => {
 
     if (existingTransaction) {
       // If it exists, check if it belongs to the same user and return current balance
-      const user = await prisma.user.findUnique({
-        where: { id: parseInt(userCode) }
-      });
+      const user = await findUserByCode(prisma, userCode);
       return res.json({
         success: true,
         message: user ? user.balance.toString() : "0",
@@ -94,9 +102,7 @@ exports.handleTransaction = async (req, res) => {
 
     // 2. Process transaction
     const result = await prisma.$transaction(async (tx) => {
-      const user = await tx.user.findUnique({
-        where: { id: parseInt(userCode) }
-      });
+      const user = await findUserByCode(tx, userCode);
 
       if (!user) {
         throw { code: OROPLAY_ERROR.USER_DOES_NOT_EXIST, message: 'User does not exist' };
@@ -170,9 +176,7 @@ exports.handleBatchTransactions = async (req, res) => {
     }
 
     const result = await prisma.$transaction(async (tx) => {
-      const user = await tx.user.findUnique({
-        where: { id: parseInt(userCode) }
-      });
+      const user = await findUserByCode(tx, userCode);
 
       if (!user) {
         throw { code: OROPLAY_ERROR.USER_DOES_NOT_EXIST, message: 'User does not exist' };

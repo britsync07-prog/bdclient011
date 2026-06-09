@@ -97,6 +97,9 @@ export default function AdminDashboard() {
     social_facebook: "",
     social_instagram: "",
     contact_email: "",
+    privacy_policy: "",
+    terms_conditions: "",
+    responsible_gaming: "",
   });
   const [newBanner, setNewBanner] = useState({
     imageUrl: "",
@@ -144,7 +147,7 @@ export default function AdminDashboard() {
         headers,
       });
       const transData = await transRes.json();
-      setTransactions(transData.requests || []);
+      setTransactions(Array.isArray(transData) ? transData : (transData.requests || []));
 
       const settingsRes = await fetch(`${BACKEND_URL}/admin/settings`, {
         headers,
@@ -963,6 +966,60 @@ export default function AdminDashboard() {
                             setSettingsData({
                               ...settingsData,
                               contact_email: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                          Privacy Policy Text
+                        </label>
+                        <textarea
+                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[#0F172A] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/30 focus:border-[#2563EB] transition-all resize-none"
+                          rows={4}
+                          placeholder="Enter your platform's privacy policy text..."
+                          value={settingsData.privacy_policy}
+                          onChange={(e) =>
+                            setSettingsData({
+                              ...settingsData,
+                              privacy_policy: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                          Terms & Conditions Text
+                        </label>
+                        <textarea
+                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[#0F172A] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/30 focus:border-[#2563EB] transition-all resize-none"
+                          rows={4}
+                          placeholder="Enter your platform's terms & conditions text..."
+                          value={settingsData.terms_conditions}
+                          onChange={(e) =>
+                            setSettingsData({
+                              ...settingsData,
+                              terms_conditions: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                          Responsible Gaming Text
+                        </label>
+                        <textarea
+                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[#0F172A] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/30 focus:border-[#2563EB] transition-all resize-none"
+                          rows={4}
+                          placeholder="Enter responsible gaming warnings and guidelines..."
+                          value={settingsData.responsible_gaming}
+                          onChange={(e) =>
+                            setSettingsData({
+                              ...settingsData,
+                              responsible_gaming: e.target.value,
                             })
                           }
                         />

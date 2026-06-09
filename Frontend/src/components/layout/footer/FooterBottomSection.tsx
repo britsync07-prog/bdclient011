@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import { FOOTER_BOTTOM_MESSAGES } from "@/constants";
 import { AlertTriangle, ShieldCheck, BadgeCheck } from "lucide-react";
 
-export const FooterBottomSection: React.FC = () => {
+interface FooterBottomSectionProps {
+  onOpenPolicy: (title: string, contentKey: string) => void;
+}
+
+export const FooterBottomSection: React.FC<FooterBottomSectionProps> = ({
+  onOpenPolicy,
+}) => {
   const [currentYear, setCurrentYear] = useState(2024);
 
   useEffect(() => {
@@ -10,10 +16,9 @@ export const FooterBottomSection: React.FC = () => {
   }, []);
 
   const legalLinks = [
-    "Privacy Policy",
-    "Terms of Service",
-    "Cookie Policy",
-    "Fair Play",
+    { label: "Privacy Policy", key: "privacy_policy" },
+    { label: "Terms of Service", key: "terms_conditions" },
+    { label: "Responsible Gaming", key: "responsible_gaming" },
   ];
 
   return (
@@ -72,13 +77,13 @@ export const FooterBottomSection: React.FC = () => {
 
           <div className="flex flex-wrap gap-x-5 gap-y-1">
             {legalLinks.map((legal) => (
-              <a
-                key={legal}
-                href="#"
-                className="text-xs text-slate-400 hover:text-[#E11D48] cursor-pointer transition-colors duration-200 font-medium hover:underline underline-offset-2"
+              <button
+                key={legal.label}
+                onClick={() => onOpenPolicy(legal.label, legal.key)}
+                className="text-xs text-slate-400 hover:text-[#E11D48] cursor-pointer transition-colors duration-200 font-medium hover:underline underline-offset-2 bg-transparent border-none p-0"
               >
-                {legal}
-              </a>
+                {legal.label}
+              </button>
             ))}
           </div>
         </div>

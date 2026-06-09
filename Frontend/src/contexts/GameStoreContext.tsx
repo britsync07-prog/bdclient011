@@ -94,11 +94,11 @@ export const GameStoreProvider: React.FC<GameStoreProviderProps> = ({
         const res = await fetch(`${BACKEND_URL}/user/games`, { headers });
         const data = await res.json();
         if (data.games) {
-          const mappedGames = data.games.map((g: { gameCode: string, gameName: string, provider: string, thumbnail: string, vendorCode: string }) => ({
+          const mappedGames = data.games.map((g: { gameCode: string, gameName: string, provider: string, thumbnail: string, vendorCode: string, category?: string }) => ({
             id: g.gameCode,
             name: g.gameName,
             provider: g.provider,
-            category: "slots", // default
+            category: (g.category || "slots") as "slots" | "table" | "live",
             rating: 4.5,
             thumbnail: g.thumbnail,
             vendorCode: g.vendorCode,

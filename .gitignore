@@ -35,3 +35,7 @@ coverage/
 
 # Local cache
 .cache/
+
+# Databases
+*.db
+*.db-journal
