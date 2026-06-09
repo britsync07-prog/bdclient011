@@ -1,0 +1,60 @@
+
+> casino-game-lobby@0.1.0 build
+> next build
+
+   ▲ Next.js 15.4.1
+   - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 6.0s
+   Linting and checking validity of types ...
+
+./src/components/features/banners/Banners.tsx
+42:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/features/filters/FilterControls.tsx
+5:10  Warning: 'getCategoryIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/features/games/card/GameCardHeader.tsx
+21:3  Warning: 'categoryColor' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/layout/footer/FooterMainContent.tsx
+8:3  Warning: 'ExternalLink' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/LoadingSpinner.tsx
+3:32  Warning: 'SPINNER_MESSAGES' is defined but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/16) ...
+   Generating static pages (4/16) 
+   Generating static pages (8/16) 
+   Generating static pages (12/16) 
+ ✓ Generating static pages (16/16)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    16.7 kB         116 kB
+├ ○ /_not-found                            991 B         101 kB
+├ ○ /admin                               7.79 kB         107 kB
+├ ○ /admin/login                         3.01 kB         103 kB
+├ ƒ /api/balance                           143 B        99.7 kB
+├ ƒ /api/batch-transactions                143 B        99.7 kB
+├ ƒ /api/games                             143 B        99.7 kB
+├ ƒ /api/oroplay/execute                   143 B        99.7 kB
+├ ƒ /api/seamless/balance                  143 B        99.7 kB
+├ ƒ /api/seamless/batch-transactions       143 B        99.7 kB
+├ ƒ /api/seamless/transaction              143 B        99.7 kB
+├ ƒ /api/transaction                       143 B        99.7 kB
+├ ○ /login                               3.81 kB         108 kB
+└ ○ /register                            4.81 kB         109 kB
++ First Load JS shared by all            99.6 kB
+  ├ chunks/4bd1b696-cf72ae8a39fa05aa.js  54.1 kB
+  ├ chunks/964-eda38e26c0391a47.js       43.5 kB
+  └ other shared chunks (total)          1.93 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

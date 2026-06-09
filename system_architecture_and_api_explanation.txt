@@ -1,0 +1,53 @@
+System Architecture and API Explanation
+=======================================
+
+1. Frontend and Backend Architecture
+------------------------------------
+Based on the PBBET Next-Gen iGaming Ecosystem presentation, the system architecture is built using a modern and highly scalable technology stack:
+- **Frontend**: Built with React.js and Next.js, ensuring lightning-fast performance, server-side rendering, and a mobile-first responsive design. The UI features a dark-themed, premium gaming experience with neon gradients.
+- **Backend**: Built with Node.js and Express, designed for scalable API management and handling complex workflows. 
+- **Database**: Utilizes MySQL/MongoDB for robust data handling and real-time transaction processing.
+- **Hosting Infrastructure**: Hosted on high-speed Cloud VPS equipped with SSL encryption and DDoS protection to ensure maximum uptime and zero downtime during high traffic.
+
+2. API Ecosystem (Backend APIs)
+-------------------------------
+The API ecosystem involves communication between the PBBET backend (the Operator) and the OroPlay platform. 
+
+**Operator APIs (APIs the Backend Has to Provide):**
+The PBBET backend must expose **3 APIs** (Seamless Wallet APIs) for OroPlay to call when players perform actions inside games. These are:
+1. `POST /api/balance` - Returns the current balance of a player.
+2. `POST /api/transaction` - Receives game transactions (e.g., bets and wins) from OroPlay to update the user's wallet in real-time.
+3. `POST /api/batch-transactions` - Receives bulk/batch game transactions.
+
+**OroPlay Integration APIs:**
+The OroPlay platform provides **20 integration APIs** for the backend to consume, categorized into:
+- **Authentication**: `CreateToken`.
+- **Game Management**: `Vendor List`, `Game List`, `Game Detail`, `Get Launch URL`.
+- **Betting History**: `Get Betting History (by Id)`, `Get Transaction History (by Id)`, `Get Betting History V2 (by date)`, `Get Betting Detail Page URL`.
+- **Wallet/Transfer (used for Transfer Wallet Mode)**: `Create User`, `Balance`, `Deposit`, `Withdraw`, `Withdraw All`, `Get User Balance Log`, `Get Agent Balance`.
+- **RTP Management**: `Set User RTP`, `Get User RTP`, `Reset Users RTP`, `Set Users RTP (Bulk)`.
+
+3. Tokens from OroPlay
+----------------------
+To interact with OroPlay's API, the backend requires a Bearer Authentication Token. 
+- **How it works**: The backend sends a `POST /auth/createtoken` request containing a `clientId` and `clientSecret`. 
+- **Token limit**: The system allows a maximum of 5 requests per 30 seconds for token generation. Excessive requests may result in account blocking.
+- The obtained token is a JWT (JSON Web Token) that comes with an expiration time, which must be included in the header (`Authorization: Bearer {token}`) of all subsequent API calls to OroPlay.
+
+4. Responsibilities: Backend vs. OroPlay
+----------------------------------------
+**What the Backend (PBBET Operator) Handles:**
+- **User Management**: KYC verification, user registration, account status, and login logs.
+- **Wallet & Funds**: The integrated wallet storing the user's actual funds. It processes all external deposits, withdrawals, and bank/crypto gateway routing. It also updates the balance in real-time when OroPlay sends betting transaction callbacks.
+- **Financial Desk**: Approval workflows for deposits and withdrawals, and strict anti-fraud monitoring.
+- **Affiliate & Growth Engine**: Advanced referral tracking, multi-tier commission structures, and real-time analytics for agents and affiliates.
+- **Advanced Bonus Engine**: Calculating daily rebates, event bonuses, VIP loyalty tiers, and scheduled campaign launches.
+- **Game API Control**: Activating/deactivating specific games or vendors, and dynamically adjusting RTP (Return to Player) settings via OroPlay APIs.
+- **Marketing Tools**: Banner management and SMS/Email campaigns.
+
+**What OroPlay Handles:**
+- **Game Hosting & Execution**: Hosting 50+ global game providers including slots, live casino tables, roulette, baccarat, and mini-games.
+- **Game Mechanics**: Executing game logic, real-time odds, and dynamic betting slips.
+- **Transaction Generation**: Automatically generating bets, wins, and transactions within the game, then dispatching those records to the backend's Seamless Wallet API.
+- **Game Launching**: Generating secure launch URLs for users to open the game in their browsers.
+- **Betting Logs**: Storing detailed game transaction logs and histories which the backend can fetch for auditing or display purposes.

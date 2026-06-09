@@ -1,0 +1,267 @@
+================================================================================
+                       PBBET iGaming Platform — System Brief
+                        Version 2.0 | Production Redesign
+================================================================================
+
+                              [WEBSITE OVERVIEW]
+
+PBBET is a full-stack iGaming platform built on:
+  - Frontend: Next.js 15 (App Router) + TypeScript + Tailwind CSS
+  - Backend: Node.js + Express (runs on port 5000 by default)
+  - Database: MySQL/MongoDB (managed by backend)
+  - Game Provider: OroPlay (third-party API)
+
+The frontend communicates exclusively with the PBBET backend via:
+  NEXT_PUBLIC_BACKEND_URL=http://localhost:5000/api
+
+================================================================================
+                              [DESIGN SYSTEM (v2)]
+================================================================================
+
+The platform has been redesigned with a bright, vibrant theme:
+
+  Primary Color:   #E11D48 (Rose Red)  — used for buttons, active states, accents
+  Secondary:       #FB7185              — lighter rose for hover states
+  CTA Blue:        #2563EB             — deposit/action buttons
+  Gold Accent:     #F59E0B (Amber)     — wallet display, special highlights
+  Background:      #F8FAFC             — very light slate
+  Text Primary:    #0F172A             — near-black for maximum readability
+  Text Muted:      #475569             — secondary text
+  Font:            DM Sans (Google Fonts, 300–800 weight)
+
+No dark backgrounds. No purple. No emojis as UI icons (all Lucide SVG icons).
+
+================================================================================
+                         [PAGE STRUCTURE & ROUTES]
+================================================================================
+
+/                       → Main Casino Game Lobby (CasinoGameLobby.tsx)
+/login                  → Player Login Page
+/register               → Player Registration Page
+/admin                  → Admin Dashboard (requires admin auth)
+/admin/login            → Admin Login Page
+
+================================================================================
+                        [USER REGISTRATION & SIGN-UP]
+================================================================================
+
+1. Player navigates to /register
+2. Fills in: username, password, confirm password
+3. Frontend calls:
+     POST http://localhost:5000/api/auth/register
+     Body: { username, password }
+4. On success:
+     - Receives: { token, user }
+     - Stores token + user in localStorage
+     - Redirects to / (game lobby)
+
+5. Player navigates to /login
+6. Frontend calls:
+     POST http://localhost:5000/api/auth/login
+     Body: { username, password }
+7. On success:
+     - Stores token + user in localStorage
+     - Redirects to /
+8. Token is sent as "Authorization: Bearer {token}" on all authenticated requests
+
+================================================================================
+                            [BACKEND API ENDPOINTS]
+================================================================================
+
+Auth Endpoints:
+  POST   /api/auth/register          — Create new player account
+  POST   /api/auth/login             — Authenticate player, get JWT token
+
+User Endpoints (requires Bearer token):
+  GET    /api/user/profile           — Get player profile + balance
+  POST   /api/user/launch            — Launch a game (returns launchUrl)
+         Body: { vendorCode, gameCode }
+
+Admin Endpoints (requires Admin Bearer token):
+  GET    /api/admin/users            — List all users
+  PATCH  /api/admin/users/:id/kyc   — Update KYC status { status: "APPROVED"|"REJECTED" }
+  GET    /api/admin/financial-requests — List all deposit/withdraw requests
+  POST   /api/admin/financial-requests/:id/approve — Approve a financial request
+  POST   /api/admin/set-rtp         — Set RTP for a player/vendor
+         Body: { userCode, vendorCode, rtp }
+  GET    /api/admin/settings         — Get site settings
+  PUT    /api/admin/settings         — Update site settings
+         Body: { about_us, social_twitter, social_facebook, social_instagram, contact_email }
+
+Public Endpoints:
+  GET    /api/user/settings          — Get public site settings (for footer, social links)
+
+================================================================================
+                          [HOW OROPLAY APIS WORK]
+================================================================================
+
+OroPlay is the third-party game provider. The relationship has TWO sides:
+
+--- SIDE A: APIs the PBBET Backend MUST PROVIDE (Seamless Wallet) ---
+OroPlay calls PBBET's backend when players make bets or win. PBBET provides:
+
+  POST /api/balance         — OroPlay asks: "What is player X's balance?"
+                              PBBET returns: { balance: number }
+
+  POST /api/transaction     — OroPlay notifies: "Player X just bet/won"
+                              PBBET updates wallet in real-time
+                              PBBET returns: { success, balance }
+
+  POST /api/batch-transactions — Bulk transaction updates
+
+--- SIDE B: APIs PBBET Backend Consumes from OroPlay ---
+PBBET's backend calls OroPlay's APIs to:
+
+Authentication:
+  POST /api/v2/auth/createtoken  — Get OroPlay Bearer token (max 5/30sec)
+                                    Body: { clientId, clientSecret }
+                                    Returns: { token, expiration }
+
+Game Management:
+  GET  /api/v2/vendors/list      — Get list of game providers (Pragmatic, etc.)
+  GET  /api/v2/game/list         — Get game list by vendor
+  GET  /api/v2/game/detail/:id   — Get game details
+  POST /api/v2/game/launch-url   — Get secure game launch URL for player
+
+Betting History:
+  POST /api/v2/betting/history/by-date-v2 — Get betting history by date range
+  GET  /api/v2/betting/detail/:id         — Get betting detail page URL
+
+RTP Management:
+  POST /api/v2/game/users/set-rtp         — Set RTP for specific user
+  GET  /api/v2/game/users/get-rtp         — Get current RTP for user
+  POST /api/v2/game/users/batch-rtp       — Bulk set RTP for multiple users
+  POST /api/v2/game/users/reset-rtp       — Reset user's RTP to default
+
+Balance Transfer APIs (Transfer Wallet Mode):
+  POST /api/v2/transfer/create-user       — Register player in OroPlay system
+  GET  /api/v2/transfer/balance           — Check OroPlay player balance
+  POST /api/v2/transfer/deposit           — Transfer funds into OroPlay
+  POST /api/v2/transfer/withdraw          — Withdraw from OroPlay to PBBET wallet
+  POST /api/v2/transfer/withdraw-all      — Withdraw all from OroPlay
+
+================================================================================
+                              [ADMIN PANEL GUIDE]
+================================================================================
+
+Admin login URL:    /admin/login
+Admin credentials:  Set in backend (role must be "ADMIN")
+
+Admin Dashboard Tabs:
+
+1. DASHBOARD
+   - Total Users count
+   - Pending KYC count
+   - Total platform liquidity (sum of all user balances)
+   - Platform status indicator (Live/Offline)
+
+2. USER MANAGEMENT
+   - List all registered users
+   - View: username, balance, KYC status
+   - Actions: Approve KYC / Reject KYC (for PENDING users)
+
+3. FINANCIAL DESK
+   - List all pending deposit/withdraw requests
+   - Approve requests (triggers balance update via OroPlay transfer API)
+
+4. GAME MANAGEMENT (RTP Configuration)
+   - Set custom RTP % for a specific player
+   - Select game vendor (Pragmatic Play, Mini Crash, etc.)
+   - Range: 30% – 99%
+   - Sends to: POST /admin/set-rtp → backend → OroPlay set-rtp API
+
+5. SITE SETTINGS (Dynamic Content — Update via Admin Panel)
+   - About Us text          → Shown in footer
+   - Twitter/X link         → Footer social icon
+   - Facebook link          → Footer social icon
+   - Instagram link         → Footer social icon
+   - Contact email          → Footer social icon (mailto: link)
+
+   All these settings are stored in the backend database and fetched in real-time
+   by the public footer. No code changes needed to update these values.
+
+================================================================================
+                          [WHAT EACH PARTY MANAGES]
+================================================================================
+
+PBBET Backend (Operator) Manages:
+  ✓ User accounts, authentication, KYC verification
+  ✓ Player wallets (real money balances)
+  ✓ Deposit/withdrawal approval workflows
+  ✓ Anti-fraud monitoring
+  ✓ RTP configuration for individual players
+  ✓ Affiliate/agent referral system
+  ✓ Bonus engine (VIP tiers, rebates)
+  ✓ Site settings (about, social media links)
+  ✓ Game vendor activation/deactivation
+
+OroPlay Manages:
+  ✓ Hosting 50+ game providers globally (Pragmatic Play, etc.)
+  ✓ Game mechanics and execution (RNG, live dealers)
+  ✓ Real-time transaction dispatching to PBBET's Seamless Wallet API
+  ✓ Secure game launch URL generation
+  ✓ Betting history and game logs
+  ✓ RTP enforcement within game execution
+
+================================================================================
+                         [FRONTEND-BACKEND DATA FLOW]
+================================================================================
+
+Player launches a game:
+  1. Player clicks "Play Now" on GameCard
+  2. Frontend calls POST /api/user/launch { vendorCode, gameCode }
+  3. Backend validates JWT token, identifies player
+  4. Backend calls OroPlay POST /api/v2/game/launch-url (with player's userCode)
+  5. OroPlay returns a secure launchUrl
+  6. Backend passes launchUrl back to frontend
+  7. Frontend opens the URL in new tab (game loads in iframe from OroPlay)
+
+During gameplay (bet/win):
+  1. Player places bet inside game (hosted by OroPlay)
+  2. OroPlay calls PBBET's POST /api/transaction endpoint
+  3. PBBET validates the request, deducts balance
+  4. PBBET returns updated balance to OroPlay
+  5. Game continues with updated balance
+
+Player checks balance:
+  1. Frontend calls GET /api/user/profile (Bearer token)
+  2. Backend returns profile including current balance from local wallet
+  3. Frontend displays balance in header wallet widget
+
+================================================================================
+                            [PRODUCTION CHECKLIST]
+================================================================================
+
+  ✓ All API calls use environment variable NEXT_PUBLIC_BACKEND_URL
+  ✓ No hardcoded dummy data on any page
+  ✓ All game data is fetched from backend (which fetches from OroPlay)
+  ✓ Admin panel reads/writes from backend database in real-time
+  ✓ Social links and About Us are database-driven (editable via admin panel)
+  ✓ Footer fetches public settings from GET /api/user/settings
+  ✓ KYC approval/rejection is functional
+  ✓ Financial request approval is functional
+  ✓ RTP setting is functional (proxied to OroPlay API)
+  ✓ Game launch is functional (returns real OroPlay launch URLs)
+  ✓ User balance refreshes after balance fetch
+  ✓ JWT token stored and sent on all authenticated requests
+  ✓ Admin-only routes protected by isAdmin check in localStorage
+  ✓ Backend URL: http://localhost:5000/api (configurable via .env)
+
+================================================================================
+                        [MISSING INFO — ADMIN CONFIGURABLE]
+================================================================================
+
+The following items have NO default values and must be configured via the
+Admin Panel → Site Settings tab:
+
+  social_twitter      → e.g., https://twitter.com/PBBET
+  social_facebook     → e.g., https://facebook.com/PBBET
+  social_instagram    → e.g., https://instagram.com/PBBET
+  contact_email       → e.g., support@pbbet.com
+  about_us            → Platform description text for footer
+
+Until configured, footer social links will show but link to "#" (harmless).
+
+================================================================================
+                              [GENERATED: June 2026]
+================================================================================

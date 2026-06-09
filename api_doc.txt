@@ -1,0 +1,3288 @@
+[The Ultimate Live Casino, Slot, and Mini Game API]
+[Latest Update: Jan, 2026]
+[Version: 1.1.1]
+
+© 2026 OroPlay
+
+Change Logs
+Date
+
+Version
+
+Changes Description
+
+10/01/2025
+11/12/2025
+01/07/2026
+
+1.0.0
+1.1.0
+1.1.1
+
+Initial Version
+Remove deprecated api (Mini Game List)
+Update - Get Betting History V2 (by-date)
+- Remove vendorCode Request parameter
+
+© 2026 OroPlay
+
+I. API Overview
+Introducing OroPlay – The Ultimate Live Casino, Slot, and Mini Game API Platform
+OroPlay is here to change the game. With its cutting-edge live casino, slot, and mini game API, OroPlay is setting a new
+standard in online gaming. This next-gen platform is built to deliver an unbeatable gaming experience for both players
+and operators.
+From immersive live dealer experiences to high-energy slots and captivating mini games, OroPlay has it all. Designed
+with the latest tech and a user-first approach, it’s a seamless, dynamic solution that adapts to the fast-paced world of
+online gaming.
+Whether you're an operator looking to elevate your platform or a player seeking top-tier entertainment,
+OroPlay is the ultimate game-changer in the industry.
+
+1.1 Seamless Wallet API
+Operator should provide the Seamless Wallet Integration API on their side. OroPlay will call the methods
+when players make a bet or get a win and their balance should be updated.
+Method/Section
+
+Description
+
+Status
+
+Balance
+
+Returns the balance of a player.
+
+Required
+
+Transaction
+
+Using this method a OroPlaysystem will notify Casino
+Operator about game transaction such as bet , win.
+
+Required
+
+1.2 Balance Transfer API
+Operator can use this API for game opening and transferring funds to player’s balance in the OroPlay
+system.
+Method/Section
+Description
+Status
+This method allows registering a new player on
+CreateUser
+Required
+OroPlayside.
+Balance
+Returns the balance of a player.
+Required
+Deposit
+This method transfers funds into player’s balance.
+Required
+Withdraw
+
+This method transfers funds out of the
+player’s balance within OroPlaysystem
+
+Required
+
+WithdrawAll
+
+This method transfers funds out of the
+player’s all balance within OroPlaysystem
+
+Required
+
+© 2026 OroPlay
+
+1.3 API Status
+Request path: GET https://api-endpoint.com /api/v2/status
+This is a method to get information about the current state of the API. If everything is OK, you will receive an
+"OK" message. Otherwise, you'll see some error.
+
+Example of HTTP request:
+
+GET /api/v2/status HTTP/2
+Host: xxx.com
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message":"success,
+"errorCode": 0
+
+1.4 API Rate Limiting Policy
+To ensure fair usage and prevent abuse, our API enforces rate limits per endpoint. Each API endpoint
+has its own limit, which resets after a specific time period. If a user exceeds the limit, the API will
+return a 429 Too Many Requests error, and further requests must wait until the reset period.
+Rate limits are communicated via response headers:
+ X-RateLimit-Limit – The maximum number of requests allowed within the time window.
+ X-RateLimit-Remaining – The number of requests remaining before hitting the limit.
+ X-RateLimit-Reset – The Unix timestamp when the limit resets.
+Rate Limits Per Endpoint
+Endpoint
+POST /auth/createtoken
+POST /betting/history/by-date-v2
+POST /game/users/batch-rtp
+
+Limit
+5
+1
+1
+
+© 2026 OroPlay
+
+Time Window
+30 seconds
+1 second
+3 seconds
+
+2. Integration API
+This is a simple API for Casino Operator to retrieve some data from OroPlay system and send some
+events to OroPlay.
+API is an HTTP listener, which listens POST requests coming to an URL with the request mappings
+below.
+All responses are in JSON format.
+URL of the HTTP service will be provided by OroPlayfor the production and test environments and
+looks
+like:
+
+https://api-endpoint.com/api/v2
+Integration simple HTTP Service is securely protected, hence please be sure:
+- player’s browser (end) must NOT be used as initiator of requests to the service;
+- proper IPs are supplied to OroPlayfor whitelisting
+
+2.1 CreateToken
+Using this method Casino Operator will get the authentication bearer token.
+This API allows a maximum of 5 requests per 30 seconds. Exceeding this limit may result in temporary
+throttling or request rejection.
+Caution: Excessive requests for token generation may result in account blocking.
+Request path: POST /auth/createtoken
+Request parameters
+Name
+Type
+clientId
+
+string
+
+clientSecret
+
+string
+
+Description
+
+Status
+
+This is OroPlayagent clientId, you can find this in agent
+page.
+This is OroPlayagent clientSecret, you can find this in agent
+page.
+
+Required
+
+Response parameters
+Name
+Type
+
+Description
+
+token
+
+string(250)
+
+This is the OroPlaytoken used for the request bearer token.
+
+expiration
+
+long
+
+This is the expiration timestamp for this token.(seconds)
+
+Example of HTTP request:
+POST /api/v2/auth/createtoken HTTP/2
+Host: xxx.com
+content-type: application/json
+accept: */*
+Request Body
+{
+"clientId": "testId",
+"clientSecret": "testSecret"
+}
+© 2026 OroPlay
+
+Required
+
+Example of JSON response:
+{
+}
+
+"token": "eyJhbGciOiJIUzUxMiI........... SlDhiXdB2y5Q",
+"expiration": 1716257131
+
+2.2 Vendor List
+
+Using this method Casino Operator will get the list of game providers available for the integration.
+Request path: GET /vendors/list
+Request Headers
+Name
+Type
+Authorization
+
+string
+
+Response parameters
+Name
+Type
+
+Description
+
+Status
+
+Bearer {token}
+Here operator can use token generated from
+createToken request.
+
+Required
+
+Description
+
+success
+
+boolean
+
+message
+
+List of Vendor
+
+errorCode
+
+int
+
+Type: Vendor
+Name
+vendorCode
+type
+
+Type
+string
+int
+
+name
+
+string
+
+Description
+Symbolic unique identifier of the vendor provided by OroPlay
+Game indicator of OroPlay1: live
+casino 2: slot 3: mini-game
+Vendor name provided by OroPlay
+
+url
+
+string
+
+Vendor api endpoint
+
+True - if the request was successfully processed or false in other
+case
+The list of vendors.(see data type description below)
+0 - if the request was successfully processed or error code in
+other case.
+
+Example of HTTP request:
+GET /api/v2/vendors/list HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+
+© 2026 OroPlay
+
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message": [
+{
+"vendorCode": "slot-pragmatic",
+"type": 2,
+"name": "Pragmatic Slot",
+},
+{
+"vendorCode": "mini-crash",
+"type": 3,
+"name": "Crash"
+},
+...
+{
+"vendorCode": "slot-habanero",
+"type": 2,
+"name": "Habanero"
+}
+],
+"errorCode": 0
+
+© 2026 OroPlay
+
+2.3 Game List
+
+Using this method Casino Operator will get the list of casino games available for the integration.
+Request path: POST /games/list
+Request Headers
+Name
+Type
+Authorization
+
+string
+
+Request parameters
+Name
+Type
+vendorCode
+
+string
+
+language
+
+string
+
+Description
+
+Status
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Description
+
+Status
+
+Symbolic unique identifier of the vendor provided by
+OroPlay.
+Language code. le. en, th,…
+
+Required
+Required
+
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolean
+
+True - if the request was successfully processed or false in other case
+
+message
+
+List of
+Game
+int
+
+The list of games.(see data type description below)
+
+errorCode
+
+0 - if the request was successfully processed or error code in other
+case.
+
+Type: Game
+Name
+provider
+vendorCode
+
+Type
+string
+string
+
+Description
+Game provider name by OroPlay.
+Symbolic unique identifier of the vendor provided by OroPlay.
+
+gameId
+
+string
+
+gameCode
+
+string
+
+id of the game provided by OroPlay.(optional)
+(This parameter only applies to specific slot games. If it is an
+empty string, it can be ignored.)
+Symbolic unique identifier of the game provided by OroPlay.
+
+gameName
+
+string
+
+Game name provided by OroPlay.
+
+slug
+thumbnail
+updatedAt
+isNew
+underMaintenance
+
+string
+string
+string
+boolean
+boolean
+
+Game slug provided by OroPlay.
+Game thumbnail url.
+Game updated datetime.
+True - if the game new or false in other case
+False - if the game runs or false in other case
+
+© 2026 OroPlay
+
+Example of HTTP request:
+POST /api/v2/games/list HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Request Body
+{
+"vendorCode": "casino-evolution",
+"language": "en"
+}
+Example of JSON response:
+{
+
+"success": true,
+"message": [
+{
+"provider": "Evolution",
+"vendorCode": "casino-evolution",
+"gameId": "",
+"gameCode": "lobby",
+"gameName": "Lobby",
+"slug": "evolution-lobby",
+"thumbnail":
+"https://www.evolution.com/wp-content/uploads/2022/01/b2c_b2b_dual_play_pid_5.jpg",
+"updatedAt": "2024-05-20T10:36:40.9800688Z",
+"isNew": false,
+"underMaintenance": false
+},
+...
+{
+"provider": "Evolution",
+"vendorCode": "casino-evolution",
+"gameId": "",
+"gameCode": "LightningDice001",
+"gameName": "Lightning Dice",
+"slug": "evolution-lightningdice",
+"thumbnail":
+"https://www.evolution.com/wp-content/uploads/2022/01/lightning_dice_pid_10.jpg",
+"updatedAt": "2024-01-10T01:18:18.043",
+"isNew": false,
+"underMaintenance": false
+}
+],
+"errorCode": 0
+}
+
+© 2026 OroPlay
+
+2.4 Game Detail
+
+Using this method Casino Operator will get the detail of game available for the integration.
+Request path: POST /game/detail
+Request Headers
+Name
+Type
+Authorization
+
+string
+
+Request parameters
+Name
+Type
+vendorCode
+
+string
+
+gameCode
+
+string
+
+Description
+
+Status
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Description
+
+Status
+
+Symbolic unique identifier of the vendor provided by
+OroPlay.
+Symbolic unique identifier of the game provided by OroPlay.
+
+Required
+Required
+
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolean
+
+True - if the request was successfully processed or false in other case
+
+message
+
+Game
+
+The list of games.(see data type description below)
+
+errorCode
+
+int
+
+0 - if the request was successfully processed or error code in other
+case.
+
+Type: Game
+Name
+provider
+vendorCode
+
+Type
+string
+string
+
+Description
+Game provider name by OroPlay.
+Symbolic unique identifier of the vendor provided by OroPlay.
+
+gameId
+
+string
+
+gameCode
+
+string
+
+id of the game provided by OroPlay.(optional)
+(This parameter only applies to specific slot games. If it is an
+empty string, it can be ignored.)
+Symbolic unique identifier of the game provided by OroPlay.
+
+gameName
+
+string
+
+Game name provided by OroPlay.
+
+slug
+thumbnail
+updatedAt
+isNew
+underMaintenance
+
+string
+string
+string
+boolean
+boolean
+
+Game slug provided by OroPlay.
+Game thumbnail url.
+Game updated datetime.
+True - if the game new or false in other case
+False - if the game runs or false in other case
+
+© 2026 OroPlay
+
+Example of HTTP request:
+POST /api/v2/game/detail HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Request Body
+{
+"vendorCode": "casino-evolution",
+"gameCode": "MonBigBaller0001"
+}
+Example of JSON response:
+{
+
+"success": true,
+"message": {
+"provider": "Evolution",
+"vendorCode": "casino-evolution",
+"gameId": "",
+"gameCode": "MonBigBaller0001",
+"gameName": "MONOPOLY Big Baller",
+"slug": "evolution-monopolybigballer",
+"thumbnail":
+"https://www.evolution.com/wp-content/uploads/2022/11/monopoly_big_baller_square_thumbn
+ail_700x700_2022_07_01.jpg",
+"updatedAt": "2024-05-20T13:25:40.2246897Z",
+"isNew": false,
+"underMaintenance": false
+},
+"errorCode": 0
+}
+
+© 2026 OroPlay
+
+2.5 Get Launch URL
+
+Using this method Casino Operator will get the launch url of the game.
+Request path: POST /game/launch-url
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+vendorCode
+
+string
+
+Symbolic unique identifier of the vendor provided by OroPlay. Required
+
+gameCode
+
+string
+
+Symbolic unique identifier of the game provided by OroPlay.
+
+Required
+
+userCode
+
+string
+
+Required
+
+language
+
+string
+
+Symbolic unique identifier of the user provided by Casino
+Operator.
+Language code. le. en, th,…
+
+lobbyUrl
+
+string
+
+Optional
+
+theme
+
+int
+
+Lobby url of the game website.
+Needed for redirection when some game providers close
+the game. Ex) Hacksaw slot game
+Select the web site style number.
+
+string
+
+Required
+
+Optional
+
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolean
+
+True - if the request was successfully processed or false in other case
+
+message
+
+string
+
+This is the launch url of the game.
+
+errorCode
+
+int
+
+0 - if the request was successfully processed or error code in other
+case.
+
+Example of HTTP request:
+POST /api/v2/game/launch-url HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Request Body
+{
+"vendorCode": "casino-evolution",
+"gameCode": "MonBigBaller0001",
+"userCode": "test",
+"language": "en",
+"lobbyUrl": "https://test.com",
+"theme": 1
+}
+Example of JSON response:
+{
+
+"success": true,
+"message": "https://evolution. apiendpoint.com/entry?jsessionid=72fa9603a8ef26381a112d86&lang=en&table=MonBigBaller0001 ",
+"errorCode": 0
+}
+© 2026 OroPlay
+
+2.6 Get Betting History(by Id)
+
+Using this method Casino Operator will get the detail of betting history by id.
+Request path: POST /betting/history/by-id
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+id
+
+History id
+
+Required
+
+string
+
+int
+
+Response parameters
+Name
+Type
+success
+
+boolean
+
+message
+
+History
+
+errorCode
+
+int
+
+Description
+True - if the request was successfully processed or false in other
+case
+The detail of history.(see data type description below)
+0 - if the request was successfully processed or error code in other
+case.
+
+Type: History
+Name
+id
+userCode
+
+Type
+int
+string
+
+roundId
+gameCode
+gameName
+vendorCode
+betAmount
+winAmount
+beforeBalance
+afterBalance
+detail
+status
+
+string
+string
+string
+string
+decimal
+decimal
+decimal
+decimal
+string
+int
+
+createdAt
+updatedAt
+
+timestamp
+timestamp
+
+Description
+History Id by OroPlay.
+Symbolic unique identifier of the user provided by Casino
+Operator.
+Round Id of the game history.
+Symbolic unique identifier of the game provided by OroPlay.
+Game Name
+Symbolic unique identifier of the vendor provided by OroPlay.
+Amount of the bet. Example: '1.00'.
+Amount of the win. Example: '1.00'.
+Balance before betting.
+Balance after betting.
+Betting detail
+Betting status.
+0: Unfinished, 1: Finished, 2: Canceled
+Betting created time.
+Betting updated time.
+
+© 2026 OroPlay
+
+Example of HTTP request:
+POST /api/v2/betting/history/by-id HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Request Body
+{
+"id": 5
+}
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"errorCode": 0,
+"message": {
+"id": 5,
+"userCode": "test",
+"roundId": "1713765639547",
+"gameCode": "vswaysmorient",
+"vendorCode": "slot-pragmatic",
+"betAmount": 100.00,
+"winAmount": 0.00,
+"beforeBalance": 999976.00,
+"afterBalance": 999876.00,
+"detail": "",
+"status": 1,
+"createdAt": 1713765639,
+"updatedAt": 1713765639
+}
+
+© 2026 OroPlay
+
+2.7 Get Transaction History(by Id)
+
+Using this method Casino Operator will get the detail transaction history by history id.
+Request path: POST /transaction/history/by-id
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+id
+
+History id
+
+Required
+
+string
+
+int
+
+Response parameters
+Name
+Type
+success
+
+boolean
+
+message
+
+List of
+Transaction
+int
+
+errorCode
+
+Type: Transaction
+Name
+Type
+id
+int
+userCode
+string
+roundId
+string
+wagerId
+int
+gameCode
+string
+vendorCode
+string
+amount
+decimal
+status
+Int
+isFinished
+boolean
+
+isCanceled
+
+boolean
+
+beforeBalance
+gameType
+
+decimal
+int
+
+transactionCode string
+detail
+string
+Datetime(UTC)
+createdAt
+
+Description
+True - if the request was successfully processed or false in other
+case
+The list of histories.(see data type description below)
+0 - if the request was successfully processed or error code in
+other case.
+
+Description
+Transaction id by OroPlay.
+Symbolic unique identifier of the user provided by Casino Operator.
+Round Id of the game history.
+History id.
+Symbolic unique identifier of the game provided by OroPlay.
+Symbolic unique identifier of the vendor provided by OroPlay.
+Change balance. Example: '1.00'.
+0:success,1:fail
+This value indicates whether the round has ended.
+If you receive another round message after receiving this
+transaction,
+please reply with an error code ‘INVALID_TRANSACTION’.
+This value indicates whether the bet has been canceled.
+Balance before transaction.
+Game type
+1: Casino, 2: Slot, 3:Other(Original games and Board Games),
+4:Fishing
+This is an identity for a transaction.
+Transaction detail
+Betting created time.
+
+© 2026 OroPlay
+
+Example of HTTP request:
+POST /api/v2/transaction/history/by-id HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Request Body
+{
+"id": "99"
+}
+Example of JSON response:
+{
+
+]
+}
+
+"success": true,
+"errorCode": 0,
+"message": [
+{
+"id": 5,
+"userCode": "test",
+"roundId": "1713765639547",
+"wagerId": "17",
+"gameCode": "vswaysmorient",
+"vendorCode": "slot-pragmatic",
+"amount": -100.00,
+“status”: 0,
+“isFinished”: false,
+“isCanceled”: false,
+"beforeBalance": 999976.00,
+“gameType”:2,
+“transactionCode”:”1713765639”,
+"detail": "",
+"createdAt": “2024-06-15 12:0:0”,
+}
+
+© 2026 OroPlay
+
+2.8 Get Agent Balance
+
+Using this method Casino Operator will get agent balance.
+Request path: GET /agent/balance
+Request Headers
+Name
+Type
+Authorization
+
+string
+
+Response parameters
+Name
+Type
+success
+
+boolean
+
+message
+
+decimal
+
+errorCode
+
+int
+
+Description
+
+Status
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Description
+True - if the request was successfully processed or false in other
+case
+User balance
+0 - if the request was successfully processed or error code in other
+case.
+
+Example of HTTP request:
+GET /api/v2/agent/balance HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Example of JSON response:
+{
+
+}
+
+"message": 1000,
+"errorCode": 0,
+"success": true
+
+© 2026 OroPlay
+
+2.9 Create User (Transfer API)
+
+Using this method Casino Operator will create user for transfer method.
+Request path: POST /user/create
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+userCode
+
+userCode from Casino operator
+
+Required
+
+string
+
+string
+
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolean
+
+True - if the request was successfully processed or false in other case
+
+message
+
+string
+
+Description of the response
+
+errorCode
+
+int
+
+0 - if the request was successfully processed or error code in other case.
+
+Example of HTTP request:
+POST /api/v2/user/create HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Request Body
+{
+"userCode": "testuser1"
+}
+Example of JSON response:
+{
+}
+
+"success": true,
+"errorCode": 0
+
+© 2026 OroPlay
+
+2.10 Balance (Transfer API)
+
+Using this method Casino Operator will get player balance for transfer method.
+Request path: POST /user/balance
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+userCode
+
+userCode from Casino operator
+
+Required
+
+string
+
+string
+
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolean
+
+True - if the request was successfully processed or false in other case
+
+message
+
+decimal
+
+Balance of the player
+
+errorCode
+
+int
+
+0 - if the request was successfully processed or error code in other case.
+
+Example of HTTP request:
+POST /api/v2/user/balance HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Request Body
+{
+"userCode": "testuser1"
+}
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message": 1000.00,
+"errorCode": 0
+
+© 2026 OroPlay
+
+2.11 Deposit (Balance Transfer API)
+
+Using this method Casino Operator will deposit player balance.
+Request path: POST /user/deposit
+Request Headers
+Name
+Type
+
+Description
+
+Status
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+userCode
+
+string
+
+userCode from Casino operator
+
+Required
+
+balance
+
+decimal
+
+Amount to deposit.
+
+Required
+
+orderNo
+
+string
+
+This is identifier for deposit.
+
+Optional
+
+vendorCode
+
+string
+
+Symbolic unique identifier of the vendor provided by
+OroPlay. (For the separated wallet this field should be
+required.)
+
+Optional
+
+Authorization
+
+string
+
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolean
+
+True - if the request was successfully processed or false in other case
+
+message
+
+decimal
+
+User balance
+
+errorCode
+
+int
+
+0 - if the request was successfully processed or error code in other case.
+
+Example of HTTP request:
+POST /api/v2/user/deposit HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Request Body
+{
+"userCode": "testuser1",
+"balance" : 1000.00,
+"orderNo" : "EF232FAD43"
+}
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message": 1000,
+"errorCode": 0
+
+© 2026 OroPlay
+
+2.12 Withdraw (Balance Transfer API)
+
+Using this method Casino Operator will withdraw user balance.
+Request path: POST /user/withdraw
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+userCode
+string
+balance
+decimal
+
+Description
+userCode from Casino operator
+Amount to deposit.
+
+Status
+Required
+Required
+
+orderNo
+
+string
+
+This is identifier for withdraw.
+
+Optional
+
+vendorCode
+
+string
+
+Symbolic unique identifier of the vendor provided by
+OroPlay. (For the separated wallet this field should be
+required.)
+
+Optional
+
+string
+
+Response parameters
+Name
+Type
+success
+
+boolean
+
+message
+
+decimal
+
+errorCode
+
+int
+
+Description
+True - if the request was successfully processed or false in other
+case
+User balance
+0 - if the request was successfully processed or error code in other
+case.
+
+Example of HTTP request:
+POST /api/v2/user/withdraw HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+{
+"userCode": "testuser",
+"balance" : 1000.00,
+"orderNo" : "EF232FAD42"
+}
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message": 1000,
+"errorCode": 0
+
+© 2026 OroPlay
+
+2.13 Withdraw All (Balance Transfer API)
+Using this method Casino Operator will withdraw all player balance.
+Request path: POST /user/withdraw-all
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+string
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Name
+
+Type
+
+Description
+
+Status
+
+userCode
+
+string
+
+userCode from Casino operator
+
+Required
+
+vendorCode
+
+string
+
+Symblic unique identifier of the vendor provided by
+OroPlay. (For the separated walltet this field should be
+required.)
+
+Optional
+
+Request parameters
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolea
+n
+
+True - if the request was successfully processed or false in other case
+
+message
+
+decimal
+
+Withdraw balance
+
+errorCode
+
+int
+
+0 - if the request was successfully processed or error code in other case.
+
+Example of HTTP request:
+POST /api/v2/user/withdraw-all HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+{
+"userCode": "testuser",
+}
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message": 1000,
+"errorCode": 0
+
+© 2026 OroPlay
+
+2.14 Get User Balance Log (Balance Transfer API)
+Using this method Casino Operator will withdraw all player balance.
+Request path: POST /user/balance-history
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+orderNo
+
+orderNo from Casino operator
+
+Required
+
+string
+
+string
+
+Response parameters
+Name
+Type
+success
+
+boolean
+
+message
+
+UserBalanceHistor
+y
+int
+
+errorCode
+
+Description
+True - if the request was successfully processed or false in
+other case
+The detail of history.(see data type description below)
+0 - if the request was successfully processed or error code in
+other case.
+
+Type: UserBalanceHistory
+Name
+Type
+id
+int
+userCode
+string
+amount
+decimal
+type
+int
+agentBeforeBalance decimal
+
+Description
+Transaction id by OroPlay.
+userCode from Casino operator.
+Request balance. Example: '1.00'.
+1:deposit,2:withdraw
+Agent balance before transaction
+
+userBeforeBalance
+
+User balance before transaction
+
+decimal
+
+Example of HTTP request:
+POST /api/v2/user/balance-history HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+{
+"orderNo": "EF232FAD42",
+}
+Example of JSON response:
+{
+
+}
+
+"success": true, "message":
+{
+"userCode": "testuser1", "amount":
+1000.00,
+"agentBeforeBalance": 10197667478346.52,
+"userBeforeBalance": 3000.00,
+"type": 1,
+"createdAt": 1724755309
+},
+"errorCode": 0
+© 2026 OroPlay
+
+2.15 Set User RTP
+Using this method Casino Operator will set user’s RTP.
+Request path: POST /game/user/set-rtp
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+vendorCode
+
+string
+
+Symblic unique identifier of the vendor provided by OroPlay.
+
+Required
+
+userCode
+
+string
+
+userCode from Casino operator.
+
+Required
+
+rtp
+
+int
+
+Number between 30 and 99
+
+Required
+
+string
+
+Response parameters
+
+Name
+success
+
+Type
+boolean
+
+Description
+True - if the request was successfully processed or false in other case
+
+errorCode
+
+int
+
+0 - if the request was successfully processed or error code in other
+case.
+
+Example of HTTP request:
+POST /api/v2/game/user/set-rtp HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+{
+"vendorCode": "slot-pragmatic",
+"userCode": " testuser1",
+"rtp": 90
+}
+Example of JSON response:
+{
+}
+
+"success": true,
+"errorCode": 0
+
+© 2026 OroPlay
+
+2.16 Get User RTP
+Using this method Casino Operator will get user’s RTP.
+Request path: POST /game/user/get-rtp
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+vendorCode
+
+string
+
+Symblic unique identifier of the vendor provided by OroPlay.
+
+Required
+
+userCode
+
+string
+
+userCode from Casino operator.
+
+Required
+
+string
+
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolean
+
+True - if the request was successfully processed or false in other case
+
+message
+errorCode
+
+int
+int
+
+User’s RTP
+0 - if the request was successfully processed or error code in other
+case.
+
+Example of HTTP request:
+POST /api/v2/game/user/get-rtp HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+{
+"vendorCode": "slot-pragmatic",
+"userCode": " testuser1"
+}
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message": 85
+"errorCode": 0
+
+© 2026 OroPlay
+
+2.17 Reset Users RTP
+Using this method Casino Operator will set all user’s RTP.
+Request path: POST /game/users/reset-rtp
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+vendorCode
+
+string
+
+Symblic unique identifier of the vendor provided by OroPlay.
+
+Required
+
+rtp
+
+int
+
+RTP for all users you are trying to set
+
+Required
+
+string
+
+Response parameters
+Name
+Type
+success
+
+boolean
+
+message
+
+int
+
+errorCode
+
+int
+
+Description
+True - if the request was successfully processed or false in
+other case
+All user’s RTP
+0 - if the request was successfully processed or error code in
+other case.
+
+Example of HTTP request:
+POST /api/v2/game/users/reset-rtp HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+{
+"vendorCode": "slot-pragmatic",
+"rtp": 85
+}
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message": 85
+"errorCode": 0
+
+© 2026 OroPlay
+
+2.18 Get Betting History V2 (by date)
+
+Using this method Casino Operator will get the list of betting history by date(max 5000 records).
+It is possible to get histories up to 7 days ago.
+This API allows a maximum of one request per second. Exceeding this limit may result in temporary
+throttling or request rejection.
+Request path: POST /betting/history/by-date-v2
+Request Headers
+Name
+Type
+Authorization
+
+string
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Description
+
+Status
+
+startDate
+
+string
+
+Start date time of the history. (UTC+0 time)
+Ex) ”yyyy-mm-dd” or ”yyyy-mm-ddThh:mm:ss”
+
+Required
+
+limit
+
+int
+
+History count (max 5000)
+
+Required
+
+Response parameters
+Name
+Type
+success
+
+boolean
+
+message
+
+HistoryRespon
+seV2
+int
+
+errorCode
+
+Type: HistoryResponseV2
+Name
+Type
+
+Description
+True - if the request was successfully processed or false in other
+case
+HistoryResponseV2 (see data type description below)
+0 - if the request was successfully processed or error code in other
+case.
+
+nextStartDate
+
+string
+
+limit
+histories
+
+int
+List of History
+
+Description
+Start date time of the history for next request. (UTC+0 time)
+Ex) ”yyyy-mm-dd” or ”yyyy-mm-ddThh:mm:ss”
+Requested History count.
+The list of history.(see data type description below)
+
+Type: History
+Name
+id
+userCode
+
+Type
+int
+string
+
+Description
+History Id by OroPlay.
+Symbolic unique identifier of the user provided by Casino Operator.
+
+roundId
+gameCode
+vendorCode
+betAmount
+winAmount
+beforeBalance
+afterBalance
+detail
+status
+
+string
+string
+string
+decimal
+decimal
+decimal
+decimal
+string
+int
+
+createdAt
+updatedAt
+
+timestamp
+timestamp
+
+Round Id of the game history.
+Symbolic unique identifier of the game provided by OroPlay.
+Symbolic unique identifier of the vendor provided by OroPlay.
+Amount of the bet. Example: '1.00'.
+Amount of the win. Example: '1.00'.
+Balance before bentting.
+Balance after betting.
+Betting detail
+Betting status.
+0: Unfinished, 1: Finished, 2: Canceled
+Betting created time.
+Betting updated time.
+
+© 2026 OroPlay
+
+Example of HTTP request:
+POST /api/v2/betting/history/by-date HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Request Body
+{
+"vendorCode": "slot-pgsoft",
+"startDate": "2024-04-21T01:00:00",
+"limit": 5000
+}
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"errorCode": 0,
+"message": {
+"limit": 5000,
+"nextStartDate": "2024-4-21T10:14:27",
+"histories": [
+{
+"id": 4,
+"userCode": "testuser",
+"roundId": "1713765639102",
+"gameCode": "vswaysmorient",
+"vendorCode": "mini-crash",
+"betAmount": 100.00,
+"winAmount": 76.00,
+"beforeBalance": 1000000.00,
+"afterBalance": 999976.00,
+"detail": "",
+"status": 1,
+"createdAt": 1713736839,
+"updatedAt": 1713736839
+},
+…
+{
+"id": 750,
+"userCode": "testuser",
+"roundId": "1713766466898",
+"gameCode": "vs10txbigbass",
+"vendorCode": "slot-pragmatic",
+"betAmount": 50.00,
+"winAmount": 10.00,
+"beforeBalance": 996287.00,
+"afterBalance": 996247.00,
+"detail": "",
+"status": 1,
+"createdAt": 1713737666,
+"updatedAt": 1713737667
+}
+]
+}
+
+© 2026 OroPlay
+
+2.19 Get Betting Detail Page URL
+
+Using this method Casino Operator will get the detail page url of the betting.
+Request path: POST /betting/history/detail
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+Id
+
+Int
+
+History Id by OroPlay.
+
+Required
+
+language
+
+string
+
+Language code. le. en, zh,…
+
+Optional
+
+string
+
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolean
+
+True - if the request was successfully processed or false in other case
+
+message
+
+string
+
+This is the detail page url of the betting.
+
+errorCode
+
+int
+
+0 - if the request was successfully processed or error code in other
+case.
+
+Example of HTTP request:
+POST /api/v2/betting/history/detail HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+Request Body
+{
+"id": 20000,
+"language": "en"
+}
+Example of JSON response:
+{
+
+"success": true,
+"message": " https://m32unew6.com/gs2c/gameDetail?
+token=06BBAC92439C373931352CD7273D6C6F979B674171FB18777E73AD2572D01540247CF163
+&playSessionId=44388079111140&lang=en ",
+"errorCode": 0
+}
+
+© 2026 OroPlay
+
+2.20 Set Users RTP (Bulk)
+Using this method, the casino operator sets the RTP for the users in bulk.(max 500 users).
+This API allows a maximum of one request per 3 seconds. Exceeding this limit may result in
+temporary throttling or request rejection.
+Request path: POST /game/users/batch-rtp
+Request Headers
+Name
+Type
+Description
+Status
+Authorization
+
+string
+
+Bearer {token}
+Here operator can use token generated from createToken
+request.
+
+Request parameters
+Name
+Type
+vendorCode
+
+string
+
+data
+
+List of UserRtp
+
+Type: UserRtp
+Name
+userCode
+rtp
+
+Type
+string
+int
+
+Required
+
+Description
+
+Status
+
+Symblic unique identifier of the vendor provided
+by OroPlay.
+User rtp from Casino operator.(max 500 users)
+
+Required
+Required
+
+Description
+userCode from Casino operator
+Number between 30 and 99
+
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolean
+
+True - if the request was successfully processed or false in other case
+
+errorCode
+
+int
+
+0 - if the request was successfully processed or error code in other
+case.
+
+Example of HTTP request:
+POST /api/v2/game/users/batch-rtp HTTP/2
+Host: xxx.com
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzU…..yC9dBS_kwww
+{
+"vendorCode": "slot-pragmatic",
+"data":[
+{ “userCode” : " testuser1",
+"rtp": 90},
+{ “userCode” : " testuser2",
+"rtp": 90},
+{ “userCode” : " testuser3",
+"rtp": 90}
+…
+]
+}
+Example of JSON response:
+{
+}
+
+"success": true,
+"errorCode": 0
+
+© 2026 OroPlay
+
+3. Seamless Wallet API (Operator API)
+Operator should provide the Seamless Wallet Integration API on their side. OroPlay will call the methods
+when players make a bet or get a win and their balance should be updated.
+Method/Section
+Description
+Status
+Balance
+Returns the balance of a player.
+Required
+Transaction
+Returns the balance of a player.
+Required
+
+3.1 Balance
+
+Using this method Casino Operator will return user balance.
+* To generate an authentication header, please check this link
+https://www.debugbear.com/basic-auth-header-generator
+Request path: POST /api/balance
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Basic {base 64 encoding of a clientId and clientSecret
+separated by a colon}
+
+Required
+
+Request parameters
+Name
+Type
+
+Description
+
+Status
+
+userCode
+
+userCode from Casino operator
+
+Required
+
+Authorization
+
+string
+
+string
+
+Response parameters
+Name
+Type
+success
+
+boolean
+
+message
+
+decimal
+
+errorCode
+
+int
+
+Description
+True - if the request was successfully processed or false in other
+case
+User balance
+0 - if the request was successfully processed or error code in other
+case.
+
+Example of HTTP request:
+POST /api/balance HTTP/2
+Host: xxx.com
+authorization: Basic dGVzdE......WNyZXQ=
+content-type: application/json
+{
+"userCode": "testuser",
+}
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message": 1000,
+"errorCode": 0
+
+© 2026 OroPlay
+
+3.2 Transaction
+
+Using this method a OroPlaysystem will notify Casino Operator about game transaction.
+* To generate an authentication header, please check this link
+https://www.debugbear.com/basic-auth-header-generator
+Request path: POST /api/transaction
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Required
+
+string
+
+Basic {base 64 encoding of a clientId and clientSecret
+separated by a colon}
+
+Request parameters
+Name
+Type
+
+Description
+
+userCode
+
+string
+
+userCode from Casino operator
+
+vendorCode
+
+string
+
+Symbolic unique identifier of the vendor provided by OroPlay
+
+gameCode
+
+string
+
+historyId
+
+int
+
+roundId
+
+string
+
+gameType
+
+int
+
+transactionCode
+
+string
+
+isFinished
+
+boolean
+
+isCanceled
+
+boolean
+
+Symbolic unique identifier of the board game provided by
+OroPlay.
+Game History Id.
+This is unique for game History.
+This is used to check game and transaction history.
+Game round identity.
+This is unique for game round.
+Game type
+1: Casino, 2: Slot, 3:Other(Original games and Board Games),
+4:Fishing
+This is a identity for transaction.
+If these values are duplicates, respond with an error code
+‘DUPLICATE_TRANSACTION’.
+This value indicates whether the round has ended.
+If you receive another round message after receiving this
+transaction, please reply with an error code
+‘INVALID_TRANSACTION’.
+This value indicates whether the bet has been canceled.
+
+amount
+
+decimal
+
+detail
+
+string
+
+transaction amount
+if this is a betting transaction(*old debit), this becomes
+negative.
+And if this is win transaction(*old credit), this becomes
+positive.
+Detail of transaction description
+
+createdAt
+
+Datetime(utc)
+
+This is the date the transaction was created.
+
+© 2026 OroPlay
+
+Response parameters
+Name
+Type
+success
+
+boolean
+
+message
+
+decimal
+
+errorCode
+
+int
+
+Description
+True - if the request was successfully processed or false in other
+case
+User balance after transaction
+0 - if the request was successfully processed or error code in other
+case.
+
+Example of HTTP request:
+POST /api/transaction HTTP/2
+Host: xxx.com
+authorization: Basic dGVzdE......WNyZXQ=
+content-type: application/json
+{
+"userCode": "testuser",
+"vendorCode": "slot-pragmatic",
+"gameCode": "vs20doghouse",
+“historyId”: ”2228221”,
+“roundId”: ”178482632282”,
+“gameType”: 2,
+“transactionCode”:”a2c333bb67”,
+“isFinished”: false,
+“isCanceled”: false,
+"amount": -1000,
+"detail":"{}",
+"createdAt":"2024-06-15 12:0:0",
+}
+
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message": 1000,
+"errorCode": 0
+
+© 2026 OroPlay
+
+3.3 Batch Transactions
+
+Using this method a OroPlaysystem will notify Casino Operator about game transaction.
+* To generate an authentication header, please check this link
+https://www.debugbear.com/basic-auth-header-generator
+Request path: POST /api/batch-transactions
+Request Headers
+Name
+Type
+Description
+
+Status
+
+Authorization
+
+Required
+
+string
+
+Basic {base 64 encoding of a clientId and clientSecret
+separated by a colon}
+
+Request parameters
+Name
+Type
+
+Description
+
+userCode
+
+string
+
+userCode from Casino operator
+
+transactions
+
+List of
+TransactionRequest
+
+The list of TransactionRequest. (Please confirm data
+type of TransactionRequest.)
+
+Type: TransactionRequest
+Name
+Type
+
+Description
+
+userCode
+
+string
+
+userCode from Casino operator
+
+vendorCode
+
+string
+
+Symbolic unique identifier of the vendor provided by OroPlay
+
+gameCode
+
+string
+
+Symbolic unique identifier of the board game provided by OroPlay.
+
+historyId
+
+int
+
+roundId
+
+string
+
+gameType
+
+int
+
+transactionCode
+
+string
+
+isFinished
+
+boolean
+
+isCanceled
+
+boolean
+
+Game History Id.
+This is unique for game History.
+This is used to check game and transaction history.
+Game round identity.
+This is unique for game round.
+Game type
+1: Casino, 2: Slot, 3:Other(Original games and Board Games),
+4:Fishing
+This is an identity for a transaction.
+If these values are duplicates, respond with an error code
+‘DUPLICATE_TRANSACTION’.
+This value indicates whether the round has ended.
+If you receive another round message after receiving this
+transaction, please reply with an error code
+‘INVALID_TRANSACTION’.
+This value indicates whether the bet has been cancelled.
+
+amount
+
+decimal
+
+Transaction amount
+If this is a betting transaction(*old debit), this becomes negative.
+And if this is a win transaction(*old credit), this becomes positive.
+
+detail
+
+string
+
+Detail of transaction description
+
+createdAt
+
+Datetime(UTC)
+
+This is the date the transaction was created.
+
+Response parameters
+Name
+Type
+
+Description
+
+success
+
+boolean
+
+True - if the request was successfully processed or false in other case
+
+message
+
+decimal
+
+User balance after transaction
+
+errorCode
+
+int
+
+0 - if the request was successfully processed or error code in other case.
+
+© 2026 OroPlay
+
+Example of HTTP request:
+POST /api/batch-transactions HTTP/2
+Host: xxx.com
+authorization: Basic dGVzdE......WNyZXQ=
+content-type: application/json
+{
+"userCode": "testuser",
+"transactions": [
+{
+"userCode": "testuser",
+"vendorCode": "fishing-jdb",
+"gameCode": "7003",
+"historyId": "2228221",
+"roundId": "178482632282",
+"gameType": 4,
+"transactionCode": "a2c333bb67",
+"isFinished": true,
+"isCanceled”: false,
+"amount": 1000,
+"detail":"{}",
+"createdAt": "2024-06-15 12:00:00",
+},
+…
+{
+"userCode": "testuser",
+"vendorCode": "fishing-jdb",
+"gameCode": "7003",
+"historyId": "2228222",
+"roundId": "178482632283",
+"gameType": 4,
+"transactionCode": "a2c333bb68",
+"isFinished": false,
+"isCanceled”: false,
+"amount": -1000,
+"detail":"{}",
+"createdAt": "2024-06-15 12:00:01"
+}
+]
+}
+
+Example of JSON response:
+{
+
+}
+
+"success": true,
+"message": 1000,
+"errorCode": 0
+
+© 2026 OroPlay
+
+Error Codes
+
+Name
+NO_ERROR
+USER_ALREADY_EXISTS
+
+Value
+0
+1
+
+USER_DOES_NOT_EXIST
+
+2
+
+INSUFFICIENT_AGENT_BALANCE
+
+3
+
+INSUFFICIENT_USER_BALANCE
+
+4
+
+NO_BETTING_LOG_EXIST
+
+5
+
+DUPLICATE_TRANSACTION
+INVALID_TRANSACTION
+BALANCE_LOG_DOES_NOT_EXIST
+VENDOR_IS_UNDER_MAINTENANCE
+GAME_IS_UNDER_MAINTENANCE
+DEPRECATED_ENDPOINT
+BAD_REQUEST
+
+6
+7
+8
+9
+10
+20
+400
+
+UNAUTHORIZED
+
+401
+
+UNKNOWN_SERVER_ERROR
+
+500
+
+Description
+No errors
+User account you are trying to create already
+exists in the system.
+Unable to find a user account with the provided
+credentials or identifier.
+Agent does not have enough balance in the
+account to complete the requested action or
+transaction.
+User does not have enough balance in the
+account to complete the requested action or
+transaction.
+Unable to find any betting or transaction logs
+for the request.
+Transaction Code is duplicated.
+This wager is already finished.
+User balance log does not exist.
+The vendor is under maintenance.
+The game is under maintenance.
+Endpoint is deprecated.
+The request sent to the system is invalid or
+incomplete, and cannot be processed as
+expected.
+User or agent does not have the necessary
+credentials to perform the requested action or
+access the requested resource.
+Unexpected or unidentified error has occurred
+on the server, preventing the system from
+processing the request as expected.
+
+© 2026 OroPlay
+
+Language Codes
+Name
+ar
+bg
+ca
+cs
+da
+de
+el
+en
+es
+et
+fi
+fr
+he
+hi
+hr
+hu
+hy
+id
+it
+ja
+ka
+ko
+lt
+lv
+mn
+ms
+nl
+pl
+pt
+ro
+ru
+sk
+sl
+sq
+sv
+th
+tr
+uk
+vi
+ar
+bg
+ca
+cs
+da
+de
+el
+en
+es
+et
+fr
+
+Description
+Arabic
+Bulgarian
+Catalan, Valencian
+Czech
+Danish
+German
+Greek
+English
+Spanish, Castilian
+Estonian
+Finnish
+French
+Hebrew
+Hindi
+Croatian
+Hungarian
+Armenian
+Indonesian
+Italian
+Japanese
+Georgian
+Korean
+Lithuanian
+Latvian
+Mongolian
+Malay
+Dutch
+Polish
+Portuguese
+Romanian
+Russian
+Slovak
+Slovene
+Albanian
+Swedish
+Thai
+Turkish
+Ukrainian
+Vietnamese
+Arabic
+Bulgarian
+Catalan, Valencian
+Czech
+Danish
+German
+Greek
+English
+Spanish, Castilian
+Estonian
+French
+© 2026 OroPlay
+
+he
+hi
+hr
+hu
+hy
+id
+it
+ja
+ka
+ko
+lt
+lv
+mn
+ms
+nl
+pl
+pt
+ro
+ru
+sk
+sl
+sq
+sv
+th
+tr
+uk
+vi
+zh
+
+Hebrew
+Hindi
+Croatian
+Hungarian
+Armenian
+Indonesian
+Italian
+Japanese
+Georgian
+Korean
+Lithuanian
+Latvian
+Mongolian
+Malay
+Dutch
+Polish
+Portuguese
+Romanian
+Russian
+Slovak
+Slovene
+Albanian
+Swedish
+Thai
+Turkish
+Ukrainian
+Vietnamese
+Chinese
+
+© 2026 OroPlay
+
+Currency Codes
+Currency Symbol
+$
+฿
+₹
+₩
+JP¥
+₮
+R$
+CN¥
+đ
+₺
+Rp
+₱
+€
+$AR
+R
+DT
+₦
+S/
+$U
+Col$
+Bs
+CLP
+Mex$
+RM
+৳
+AU$
+K
+₭
+₲
+NT$
+₽
+Rs
+£
+Лв
+
+Currency Code
+USD
+THB
+INR
+KRW
+JPY
+MNT
+BRL
+CNY
+VND
+TRY
+IDR
+PHP
+EUR
+ARS
+ZAR
+TND
+NGN
+PEN
+UYU
+COP
+BOB
+CLP
+MXN
+MYR
+BDT
+AUD
+MMK
+LAK
+PYG
+TWD
+RUB
+PKR
+EGP
+UZS
+
+© 2026 OroPlay
+
+Description
+US Dollar
+Thai Baht
+Indian Rupee
+South Korean Won
+Japanese Yen
+Mongolian Tugrik
+Brazilian Real
+Chinese Yuan
+Vietnamese Dong
+Turkish Lira
+Indonesian Rupiah
+Philippine Peso
+Euro
+Argentine Peso
+South African Rand
+Tunisia Dinar
+Nigerian naira
+Peruvian sol
+Uruguayan Peso
+Colombian peso
+Bolivian boliviano
+Chilean peso
+Mexican peso
+Malaysian ringgit
+Bangladeshi Takas
+Australian dollar
+Myanmar kyat
+Lao kip
+Paraguayan Guarani
+New Taiwan dollar
+Russian Ruble
+Pakistani Rupee
+Egyptian pound
+Uzbekistani Som
+
+4. FAQ(Frequently AskedQuestions)
+General
+Q: What is OroPlay?
+A: OroPlayis a complete global API service for integrating online casino, slot and mini games. It
+enables operators to manage games, players, wallets, and reporting in a secure and scalable way.
+Q: Who can use OroPlay?
+A: Online casino operators, aggregators, and developers who want to integrate casino, slot and
+mini games content into their platforms.
+
+Integration
+Q: How do I start integrating OroPlay?
+A: Request access to the OroPlay dashboard. Once approved, you’ll receive API credentials
+(ClientId and ClientSecret). Start with the Authentication Guide before moving to production.
+Q: Does OroPlay support seamless wallet and transfer wallet?
+A: Yes. Both are possible. In case of seamless wallet mode, the client must register callback url for
+call back api.
+
+Games
+Q: What types of games are available?
+A: Slots, mini games, live dealer tables, roulette, baccarat, and sports betting integrations.
+Q: How often are new games added?
+A: New slot and casino titles are released monthly and weekly, depending on our plans and client’s
+request.
+
+Security & Compliance
+Q: How secure is OroPlay?
+A: All API requests require HTTPS and token-based authentication. IP whitelisting are also
+supported. You can reset your API credentials on the Profile page. All agents must provide white
+IPs to use our API.
+Q: Does OroPlay comply with gaming regulations?
+A: Yes. We provide detailed audit logs, fair-play verification, and jurisdiction-specific compliance
+reporting.
+
+© 2026 OroPlay
+
+Transactions
+Q: What currencies are supported?
+A: OroPlay supports multi-currency operations, including fiat and cryptocurrency, depending on
+your setup. We use ExchangeRate-Api for real-time fiat currency rate and coingecko api for realtime crypto currency rate. Exchange rates for all available currencies can be found on the
+Currency Rate page.
+Q: What languages are supported?
+A: OroPlay supports multi-language operations following client’s request. Please refer to
+Supported Languages Section. All agents can use the language parameter when sending a launch
+URL request. The default is en. Language code param format is here.
+Q: Is there a maximum transaction limit?
+A: To ensure fair usage and prevent abuse, our API enforces rate limits per endpoint. Please refer
+to API Rate Limiting Policy section.
+Q: Can I download betting log data to Excel from the admin page?
+A: Yes, you can. To do this, follow these steps:
+- Filter the data you want to download on the Betting Log page.
+- Click the Export to CSV button to submit your request.
+- Check the Export Logs page in the upper right corner to confirm your request has been approved.
+(All requests are approved within one minute.)
+- Click the name of the approved Excel file to download it.
+
+RTP
+Q: Can I control the user's RTP in real time?
+A: Yes, it is possible for all slot and mini games except All live casino tables and Aviator. Online
+platform operators can apply user RTPs individually to individual providers or to individual users,
+and the effects of the application are reflected immediately.
+Q: Can I do all my RTP settings through the API?
+A: Yes, you can. We provide API access to all the RTP settings available on the admin page. Please
+refer to the RTP API section for more information.
+Q: What is call-feature?
+A: Giving a call means manipulating the currently playing user to win. There are two methods:
+manual call application and automatic call application. All call logs can be found on the Call Log
+page.
+Q: What is manual-call?
+A: Online platform operators can monitor the betting status of currently connected users in real
+time and award a desired amount of winnings to specific users.
+Q: What is auto-call?
+A: The automated call system requires online platform operators to monitor users' betting status
+in real time, requiring them to be constantly online. The automated call system allows this process
+to be automated. The default setting is Disabled.
+Q: How do I set up an auto-call feature?
+© 2026 OroPlay
+
+A: All agents can configure this on the Auto Call Settings page in the Admin page. Auto Call Settings
+are controlled by the following four variables, each with its own meaning:
+-Percent: This is the percentage reserved for auto call. User rtp is calculated by subtracting this
+value from user value.
+-MaxAmount Per Day: This is the maximum call amount paid out to each user each day. The
+default is 0, which means there is no limit.
+-Trigger Balance: If the user’s balance is bigger than this value, an auto call will be triggered. The
+default is 0, which means there is no limit.
+-Trigger Total Bet: If the user’s betting amount is bigger than this value, an auto call will be
+triggered. The default is 0, which means there is no limit.
+
+Operating Related
+Q: Can I monitor the player’s betting logs in real-time?
+A: Yes, the operators can check users' betting logs in real time, with a delay of approximately 5
+seconds. We retain 15 days of data to display betting logs. All logs are compiled hourly and stored
+separately, and can be viewed on the admin page.
+Q: Is it possible to check detailed information about a user's bet through the UI?
+A: Yes, you can. We provide the same game details page for all slot game providers, provided by
+the official website. You can check this by clicking the round ID section of the betting log.
+Q: Is it RoundId is unique value?
+A: Yes, all RoundId is unique to each provider.
+
+Support
+Q: What if I encounter an API error?
+A: Refer to the Error Codes section. If unresolved, contact our support team.
+Q: Does OroPlay provide 24/7 support?
+A: Yes. Our support team is available 24/7 for critical issues.
+
+© 2026 OroPlay
+
+

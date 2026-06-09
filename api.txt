@@ -1,0 +1,9 @@
+api url: https://bs.sxvwlkohlv.com/api/v2
+
+ API Mode :  Seamless 
+ 
+ Currency : BDT
+ 
+  Client ID : RSU2
+  
+   Client Secret : UoHxygREc2f238EbEBYxEjMR3xoZJP55
