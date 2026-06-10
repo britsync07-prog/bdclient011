@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
@@ -417,6 +417,12 @@ const CasinoGameLobby: React.FC = () => {
   };
 
   const { favorites, favoritesCount, toggleFavorite } = useFavoritesContext();
+  const userRef = useRef(user);
+  const gamesRef = useRef(state.games);
+  useEffect(() => { gamesRef.current = state.games; }, [state.games]);
+  useEffect(() => { userRef.current = user; }, [user]);
+  const favoritesRef = useRef(favorites);
+  useEffect(() => { favoritesRef.current = favorites; }, [favorites]);
   const filteredGames = useFilteredGames();
 
   const showToastMessage = useCallback((message: string) => {
@@ -430,7 +436,7 @@ const CasinoGameLobby: React.FC = () => {
 
   const handlePlay = useCallback(
     async (gameId: string) => {
-      const game = state.games.find((g) => g.id === gameId);
+      const game = gamesRef.current.find((g) => g.id === gameId);
       if (game) {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -525,7 +531,7 @@ const CasinoGameLobby: React.FC = () => {
             const newPersonal: BetLog = {
               id: Math.random().toString(36).substring(2, 9),
               game: game.name,
-              user: user?.username || "You",
+              user: userRef.current?.username || "You",
               time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
               amount: betAmt,
               multiplier: isWin ? mult : 0,
@@ -570,20 +576,20 @@ const CasinoGameLobby: React.FC = () => {
         }
       }
     },
-    [showToastMessage, state.games, router, user]
+    [showToastMessage, router]
   );
 
   const handleToggleFavorite = useCallback(
     (gameId: string) => {
-      const game = state.games.find((g) => g.id === gameId);
-      const wasFavorite = favorites.includes(gameId);
+      const game = gamesRef.current.find((g) => g.id === gameId);
+      const wasFavorite = favoritesRef.current.includes(gameId);
       logClientAction("Toggle Favorite Game", { gameId, gameName: game?.name || "unknown", action: wasFavorite ? "remove" : "add" });
       toggleFavorite(gameId);
       if (game) {
         showToastMessage(createFavoriteMessage(game.name, !wasFavorite));
       }
     },
-    [toggleFavorite, favorites, showToastMessage, state.games]
+    [toggleFavorite, showToastMessage]
   );
 
   if (state.isLoading) {

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Gamepad2, X } from "lucide-react";
 
 import { Game } from "@/types/game";
 import { GameCard } from "./card/GameCard";
-import { GAME_GRID_MESSAGES } from "@/constants";
 import { EmptyState } from "../../ui/EmptyState";
 import { formatMessage } from "@/utils/helpers";
 
@@ -27,7 +26,6 @@ export const GameGrid: React.FC<GameGridProps> = ({
   const [visibleCount, setVisibleCount] = useState(24);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  // Reset visible count back to initial page size when search query or filter changes the count
   useEffect(() => {
     setVisibleCount(24);
   }, [games.length]);
@@ -40,46 +38,44 @@ export const GameGrid: React.FC<GameGridProps> = ({
     }, 450);
   };
 
-  const isFavorite = (gameId: string): boolean => {
-    return favorites.includes(gameId);
-  };
+  // Performance Optimization: Convert favorites array to a Set for O(1) lookups
+  // during the render loop. This avoids O(n^2) complexity where n is the number of visible games.
+  const favoritesSet = useMemo(() => new Set(favorites), [favorites]);
 
   const visibleGames = games.slice(0, visibleCount);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {games.length > 0 && (
-        <div className="bg-[#0f172a]/80 rounded-xl px-4 py-3 border border-slate-800 shadow-sm flex items-center justify-between">
+        <div className="bg-[#192243]/50 rounded-xl px-4 py-2 border border-slate-700/50 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Gamepad2 className="w-4 h-4 text-blue-500" aria-hidden="true" />
-            <span className="text-slate-300 text-sm font-medium">
-              {formatMessage(GAME_GRID_MESSAGES.SHOWING_GAMES, {
-                gamesLength: visibleGames.length,
-                totalGames: games.length,
-              })}
+            <Gamepad2 className="w-4 h-4 text-blue-400" />
+            <span className="text-slate-400 text-xs font-bold">
+              {games.length} টি গেম পাওয়া গেছে
             </span>
           </div>
           {games.length !== totalGames && (
             <button
               onClick={onClearFilters}
-              className="flex items-center gap-1.5 text-blue-500 hover:text-blue-400 text-sm font-600 transition-colors duration-200 cursor-pointer"
+              className="text-blue-400 hover:text-blue-300 text-xs font-bold transition-colors cursor-pointer"
             >
-              <X className="w-3.5 h-3.5" aria-hidden="true" />
-              {GAME_GRID_MESSAGES.SHOW_ALL_GAMES}
+              সব দেখান
             </button>
           )}
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-4">
         {visibleGames.length === 0 ? (
-          <EmptyState onClearFilters={onClearFilters} />
+          <div className="col-span-full">
+            <EmptyState onClearFilters={onClearFilters} />
+          </div>
         ) : (
           visibleGames.map((game) => (
             <GameCard
               key={game.id}
               game={game}
-              isFavorite={isFavorite(game.id)}
+              isFavorite={favoritesSet.has(game.id)}
               onToggleFavorite={onToggleFavorite}
               onPlay={onPlay}
             />
@@ -92,19 +88,9 @@ export const GameGrid: React.FC<GameGridProps> = ({
           <button
             onClick={loadMoreGames}
             disabled={loadingMore}
-            className="flex items-center justify-center gap-2 px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs tracking-wider uppercase rounded-xl border border-blue-600 transition-all shadow-md shadow-blue/15 hover:shadow-blue/35 hover:-translate-y-0.5 cursor-pointer disabled:opacity-50 select-none min-w-[160px]"
+            className="px-8 py-2.5 bg-[#263668] hover:bg-[#32457a] text-white font-bold text-xs rounded-lg transition-all cursor-pointer disabled:opacity-50"
           >
-            {loadingMore ? (
-              <>
-                <svg className="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Loading...
-              </>
-            ) : (
-              "Show More"
-            )}
+            {loadingMore ? "লোড হচ্ছে..." : "আরো দেখুন"}
           </button>
         </div>
       )}
