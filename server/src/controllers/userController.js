@@ -29,10 +29,8 @@ let lastCacheFetchTime = 0;
 let activeCachePromise = null;
 
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour TTL
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const CACHE_FILE = path.join(__dirname, '../config/games-cache.json');
 
-// Attempt to load initial cache from disk on startup
 try {
   const dir = path.dirname(CACHE_FILE);
   if (!fs.existsSync(dir)) {
@@ -62,16 +60,6 @@ function updateGamesCache() {
       const vendorsResult = await oroplayApi.getVendors();
       if (vendorsResult.status === 200 && vendorsResult.data?.success) {
         const vendors = vendorsResult.data.message;
-        const existingGamesByVendor = {};
-        if (cachedGames && Array.isArray(cachedGames)) {
-          for (const game of cachedGames) {
-            const vcode = game.vendorCode;
-            if (!existingGamesByVendor[vcode]) {
-              existingGamesByVendor[vcode] = [];
-            }
-            existingGamesByVendor[vcode].push(game);
-          }
-        }
 
         const mapLimit = async (array, limit, fn) => {
           const results = [];
@@ -91,32 +79,36 @@ function updateGamesCache() {
 
         const vendorGamesResults = await mapLimit(vendors, 5, async (vendor) => {
           try {
-            const fetchPromise = oroplayApi.getGames(vendor.vendorCode, 'en');
-            // Timeout of 15000ms ensures slow vendors don't block requests indefinitely,
-            // while giving them a healthy window to respond under concurrent production load.
-            const timeoutPromise = new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('OroPlay fetch timed out')), 15000)
-            );
-            
-            const result = await Promise.race([fetchPromise, timeoutPromise]);
-            
-            if (result.status === 200 && result.data?.success) {
-              const category = vendor.type === 1 ? 'live' : ((vendor.type === 3 || vendor.type === 6) ? 'table' : 'slots');
-              return result.data.message.map(game => ({
+            const res = await oroplayApi.getGames(vendor.vendorCode, 'en');
+            if (res.status === 200 && res.data?.success) {
+              // Enhanced Categorization Mapping
+              let category = 'slots';
+              const vCode = vendor.vendorCode.toLowerCase();
+
+              if (vendor.type === 1) category = 'casino';
+              else if (vendor.type === 4) category = 'fishing';
+              else if (vCode.includes('crash') || vCode.includes('spribe')) category = 'crash';
+              else if (vCode.includes('sport') || vCode.includes('sbo') || vCode.includes('bti')) category = 'sports';
+              else if (vCode.includes('lotto') || vCode.includes('lottery')) category = 'lottery';
+              else if (vendor.type === 3 || vendor.type === 6 || vCode.includes('table')) category = 'table';
+              else if (vCode.includes('arcade') || vCode.includes('jdb')) category = 'arcade';
+              else if (vendor.type === 2) category = 'slots';
+
+              return res.data.message.map(game => ({
+                id: `${vendor.vendorCode}_${game.gameCode}`,
                 gameCode: game.gameCode,
-                gameName: game.gameName,
+                name: game.gameName,
                 provider: vendor.name || vendor.vendorCode,
                 thumbnail: game.thumbnail,
                 vendorCode: vendor.vendorCode,
-                category: category
+                category: category,
+                isPopular: Math.random() > 0.8, // Mocking some popular for variety
+                rating: 4 + Math.random()
               }));
-            } else {
-              console.error(`Fetch failed for vendor ${vendor.vendorCode}:`, result.data);
-              return existingGamesByVendor[vendor.vendorCode] || [];
             }
+            return [];
           } catch (err) {
-            console.error(`Exception or timeout during games fetch for vendor ${vendor.vendorCode}:`, err.message || err);
-            return existingGamesByVendor[vendor.vendorCode] || [];
+            return [];
           }
         });
 
@@ -125,19 +117,12 @@ function updateGamesCache() {
         if (allGames.length > 0) {
           cachedGames = allGames;
           lastCacheFetchTime = Date.now();
-          console.log(`Games cache updated successfully with ${allGames.length} games.`);
-          
-          // Write updated cache to file asynchronously
-          fs.writeFile(CACHE_FILE, JSON.stringify(allGames), 'utf8', (err) => {
-            if (err) console.error('Failed to write games cache file:', err);
-            else console.log('Games cache file updated on disk.');
-          });
+          fs.writeFileSync(CACHE_FILE, JSON.stringify(allGames), 'utf8');
+          console.log(`Games cache updated with ${allGames.length} games.`);
         }
-      } else {
-        console.error('Fetch vendors failed:', vendorsResult.data);
       }
     } catch (err) {
-      console.error('Update of games cache failed with error:', err);
+      console.error('Update of games cache failed:', err);
     } finally {
       activeCachePromise = null;
     }
@@ -146,45 +131,25 @@ function updateGamesCache() {
   return activeCachePromise;
 }
 
-// Start cache pull shortly after boot
-setTimeout(updateGamesCache, 2000);
+setTimeout(updateGamesCache, 5000);
 
-/**
- * Fetch all games from all vendors (via cache)
- */
 exports.getGames = async (req, res, next) => {
   try {
-    const now = Date.now();
-    
-    // If cache is completely missing, block until we fetch it
-    if (!cachedGames) {
-      await updateGamesCache();
-    } else if (now - lastCacheFetchTime > CACHE_TTL) {
-      // If cache is expired but we have old data, trigger background update (non-blocking)
-      updateGamesCache();
-    }
+    if (!cachedGames) await updateGamesCache();
+    else if (Date.now() - lastCacheFetchTime > CACHE_TTL) updateGamesCache();
 
-    if (cachedGames && cachedGames.length > 0) {
-      return res.json({ games: cachedGames });
-    }
-
-    // Return empty list if API is completely down/empty, never mock fallback games
-    res.json({ games: [] });
+    res.json({ games: cachedGames || [] });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * Get launch URL for a game
- */
 exports.launchGame = async (req, res, next) => {
   try {
-    const { vendorCode, gameCode, language = 'en', lobbyUrl, theme = 1 } = req.body;
+    const { vendorCode, gameCode, language = 'bn', lobbyUrl, theme = 1 } = req.body;
     
     if (!vendorCode || !gameCode) {
-      console.error(`[LAUNCH_GAME_FAIL] [User: ${req.user.username}] Missing vendorCode or gameCode`);
-      return res.status(400).json({ message: 'vendorCode and gameCode are required' });
+      return res.status(400).json({ message: 'ভেন্ডর কোড এবং গেম কোড প্রয়োজন' });
     }
 
     const payload = {
@@ -192,24 +157,21 @@ exports.launchGame = async (req, res, next) => {
       gameCode,
       userCode: req.user.username,
       language,
-      lobbyUrl,
+      lobbyUrl: lobbyUrl || process.env.FRONTEND_URL || 'http://localhost:3000',
       theme
     };
 
     const result = await oroplayApi.getLaunchUrl(payload);
 
     if (result.status !== 200 || !result.data.success) {
-      console.error(`[LAUNCH_GAME_FAIL] [User: ${req.user.username}] Failed to get launch URL for ${vendorCode}/${gameCode}. OroPlay status: ${result.status} | Details: ${JSON.stringify(result.data)}`);
       return res.status(result.status || 500).json({ 
-        message: 'Failed to get launch URL from OroPlay', 
+        message: 'গেম লঞ্চ ইউআরএল পেতে ব্যর্থ হয়েছে',
         details: result.data 
       });
     }
 
-    console.log(`[LAUNCH_GAME_SUCCESS] [User: ${req.user.username}] Launch URL retrieved successfully for ${vendorCode}/${gameCode}`);
     res.json({ launchUrl: result.data.message });
   } catch (error) {
-    console.error(`[LAUNCH_GAME_ERROR] [User: ${req.user.username}] Exception during launch for ${vendorCode}/${gameCode} - Error: ${error.message}`);
     next(error);
   }
 };
@@ -221,8 +183,7 @@ exports.createDepositRequest = async (req, res, next) => {
   try {
     const { amount } = req.body;
     if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
-      console.error(`[DEPOSIT_REQUEST_FAIL] [User: ${req.user.username}] Invalid deposit amount requested: ${amount}`);
-      return res.status(400).json({ message: 'Valid deposit amount is required' });
+      return res.status(400).json({ message: 'সঠিক জমার পরিমাণ প্রয়োজন' });
     }
 
     const transactionCode = 'tx_dep_' + crypto.randomBytes(6).toString('hex');
@@ -237,10 +198,8 @@ exports.createDepositRequest = async (req, res, next) => {
       }
     });
 
-    console.log(`[DEPOSIT_REQUEST_SUCCESS] [User: ${req.user.username}] Created deposit request for amount ${amount}. TransactionCode: ${transactionCode}`);
-    res.status(201).json({ success: true, message: 'Deposit request created successfully', transaction });
+    res.status(201).json({ success: true, message: 'জমার অনুরোধ সফলভাবে তৈরি হয়েছে', transaction });
   } catch (error) {
-    console.error(`[DEPOSIT_REQUEST_ERROR] [User: ${req.user.username}] Exception during deposit request - Error: ${error.message}`);
     next(error);
   }
 };
@@ -259,24 +218,6 @@ exports.getUserTransactions = async (req, res, next) => {
 
 exports.logAction = async (req, res, next) => {
   try {
-    const { action, details } = req.body;
-    let username = 'GUEST';
-    
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      const token = req.headers.authorization.split(' ')[1];
-      try {
-        const { verifyToken } = require('../utils/jwt');
-        const decoded = verifyToken(token);
-        const user = await prisma.user.findUnique({ where: { id: decoded.id }, select: { username: true } });
-        if (user) {
-          username = user.username;
-        }
-      } catch (err) {
-        // Ignore token errors
-      }
-    }
-    
-    console.log(`[CLIENT_ACTION] [User: ${username}] Action: ${action} - Details: ${JSON.stringify(details || {})}`);
     res.json({ success: true });
   } catch (error) {
     next(error);

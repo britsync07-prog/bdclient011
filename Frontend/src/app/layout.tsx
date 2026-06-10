@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={dmSans.variable}>
+    <html lang="bn" className={dmSans.variable}>
       <body suppressHydrationWarning={true} className="bg-[#020617] text-slate-100 font-sans">
         <ErrorBoundary>
           <AppProviders>{children}</AppProviders>

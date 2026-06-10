@@ -540,7 +540,7 @@ export default function AdminDashboard() {
             </div>
             <div className="min-w-0">
               <p className="text-sm font-bold text-[#0F172A] truncate">{adminName}</p>
-              <p className="text-[10px] text-slate-400 font-medium">Administrator</p>
+              <p className="text-[10px] text-slate-400 font-medium">প্রশাসক</p>
             </div>
           </div>
           <button
@@ -644,10 +644,10 @@ export default function AdminDashboard() {
                       <table className="w-full text-left text-sm">
                         <thead>
                           <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
-                            <th className="px-6 py-4">Player</th>
-                            <th className="px-6 py-4">Balance</th>
+                            <th className="px-6 py-4">খেলোয়াড়</th>
+                            <th className="px-6 py-4">ব্যালেন্স</th>
                             <th className="px-6 py-4">KYC Status</th>
-                            <th className="px-6 py-4 text-right">Actions</th>
+                            <th className="px-6 py-4 text-right">অ্যাকশন</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -739,11 +739,11 @@ export default function AdminDashboard() {
                       <table className="w-full text-left text-sm">
                         <thead>
                           <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
-                            <th className="px-6 py-4">Type</th>
-                            <th className="px-6 py-4">User</th>
-                            <th className="px-6 py-4">Amount</th>
-                            <th className="px-6 py-4">Status</th>
-                            <th className="px-6 py-4 text-right">Actions</th>
+                            <th className="px-6 py-4">ধরণ</th>
+                            <th className="px-6 py-4">ইউজার</th>
+                            <th className="px-6 py-4">পরিমাণ</th>
+                            <th className="px-6 py-4">অবস্থা</th>
+                            <th className="px-6 py-4 text-right">অ্যাকশন</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
