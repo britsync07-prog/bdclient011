@@ -192,14 +192,11 @@ exports.setGameRTP = async (req, res, next) => {
     console.log(`[ADMIN_RTP_SET_SUCCESS] [Admin: ${req.user.username}] Successfully set RTP for user ${username} on vendor ${vendorCode} to ${rtp}%`);
     res.json({ message: 'RTP set successfully', data: result.data });
   } catch (error) {
-<<<<<<< HEAD
-=======
     if (error instanceof z.ZodError || error.name === 'ZodError') {
       console.warn(`[ADMIN_RTP_SET_FAIL] [Admin: ${req.user.username}] Validation failed for set RTP request`);
       return res.status(400).json({ errors: error.errors || error.issues });
     }
     console.error(`[ADMIN_RTP_SET_ERROR] [Admin: ${req.user.username}] Exception setting game RTP - Error: ${error.message}`);
->>>>>>> origin/testing-improvement-kyc-validation-8003940091528641551
     next(error);
   }
 };
