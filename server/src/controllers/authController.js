@@ -6,7 +6,7 @@ const crypto = require('crypto');
 
 const registerSchema = z.object({
   username: z.string().min(3).max(20),
-  password: z.string().min(6),
+  password: z.string().min(8, "Password must be at least 8 characters long").regex(/[A-Z]/, "Password must contain at least one uppercase letter").regex(/[0-9]/, "Password must contain at least one number").regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
 });
 
 const loginSchema = z.object({
@@ -54,7 +54,7 @@ exports.register = async (req, res, next) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.warn(`[AUTH_REGISTER_FAIL] Registration input validation failed for: ${req.body?.username || 'unknown'}`);
-      return res.status(400).json({ errors: error.errors });
+      return res.status(400).json({ message: error.errors[0]?.message || "Invalid input", errors: error.errors });
     }
     console.error(`[AUTH_REGISTER_ERROR] Exception during registration: ${error.message}`);
     next(error);
@@ -87,7 +87,7 @@ exports.login = async (req, res, next) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.warn(`[AUTH_LOGIN_FAIL] Login input validation failed for: ${req.body?.username || 'unknown'}`);
-      return res.status(400).json({ errors: error.errors });
+      return res.status(400).json({ message: error.errors[0]?.message || "Invalid input", errors: error.errors });
     }
     console.error(`[AUTH_LOGIN_ERROR] Exception during login: ${error.message}`);
     next(error);
