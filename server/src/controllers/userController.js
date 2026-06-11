@@ -1,7 +1,10 @@
+const { paginationSchema } = require('../utils/validation');
 const fs = require('fs');
 const path = require('path');
 const oroplayApi = require('../utils/oroplayApi');
 const SettingService = require('../services/SettingService');
+const crypto = require('crypto');
+const prisma = require('../config/db');
 
 exports.getPublicSettings = async (req, res, next) => {
   try {
@@ -176,9 +179,6 @@ exports.launchGame = async (req, res, next) => {
   }
 };
 
-const crypto = require('crypto');
-const prisma = require('../config/db');
-
 exports.createDepositRequest = async (req, res, next) => {
   try {
     const { amount } = req.body;
@@ -206,11 +206,31 @@ exports.createDepositRequest = async (req, res, next) => {
 
 exports.getUserTransactions = async (req, res, next) => {
   try {
-    const transactions = await prisma.transaction.findMany({
-      where: { userId: req.user.id },
-      orderBy: { createdAt: 'desc' }
+    const { page, limit } = paginationSchema.parse(req.query);
+    const skip = (page - 1) * limit;
+
+    const [transactions, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where: { userId: req.user.id },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.transaction.count({
+        where: { userId: req.user.id },
+      }),
+    ]);
+
+    res.json({
+      success: true,
+      data: transactions,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
     });
-    res.json({ success: true, data: transactions });
   } catch (error) {
     next(error);
   }

@@ -28,6 +28,9 @@ app.get('/health', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
+  if (err instanceof require('zod').ZodError) {
+    return res.status(400).json({ success: false, errors: err.errors });
+  }
   console.error(err.stack);
   res.status(err.status || 500).json({
     message: err.message || 'Internal Server Error',
