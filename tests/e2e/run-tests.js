@@ -510,6 +510,15 @@ async function runAllTiers() {
   const approveRes = await post(`${BACKEND_URL}/api/admin/financial-requests/${manualTx.id}/approve`, {}, { 'Authorization': `Bearer ${adminToken}` });
   assertTest(approveRes.status === 200 && approveRes.data?.message?.includes('approved successfully'), 'Admin approves deposit request');
 
+  // Re-approve the same financial request (should fail)
+  const reApproveRes = await post(`${BACKEND_URL}/api/admin/financial-requests/${manualTx.id}/approve`, {}, { "Authorization": `Bearer ${adminToken}` });
+  assertTest(reApproveRes.status === 400 && reApproveRes.data?.message === "Invalid or already processed transaction", "Re-approving an already SUCCESS transaction fails with 400");
+
+  // Approve a non-existent financial request (should fail)
+  const nonExistentId = 999999;
+  const failApproveRes = await post(`${BACKEND_URL}/api/admin/financial-requests/${nonExistentId}/approve`, {}, { "Authorization": `Bearer ${adminToken}` });
+  assertTest(failApproveRes.status === 400 && failApproveRes.data?.message === "Invalid or already processed transaction", "Approving a non-existent transaction ID fails with 400");
+
   // Check balance after manual deposit approval (Starts at 10000 + 5000 = 15000)
   profile = await get(`${BACKEND_URL}/api/user/profile`, { 'Authorization': `Bearer ${realUserToken}` });
   assertTest(Number(profile.data?.balance) === 15000, `Realuser balance is 15000 after deposit approval (got: ${profile.data?.balance})`);
