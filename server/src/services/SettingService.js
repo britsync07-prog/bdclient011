@@ -29,17 +29,45 @@ class SettingService {
    * Update multiple settings
    */
   static async updateSettings(settingsObj) {
-    const updates = [];
+    const keys = Object.keys(settingsObj);
+    if (keys.length === 0) return this.getAllSettings();
+
+    const existingSettings = await prisma.siteSetting.findMany({
+      where: { key: { in: keys } }
+    });
+
+    const existingMap = new Map(existingSettings.map(s => [s.key, s]));
+    const toCreate = [];
+    const toUpdate = [];
+
     for (const [key, value] of Object.entries(settingsObj)) {
-      updates.push(
-        prisma.siteSetting.upsert({
-          where: { key },
-          update: { value },
-          create: { key, value }
-        })
-      );
+      const existing = existingMap.get(key);
+      if (existing) {
+        if (existing.value !== value) {
+          toUpdate.push(
+            prisma.siteSetting.update({
+              where: { id: existing.id },
+              data: { value }
+            })
+          );
+        }
+      } else {
+        toCreate.push({ key, value });
+      }
     }
-    await prisma.$transaction(updates);
+
+    const operations = [];
+    if (toCreate.length > 0) {
+      operations.push(prisma.siteSetting.createMany({ data: toCreate }));
+    }
+    if (toUpdate.length > 0) {
+      operations.push(...toUpdate);
+    }
+
+    if (operations.length > 0) {
+      await prisma.$transaction(operations);
+    }
+
     return this.getAllSettings();
   }
 
