@@ -39,6 +39,7 @@ import { GameGrid } from "./GameGrid";
 import { Banners } from "../banners/Banners";
 import { logClientAction } from "@/lib/logger";
 
+import { escapeHtml } from "@/utils/security";
 import { TOAST_DURATION } from "@/constants";
 import { Game, Category } from "@/types/game";
 import { createFavoriteMessage, renderGameErrorToWindow } from "@/utils/helpers";
