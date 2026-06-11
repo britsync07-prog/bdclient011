@@ -148,6 +148,7 @@ exports.getGames = async (req, res, next) => {
 };
 
 exports.launchGame = async (req, res, next) => {
+  const { vendorCode, gameCode, language = 'en', lobbyUrl, theme = 1 } = req.body;
   try {
     const { vendorCode, gameCode, language = 'bn', lobbyUrl, theme = 1 } = req.body;
     
