@@ -82,54 +82,54 @@ export const ARIA_LABELS = {
 } as const;
 
 export const FOOTER_MAIN_MESSAGES = {
-    PREMIUM_GAMING_EXCELLENCE: "Premium Gaming Excellence",
-    EST: "EST."
+    PREMIUM_GAMING_EXCELLENCE: "২০২৬ সালে ক্রিকেট বেটিংয়ের জন্য পিবিসি৮৮ ক্যাসিনো সেরা পছন্দ। আমাদের গেমগুলি এবং বিভাগগুলি চমৎকার সেবা প্রদান করে।",
+    EST: "প্রতিষ্ঠিত."
 };
 
 export const FOOTER_BOTTOM_MESSAGES = {
-    PLAY_RESPONSIBLY: "Play Responsibly",
-    PLAY_RESPONSIBLY_DETAILS: "Gaming should be entertaining and fun. If you feel you may have a gambling problem, please seek professional help immediately.",
-    OVER18_ONLY: "18+ Only",
-    LICENSED_REGULATED: "Licensed & Regulated",
-    SECURE_GAMING: "Secure Gaming",
-    ROYAL_CASINO_CRAFTED: "Royal Casino Crafted with Next.js, TypeScript & Tailwind CSS.",
-    PREMIUM_GAMING_EXPERIENCE: "Premium gaming experience powered by cutting-edge technology"
+    PLAY_RESPONSIBLY: "দায়িত্বশীল গেম্বলিং",
+    PLAY_RESPONSIBLY_DETAILS: "গেম খেলা বিনোদন এবং মজার জন্য হওয়া উচিত। আপনি যদি মনে করেন আপনার জুয়ার সমস্যা হতে পারে, অনুগ্রহ করে অবিলম্বে পেশাদার সাহায্য নিন।",
+    OVER18_ONLY: "১৮+ শুধুমাত্র",
+    LICENSED_REGULATED: "লাইসেন্সপ্রাপ্ত এবং নিয়ন্ত্রিত",
+    SECURE_GAMING: "নিরাপদ গেমিং",
+    ROYAL_CASINO_CRAFTED: "২০২৬ পিবিসি৮৮ ক্যাসিনো - পিবিসি৮৮ স্পোর্টস বেটিং লবি।",
+    PREMIUM_GAMING_EXPERIENCE: "অত্যাধুনিক প্রযুক্তি দ্বারা চালিত প্রিমিয়াম গেমিং অভিজ্ঞতা"
 };
 
 export const GAME_CARD_HEADER = {
-    NEW: "NEW",
-    HOT: "HOT",
-    PLAY: "Play"
+    NEW: "নতুন",
+    HOT: "গরম",
+    PLAY: "খেলুন"
 };
 
 export const GAME_GRID_MESSAGES = {
-    SHOWING_GAMES: "Showing {gamesLength} of {totalGames} games",
-    SHOW_ALL_GAMES: "Show all games"
+    SHOWING_GAMES: "{totalGames} টি গেমের মধ্যে {gamesLength} টি দেখানো হচ্ছে",
+    SHOW_ALL_GAMES: "সব গেম দেখান"
 };
 
 export const HEADER_MESSAGES = {
-    ROYAL_CASINO: "ROYAL CASINO",
-    PREMIUM_GAMING_DESTINATION: "Premium Gaming Destination",
-    GAMES: "GAMES",
-    FAVORITES: "FAVORITES",
-    VIP_MEMBER: "VIP MEMBER"
+    ROYAL_CASINO: "পিবিসি৮৮ ক্যাসিনো",
+    PREMIUM_GAMING_DESTINATION: "সেরা ক্রিকেট বেটিং এবং ক্যাসিনো লবি",
+    GAMES: "গেমস",
+    FAVORITES: "পছন্দসই",
+    VIP_MEMBER: "ভিআইপি মেম্বার"
 };
 
 export const ERROR_BOUNDARY_MESSAGES = {
-  SOMETHING_WENT_WRONG: "Oops! Something went wrong",
-  SOMETHING_UNEXPECTED_HAPPENED: "We're sorry, but something unexpected happened.",
-  RELOAD_PAGE: "Reload Page",
+  SOMETHING_WENT_WRONG: "ওহ! কিছু ভুল হয়েছে",
+  SOMETHING_UNEXPECTED_HAPPENED: "আমরা দুঃখিত, কিন্তু একটি অপ্রত্যাশিত সমস্যা ঘটেছে।",
+  RELOAD_PAGE: "পেজ রিলোড করুন",
 };
 
 export const FILTER_CONTROLS = {
-  FILTER_GAMES: "Filter Games",
-  FAVORITES_ONLY: "Favorites Only",
-  CLEAR_ALL: "Clear All",
+  FILTER_GAMES: "গেম ফিল্টার",
+  FAVORITES_ONLY: "শুধুমাত্র পছন্দসই",
+  CLEAR_ALL: "সব মুছুন",
 };
 
 export const GAME_CARD_CONTEXT = {
-  BY: "By",
-  PREMIUM: "PREMIUM",
-  PLAY_NOW: "PLAY NOW",
-  OUT_OF_FIVE_STARS: "out of 5 stars",
+  BY: "কর্তৃক",
+  PREMIUM: "প্রিমিয়াম",
+  PLAY_NOW: "এখন খেলুন",
+  OUT_OF_FIVE_STARS: "৫ স্টারের মধ্যে",
 };

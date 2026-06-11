@@ -714,16 +714,16 @@ const CasinoGameLobby: React.FC = () => {
     icon: React.ReactNode;
     value: Category | "favorites" | "sports" | "promotions" | "vip";
   }[] = [
-    { label: currentLanguage === "BN" ? "লবি" : "All Lobby", icon: <LayoutDashboard size={18} />, value: "all" },
-    { label: currentLanguage === "BN" ? "স্পোর্টস" : "Sports Book", icon: <Trophy size={18} />, value: "sports" },
-    { label: currentLanguage === "BN" ? "লাইভ ক্যাসিনো" : "Live Casino", icon: <Gamepad2 size={18} />, value: "live" },
-    { label: currentLanguage === "BN" ? "স্লট" : "Slots Engine", icon: <Cherry size={18} />, value: "slots" },
-    { label: currentLanguage === "BN" ? "টেবিল গেম" : "Table Games", icon: <Spade size={18} />, value: "table" },
-    { label: currentLanguage === "BN" ? "ফিশিং" : "Fishing", icon: <Anchor size={18} />, value: "fishing" },
-    { label: currentLanguage === "BN" ? "ক্র্যাশ গেম" : "Crash Games", icon: <Zap size={18} />, value: "crash" },
-    { label: currentLanguage === "BN" ? "অফার ও প্রমো" : "Promotions", icon: <Gift size={18} />, value: "promotions" },
-    { label: currentLanguage === "BN" ? "ভিআইপি ক্লাব" : "VIP Club", icon: <Crown size={18} />, value: "vip" },
-    { label: currentLanguage === "BN" ? "ফেভারিটস" : "Favorites", icon: <Star size={18} />, value: "favorites" },
+    { label: currentLanguage === "BN" ? "গরম খেলা" : "Hot Games", icon: <LayoutDashboard size={18} />, value: "all" },
+    { label: currentLanguage === "BN" ? "স্পোর্ট" : "Sport", icon: <Trophy size={18} />, value: "sports" },
+    { label: currentLanguage === "BN" ? "ক্যাসিনো" : "Casino", icon: <Gamepad2 size={18} />, value: "live" },
+    { label: currentLanguage === "BN" ? "স্লট" : "Slot", icon: <Cherry size={18} />, value: "slots" },
+    { label: currentLanguage === "BN" ? "টেবিল" : "Table", icon: <Spade size={18} />, value: "table" },
+    { label: currentLanguage === "BN" ? "ফিসিং" : "Fishing", icon: <Anchor size={18} />, value: "fishing" },
+    { label: currentLanguage === "BN" ? "ক্র্যাশ" : "Crash", icon: <Zap size={18} />, value: "crash" },
+    { label: currentLanguage === "BN" ? "প্রমোশন" : "Promotions", icon: <Gift size={18} />, value: "promotions" },
+    { label: currentLanguage === "BN" ? "আর্কেড" : "Arcade", icon: <Crown size={18} />, value: "vip" },
+    { label: currentLanguage === "BN" ? "প্রিয়" : "Favorites", icon: <Star size={18} />, value: "favorites" },
   ];
 
 
@@ -891,15 +891,15 @@ const CasinoGameLobby: React.FC = () => {
           <section className="px-4 sm:px-6 lg:px-8 py-2.5 bg-[#0b1329] border-b border-slate-800 shadow-sm" aria-label="Announcement banner">
             <div className="max-w-7xl mx-auto flex items-center gap-3 px-4 py-2 rounded-2xl bg-gradient-to-r from-blue-950/20 via-slate-900/50 to-slate-900/20 border border-slate-800 backdrop-blur-md">
               <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#3b82f6] text-white text-[10px] font-bold uppercase tracking-widest shrink-0 shadow-md shadow-[#3b82f6]/15 animate-pulse">
-               Notice
+               {currentLanguage === "BN" ? "বিজ্ঞপ্তি" : "Notice"}
              </span>
              <div className="marquee-container text-xs text-slate-300 font-semibold overflow-hidden">
                <div className="marquee-content whitespace-nowrap">
-                 {currentLanguage === "BN"
-                   ? "Welcome to PBBET -- Bangladesh's leading online casino & sportsbook! Get a 100% welcome bonus on your first deposit! Play verified Slots and Live dealer casino tables under OroPlay integration! Secure payments via Bkash, Nagad, Rocket!"
-                   : "Welcome to PBBET -- the premium iGaming platform in Bangladesh! Get a 100% welcome bonus on your first deposit! Join our VIP club and win weekly cashbacks! Experience the top-rated slot engines and live casino tables under OroPlay integration! Fair play & RNG certified payouts guaranteed!"}
-               </div>
-             </div>
+                  {currentLanguage === "BN"
+                    ? "📲 এক্সক্লুসিভ ৫০০ টাকা পুরস্কার পেতে অ্যাপে আসুন! আজই ডাউনলোড করুন! 💰"
+                    : "📲 Come to the app to get an exclusive 500 BDT reward! Download today! 💰"}
+                </div>
+              </div>
            </div>
          </section>
 
