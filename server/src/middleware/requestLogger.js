@@ -1,5 +1,3 @@
-const prisma = require('../config/db');
-
 // Mask sensitive fields
 const maskSensitive = (obj) => {
   if (!obj || typeof obj !== 'object') return obj;

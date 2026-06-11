@@ -1,5 +1,3 @@
-const prisma = require('./config/db');
-
 async function verify() {
   console.log('--- Phase 3 Verification ---');
 

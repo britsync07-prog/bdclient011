@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+const prisma = require('../config/db');
 const fs = require('fs');
 const path = require('path');
 const oroplayApi = require('../utils/oroplayApi');
@@ -29,7 +31,6 @@ let lastCacheFetchTime = 0;
 let activeCachePromise = null;
 
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour TTL
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const CACHE_FILE = path.join(__dirname, '../config/games-cache.json');
 
 // Attempt to load initial cache from disk on startup
@@ -179,9 +180,8 @@ exports.getGames = async (req, res, next) => {
  * Get launch URL for a game
  */
 exports.launchGame = async (req, res, next) => {
+  const { vendorCode, gameCode, language = 'en', lobbyUrl, theme = 1 } = req.body;
   try {
-    const { vendorCode, gameCode, language = 'en', lobbyUrl, theme = 1 } = req.body;
-    
     if (!vendorCode || !gameCode) {
       console.error(`[LAUNCH_GAME_FAIL] [User: ${req.user.username}] Missing vendorCode or gameCode`);
       return res.status(400).json({ message: 'vendorCode and gameCode are required' });
@@ -209,13 +209,10 @@ exports.launchGame = async (req, res, next) => {
     console.log(`[LAUNCH_GAME_SUCCESS] [User: ${req.user.username}] Launch URL retrieved successfully for ${vendorCode}/${gameCode}`);
     res.json({ launchUrl: result.data.message });
   } catch (error) {
-    console.error(`[LAUNCH_GAME_ERROR] [User: ${req.user.username}] Exception during launch for ${vendorCode}/${gameCode} - Error: ${error.message}`);
+    console.error(`[LAUNCH_GAME_ERROR] [User: ${req.user.username}] Exception during launch for ${vendorCode || 'unknown'}/${gameCode || 'unknown'} - Error: ${error.message}`);
     next(error);
   }
 };
-
-const crypto = require('crypto');
-const prisma = require('../config/db');
 
 exports.createDepositRequest = async (req, res, next) => {
   try {
