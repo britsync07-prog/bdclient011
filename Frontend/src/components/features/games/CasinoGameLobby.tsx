@@ -448,57 +448,56 @@ const CasinoGameLobby: React.FC = () => {
         // Open a blank tab immediately to avoid popup blockers and make launching feel instant
         const gameWin = window.open("about:blank", "_blank");
         if (gameWin) {
-          gameWin.document.write(`
-            <html>
-              <head>
-                <title>Loading ${game.name}...</title>
-                <style>
-                  body {
-                    background-color: #0b1329;
-                    color: #f8fafc;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    height: 100vh;
-                    margin: 0;
-                    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                  }
-                  .spinner {
-                    border: 4px solid rgba(59, 130, 246, 0.1);
-                    width: 48px;
-                    height: 48px;
-                    border-radius: 50%;
-                    border-left-color: #3b82f6;
-                    animation: spin 1s linear infinite;
-                    margin-bottom: 24px;
-                  }
-                  @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                  }
-                  .title {
-                    font-size: 18px;
-                    font-weight: 800;
-                    text-transform: uppercase;
-                    letter-spacing: 0.05em;
-                    color: #3b82f6;
-                  }
-                  .subtitle {
-                    color: #94a3b8;
-                    font-size: 12px;
-                    margin-top: 8px;
-                    font-weight: 500;
-                  }
-                </style>
-              </head>
-              <body>
-                <div class="spinner"></div>
-                <div class="title">Launching ${game.name}...</div>
-                <div class="subtitle">Securing game session connection. Please wait...</div>
-              </body>
-            </html>
-          `);
+          gameWin.document.title = `Loading ${game.name}...`;
+          gameWin.document.body.style.backgroundColor = "#0b1329";
+          gameWin.document.body.style.color = "#f8fafc";
+          gameWin.document.body.style.display = "flex";
+          gameWin.document.body.style.flexDirection = "column";
+          gameWin.document.body.style.justifyContent = "center";
+          gameWin.document.body.style.alignItems = "center";
+          gameWin.document.body.style.height = "100vh";
+          gameWin.document.body.style.margin = "0";
+          gameWin.document.body.style.fontFamily = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+
+          const style = gameWin.document.createElement("style");
+          style.textContent = `
+            .spinner {
+              border: 4px solid rgba(59, 130, 246, 0.1);
+              width: 48px;
+              height: 48px;
+              border-radius: 50%;
+              border-left-color: #3b82f6;
+              animation: spin 1s linear infinite;
+              margin-bottom: 24px;
+            }
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `;
+          gameWin.document.head.appendChild(style);
+
+          const spinner = gameWin.document.createElement("div");
+          spinner.className = "spinner";
+
+          const title = gameWin.document.createElement("div");
+          title.style.fontSize = "18px";
+          title.style.fontWeight = "800";
+          title.style.textTransform = "uppercase";
+          title.style.letterSpacing = "0.05em";
+          title.style.color = "#3b82f6";
+          title.textContent = `Launching ${game.name}...`;
+
+          const subtitle = gameWin.document.createElement("div");
+          subtitle.style.color = "#94a3b8";
+          subtitle.style.fontSize = "12px";
+          subtitle.style.marginTop = "8px";
+          subtitle.style.fontWeight = "500";
+          subtitle.textContent = "Securing game session connection. Please wait...";
+
+          gameWin.document.body.appendChild(spinner);
+          gameWin.document.body.appendChild(title);
+          gameWin.document.body.appendChild(subtitle);
         }
 
         try {
@@ -544,13 +543,49 @@ const CasinoGameLobby: React.FC = () => {
             
             // Show error in the open window
             if (gameWin) {
-              gameWin.document.body.innerHTML = `
-                <div style="background-color: #0b1329; color: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: system-ui, sans-serif; text-align: center; padding: 24px;">
-                  <div style="color: #ef4444; font-size: 20px; font-weight: 800; text-transform: uppercase;">Launch Failed</div>
-                  <div style="color: #cbd5e1; font-size: 14px; margin-top: 12px; max-width: 400px; line-height: 1.5;">${data.message || "Failed to launch game session. Please check your account status or balance."}</div>
-                  <button onclick="window.close()" style="margin-top: 24px; padding: 10px 20px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Close Window</button>
-                </div>
-              `;
+              gameWin.document.body.innerHTML = "";
+              gameWin.document.body.style.backgroundColor = "#0b1329";
+              gameWin.document.body.style.color = "#f8fafc";
+              gameWin.document.body.style.display = "flex";
+              gameWin.document.body.style.flexDirection = "column";
+              gameWin.document.body.style.justifyContent = "center";
+              gameWin.document.body.style.alignItems = "center";
+              gameWin.document.body.style.height = "100vh";
+              gameWin.document.body.style.margin = "0";
+              gameWin.document.body.style.fontFamily = "system-ui, sans-serif";
+              gameWin.document.body.style.textAlign = "center";
+              gameWin.document.body.style.padding = "24px";
+
+              const title = gameWin.document.createElement("div");
+              title.style.color = "#ef4444";
+              title.style.fontSize = "20px";
+              title.style.fontWeight = "800";
+              title.style.textTransform = "uppercase";
+              title.textContent = "Launch Failed";
+
+              const message = gameWin.document.createElement("div");
+              message.style.color = "#cbd5e1";
+              message.style.fontSize = "14px";
+              message.style.marginTop = "12px";
+              message.style.maxWidth = "400px";
+              message.style.lineHeight = "1.5";
+              message.textContent = data.message || "Failed to launch game session. Please check your account status or balance.";
+
+              const closeBtn = gameWin.document.createElement("button");
+              closeBtn.style.marginTop = "24px";
+              closeBtn.style.padding = "10px 20px";
+              closeBtn.style.backgroundColor = "#3b82f6";
+              closeBtn.style.color = "white";
+              closeBtn.style.border = "none";
+              closeBtn.style.borderRadius = "8px";
+              closeBtn.style.fontWeight = "bold";
+              closeBtn.style.cursor = "pointer";
+              closeBtn.textContent = "Close Window";
+              closeBtn.onclick = () => gameWin.close();
+
+              gameWin.document.body.appendChild(title);
+              gameWin.document.body.appendChild(message);
+              gameWin.document.body.appendChild(closeBtn);
             }
           }
         } catch (err) {
@@ -559,13 +594,47 @@ const CasinoGameLobby: React.FC = () => {
           showToastMessage("Error launching game");
           
           if (gameWin) {
-            gameWin.document.body.innerHTML = `
-              <div style="background-color: #0b1329; color: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: system-ui, sans-serif; text-align: center; padding: 24px;">
-                <div style="color: #ef4444; font-size: 20px; font-weight: 800; text-transform: uppercase;">Connection Error</div>
-                <div style="color: #cbd5e1; font-size: 14px; margin-top: 12px;">Failed to connect to the operator server.</div>
-                <button onclick="window.close()" style="margin-top: 24px; padding: 10px 20px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Close Window</button>
-              </div>
-            `;
+            gameWin.document.body.innerHTML = "";
+            gameWin.document.body.style.backgroundColor = "#0b1329";
+            gameWin.document.body.style.color = "#f8fafc";
+            gameWin.document.body.style.display = "flex";
+            gameWin.document.body.style.flexDirection = "column";
+            gameWin.document.body.style.justifyContent = "center";
+            gameWin.document.body.style.alignItems = "center";
+            gameWin.document.body.style.height = "100vh";
+            gameWin.document.body.style.margin = "0";
+            gameWin.document.body.style.fontFamily = "system-ui, sans-serif";
+            gameWin.document.body.style.textAlign = "center";
+            gameWin.document.body.style.padding = "24px";
+
+            const title = gameWin.document.createElement("div");
+            title.style.color = "#ef4444";
+            title.style.fontSize = "20px";
+            title.style.fontWeight = "800";
+            title.style.textTransform = "uppercase";
+            title.textContent = "Connection Error";
+
+            const message = gameWin.document.createElement("div");
+            message.style.color = "#cbd5e1";
+            message.style.fontSize = "14px";
+            message.style.marginTop = "12px";
+            message.textContent = "Failed to connect to the operator server.";
+
+            const closeBtn = gameWin.document.createElement("button");
+            closeBtn.style.marginTop = "24px";
+            closeBtn.style.padding = "10px 20px";
+            closeBtn.style.backgroundColor = "#3b82f6";
+            closeBtn.style.color = "white";
+            closeBtn.style.border = "none";
+            closeBtn.style.borderRadius = "8px";
+            closeBtn.style.fontWeight = "bold";
+            closeBtn.style.cursor = "pointer";
+            closeBtn.textContent = "Close Window";
+            closeBtn.onclick = () => gameWin.close();
+
+            gameWin.document.body.appendChild(title);
+            gameWin.document.body.appendChild(message);
+            gameWin.document.body.appendChild(closeBtn);
           }
         }
       }
