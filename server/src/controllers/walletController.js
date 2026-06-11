@@ -1,12 +1,13 @@
 const prisma = require('../config/db');
 
 const findUserByCode = async (client, userCode) => {
-  const parsedId = parseInt(userCode, 10);
-  if (!isNaN(parsedId) && String(parsedId) === String(userCode)) {
+  // If userCode is numeric, treat it as an ID
+  if (/^\d+$/.test(userCode)) {
     return await client.user.findUnique({
-      where: { id: parsedId }
+      where: { id: parseInt(userCode, 10) }
     });
   }
+  // Otherwise, treat it as a username
   return await client.user.findUnique({
     where: { username: String(userCode) }
   });
@@ -85,18 +86,18 @@ exports.handleTransaction = async (req, res) => {
       vendorCode
     } = req.body;
 
-    // 1. Check if transaction already exists
+    // 1. Check if transaction already exists, include user to avoid redundant query
     const existingTransaction = await prisma.transaction.findUnique({
-      where: { transactionCode }
+      where: { transactionCode },
+      include: { user: true }
     });
 
     if (existingTransaction) {
-      // If it exists, check if it belongs to the same user and return current balance
-      const user = await findUserByCode(prisma, userCode);
+      // If it exists, return current balance of the associated user
       return res.json({
         success: true,
-        message: user ? user.balance.toString() : "0",
-        errorCode: OROPLAY_ERROR.NO_ERROR // OroPlay often prefers NO_ERROR for idempotency if already processed
+        message: existingTransaction.user ? existingTransaction.user.balance.toString() : "0",
+        errorCode: OROPLAY_ERROR.NO_ERROR
       });
     }
 
@@ -129,7 +130,6 @@ exports.handleTransaction = async (req, res) => {
           type: transAmount < 0 ? 'BET' : 'WIN',
           status: 'SUCCESS',
           transactionCode: transactionCode,
-          // We could add game information to Transaction model if needed
         }
       });
 
@@ -174,6 +174,14 @@ exports.handleBatchTransactions = async (req, res) => {
         errorCode: OROPLAY_ERROR.GENERAL_ERROR
       });
     }
+
+    // Pre-fetch all existing transactions in this batch to avoid N+1 queries
+    const transactionCodes = transactions.map(t => t.transactionCode);
+    const existingTransactions = await prisma.transaction.findMany({
+      where: { transactionCode: { in: transactionCodes } },
+      select: { transactionCode: true }
+    });
+    const existingCodesSet = new Set(existingTransactions.map(t => t.transactionCode));
 
     const result = await prisma.$transaction(async (tx) => {
       const user = await findUserByCode(tx, userCode);
