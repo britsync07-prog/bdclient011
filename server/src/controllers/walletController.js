@@ -182,16 +182,27 @@ exports.handleBatchTransactions = async (req, res) => {
         throw { code: OROPLAY_ERROR.USER_DOES_NOT_EXIST, message: 'User does not exist' };
       }
 
+      const incomingCodes = transactions.map(t => t.transactionCode);
+      const existingTransactions = await tx.transaction.findMany({
+        where: {
+          transactionCode: { in: incomingCodes }
+        },
+        select: { transactionCode: true }
+      });
+
+      const existingCodesSet = new Set(existingTransactions.map(t => t.transactionCode));
+      const processedCodesInBatch = new Set();
+
       let currentBalance = parseFloat(user.balance);
+      const newTransactionsData = [];
 
       for (const trans of transactions) {
         const { transactionCode, amount } = trans;
 
-        // Skip if duplicate (idempotency)
-        const exists = await tx.transaction.findUnique({
-          where: { transactionCode }
-        });
-        if (exists) continue;
+        // Skip if already in DB or already processed in this batch (idempotency)
+        if (existingCodesSet.has(transactionCode) || processedCodesInBatch.has(transactionCode)) {
+          continue;
+        }
 
         const transAmount = parseFloat(amount);
         currentBalance += transAmount;
@@ -200,14 +211,20 @@ exports.handleBatchTransactions = async (req, res) => {
           throw { code: OROPLAY_ERROR.INSUFFICIENT_USER_BALANCE, message: 'Insufficient balance during batch processing' };
         }
 
-        await tx.transaction.create({
-          data: {
-            userId: user.id,
-            amount: transAmount,
-            type: transAmount < 0 ? 'BET' : 'WIN',
-            status: 'SUCCESS',
-            transactionCode: transactionCode
-          }
+        newTransactionsData.push({
+          userId: user.id,
+          amount: transAmount,
+          type: transAmount < 0 ? 'BET' : 'WIN',
+          status: 'SUCCESS',
+          transactionCode: transactionCode
+        });
+
+        processedCodesInBatch.add(transactionCode);
+      }
+
+      if (newTransactionsData.length > 0) {
+        await tx.transaction.createMany({
+          data: newTransactionsData
         });
       }
 
