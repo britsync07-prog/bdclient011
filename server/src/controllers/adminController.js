@@ -1,4 +1,5 @@
 const prisma = require('../config/db');
+const { paginationSchema } = require('../utils/validation');
 const oroplayApi = require('../utils/oroplayApi');
 const { z } = require('zod');
 
@@ -18,8 +19,7 @@ const setRTPSchema = z.object({
  */
 exports.getUsers = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const { page, limit } = paginationSchema.parse(req.query);
     const skip = (page - 1) * limit;
 
     const [users, total] = await Promise.all([
@@ -70,11 +70,6 @@ exports.updateUserKYC = async (req, res, next) => {
     console.log(`[ADMIN_KYC_UPDATE] [Admin: ${req.user.username}] Updated User ${user.username} (ID: ${userId}) KYC status to ${kycStatus}`);
     res.json({ message: `KYC status updated to ${kycStatus}`, user: { id: user.id, username: user.username, kycStatus: user.kycStatus } });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.warn(`[ADMIN_KYC_UPDATE_FAIL] [Admin: ${req.user.username}] Validation failed for user ${req.params.userId} KYC update`);
-      return res.status(400).json({ errors: error.errors });
-    }
-    console.error(`[ADMIN_KYC_UPDATE_ERROR] [Admin: ${req.user.username}] Exception updating KYC for user ${req.params.userId} - Error: ${error.message}`);
     next(error);
   }
 };
@@ -84,23 +79,44 @@ exports.updateUserKYC = async (req, res, next) => {
  */
 exports.getFinancialRequests = async (req, res, next) => {
   try {
-    const requests = await prisma.transaction.findMany({
-      where: {
-        status: 'PENDING',
-        type: { in: ['DEPOSIT', 'WITHDRAWAL'] },
-      },
-      include: {
-        user: {
-          select: {
-            username: true,
-            balance: true,
+    const { page, limit } = paginationSchema.parse(req.query);
+    const skip = (page - 1) * limit;
+
+    const [requests, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where: {
+          status: 'PENDING',
+          type: { in: ['DEPOSIT', 'WITHDRAWAL'] },
+        },
+        include: {
+          user: {
+            select: {
+              username: true,
+              balance: true,
+            },
           },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.transaction.count({
+        where: {
+          status: 'PENDING',
+          type: { in: ['DEPOSIT', 'WITHDRAWAL'] },
+        },
+      }),
+    ]);
 
-    res.json(requests);
+    res.json({
+      requests,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -171,11 +187,6 @@ exports.setGameRTP = async (req, res, next) => {
     console.log(`[ADMIN_RTP_SET_SUCCESS] [Admin: ${req.user.username}] Successfully set RTP for user ${username} on vendor ${vendorCode} to ${rtp}%`);
     res.json({ message: 'RTP set successfully', data: result.data });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.warn(`[ADMIN_RTP_SET_FAIL] [Admin: ${req.user.username}] Validation failed for set RTP request`);
-      return res.status(400).json({ errors: error.errors });
-    }
-    console.error(`[ADMIN_RTP_SET_ERROR] [Admin: ${req.user.username}] Exception setting game RTP - Error: ${error.message}`);
     next(error);
   }
 };
