@@ -592,6 +592,47 @@ const CasinoGameLobby: React.FC = () => {
     [toggleFavorite, showToastMessage]
   );
 
+  const activeChip = state.showFavoritesOnly
+    ? "favorites"
+    : state.selectedCategory;
+  const isCategoryActive = useCallback((value: string) => {
+    if (value === "favorites") return activeChip === "favorites";
+    if (value === "sports") return sportsModalOpen;
+    if (value === "promotions") return promotionsModalOpen;
+    if (value === "vip") return vipModalOpen;
+    return activeChip === value;
+  }, [activeChip, sportsModalOpen, promotionsModalOpen, vipModalOpen]);
+
+  const handleCategoryClick = useCallback((value: string) => {
+    logClientAction("Click Category Chip", { category: value });
+
+    switch (value) {
+      case "favorites":
+        if (!state.showFavoritesOnly) toggleFavoritesOnly();
+        break;
+      case "sports":
+        setSportsModalOpen(true);
+        break;
+      case "promotions":
+        setPromotionsModalOpen(true);
+        break;
+      case "vip":
+        setVipModalOpen(true);
+        break;
+      default:
+        if (state.showFavoritesOnly) toggleFavoritesOnly();
+        setCategory(value as Category);
+        break;
+    }
+  }, [
+    state.showFavoritesOnly,
+    toggleFavoritesOnly,
+    setCategory,
+    setSportsModalOpen,
+    setPromotionsModalOpen,
+    setVipModalOpen,
+  ]);
+
   if (state.isLoading) {
     return <LoadingSpinner />;
   }
@@ -615,9 +656,6 @@ const CasinoGameLobby: React.FC = () => {
     { label: currentLanguage === "BN" ? "ফেভারিটস" : "Favorites", icon: <Star size={18} />, value: "favorites" },
   ];
 
-  const activeChip = state.showFavoritesOnly
-    ? "favorites"
-    : state.selectedCategory;
 
   const currentLeaderboardList =
     activeLeaderboardTab === "recent"
@@ -878,32 +916,8 @@ const CasinoGameLobby: React.FC = () => {
                 key={value}
                 label={label}
                 icon={icon}
-                active={
-                  value === "favorites"
-                    ? activeChip === "favorites"
-                    : value === "sports"
-                    ? sportsModalOpen
-                    : value === "promotions"
-                    ? promotionsModalOpen
-                    : value === "vip"
-                    ? vipModalOpen
-                    : activeChip === value
-                }
-                onClick={() => {
-                  logClientAction("Click Category Chip", { category: value });
-                  if (value === "favorites") {
-                    if (!state.showFavoritesOnly) toggleFavoritesOnly();
-                  } else if (value === "sports") {
-                    setSportsModalOpen(true);
-                  } else if (value === "promotions") {
-                    setPromotionsModalOpen(true);
-                  } else if (value === "vip") {
-                    setVipModalOpen(true);
-                  } else {
-                    if (state.showFavoritesOnly) toggleFavoritesOnly();
-                    setCategory(value as Category);
-                  }
-                }}
+                active={isCategoryActive(value)}
+                onClick={() => handleCategoryClick(value)}
               />
             ))}
           </div>
