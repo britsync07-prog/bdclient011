@@ -19,3 +19,13 @@ export function isDuplicateTransaction(code: string): boolean {
 export function markTransaction(code: string): void {
   processedTransactions.add(code);
 }
+
+/**
+ * Resets the store to its initial state.
+ * Primarily used for testing purposes.
+ */
+export function resetStore(): void {
+  balances.clear();
+  balances.set("testuser1", 10000);
+  processedTransactions.clear();
+}
