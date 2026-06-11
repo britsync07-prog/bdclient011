@@ -1,5 +1,3 @@
-const prisma = require('../config/db');
-
 /**
  * Middleware to verify OroPlay Basic Auth
  */
