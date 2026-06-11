@@ -62,16 +62,7 @@ function updateGamesCache() {
       const vendorsResult = await oroplayApi.getVendors();
       if (vendorsResult.status === 200 && vendorsResult.data?.success) {
         const vendors = vendorsResult.data.message;
-        const existingGamesByVendor = {};
-        if (cachedGames && Array.isArray(cachedGames)) {
-          for (const game of cachedGames) {
-            const vcode = game.vendorCode;
-            if (!existingGamesByVendor[vcode]) {
-              existingGamesByVendor[vcode] = [];
-            }
-            existingGamesByVendor[vcode].push(game);
-          }
-        }
+        const existingGamesByVendor = Array.isArray(cachedGames) ? Object.groupBy(cachedGames, game => game.vendorCode) : {};
 
         const mapLimit = async (array, limit, fn) => {
           const results = [];
