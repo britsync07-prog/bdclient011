@@ -267,9 +267,8 @@ exports.logAction = async (req, res, next) => {
       try {
         const { verifyToken } = require('../utils/jwt');
         const decoded = verifyToken(token);
-        const user = await prisma.user.findUnique({ where: { id: decoded.id }, select: { username: true } });
-        if (user) {
-          username = user.username;
+        if (decoded && decoded.username) {
+          username = decoded.username;
         }
       } catch (err) {
         // Ignore token errors

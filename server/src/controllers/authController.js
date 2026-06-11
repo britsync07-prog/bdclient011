@@ -49,7 +49,7 @@ exports.register = async (req, res, next) => {
         role: user.role,
         balance: user.balance,
       },
-      token: signToken(user.id),
+      token: signToken(user.id, user.username, user.role),
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -82,7 +82,7 @@ exports.login = async (req, res, next) => {
         role: user.role,
         balance: user.balance,
       },
-      token: signToken(user.id),
+      token: signToken(user.id, user.username, user.role),
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
