@@ -18,6 +18,11 @@ exports.protect = async (req, res, next) => {
   try {
     const decoded = verifyToken(token);
 
+    // Optimization: If we only need id and username and role, we can potentially skip the DB lookup.
+    // However, balance changes frequently and we don't want to store it in JWT.
+    // Also role might change.
+    // For now, we keep the DB lookup but we know that decoded has username and role.
+
     req.user = await prisma.user.findUnique({
       where: { id: decoded.id },
       select: {
