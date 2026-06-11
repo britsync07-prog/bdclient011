@@ -206,10 +206,10 @@ exports.launchGame = async (req, res, next) => {
       });
     }
 
-    console.log(`[LAUNCH_GAME_SUCCESS] [User: ${req.user.username}] Launch URL retrieved successfully for ${vendorCode}/${gameCode}`);
+    console.log(`[LAUNCH_GAME_SUCCESS] [User: ${req.user.username}] Launch URL retrieved successfully for ${req.body.vendorCode}/${req.body.gameCode}`);
     res.json({ launchUrl: result.data.message });
   } catch (error) {
-    console.error(`[LAUNCH_GAME_ERROR] [User: ${req.user.username}] Exception during launch for ${vendorCode}/${gameCode} - Error: ${error.message}`);
+    console.error(`[LAUNCH_GAME_ERROR] [User: ${req.user.username}] Exception during launch for ${req.body.vendorCode}/${req.body.gameCode} - Error: ${error.message}`);
     next(error);
   }
 };
