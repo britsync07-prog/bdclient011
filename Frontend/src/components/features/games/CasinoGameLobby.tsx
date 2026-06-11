@@ -586,33 +586,9 @@ const CasinoGameLobby: React.FC = () => {
     [toggleFavorite, favorites, showToastMessage, state.games]
   );
 
-  if (state.isLoading) {
-    return <LoadingSpinner />;
-  }
-
-
-
-  const categoryChips: {
-    label: string;
-    icon: React.ReactNode;
-    value: Category | "favorites" | "sports" | "promotions" | "vip";
-  }[] = [
-    { label: currentLanguage === "BN" ? "লবি" : "All Lobby", icon: <LayoutDashboard size={18} />, value: "all" },
-    { label: currentLanguage === "BN" ? "স্পোর্টস" : "Sports Book", icon: <Trophy size={18} />, value: "sports" },
-    { label: currentLanguage === "BN" ? "লাইভ ক্যাসিনো" : "Live Casino", icon: <Gamepad2 size={18} />, value: "live" },
-    { label: currentLanguage === "BN" ? "স্লট" : "Slots Engine", icon: <Cherry size={18} />, value: "slots" },
-    { label: currentLanguage === "BN" ? "টেবিল গেম" : "Table Games", icon: <Spade size={18} />, value: "table" },
-    { label: currentLanguage === "BN" ? "ফিশিং" : "Fishing", icon: <Anchor size={18} />, value: "fishing" },
-    { label: currentLanguage === "BN" ? "ক্র্যাশ গেম" : "Crash Games", icon: <Zap size={18} />, value: "crash" },
-    { label: currentLanguage === "BN" ? "অফার ও প্রমো" : "Promotions", icon: <Gift size={18} />, value: "promotions" },
-    { label: currentLanguage === "BN" ? "ভিআইপি ক্লাব" : "VIP Club", icon: <Crown size={18} />, value: "vip" },
-    { label: currentLanguage === "BN" ? "ফেভারিটস" : "Favorites", icon: <Star size={18} />, value: "favorites" },
-  ];
-
   const activeChip = state.showFavoritesOnly
     ? "favorites"
     : state.selectedCategory;
-
   const isCategoryActive = useCallback((value: string) => {
     if (value === "favorites") return activeChip === "favorites";
     if (value === "sports") return sportsModalOpen;
@@ -650,6 +626,30 @@ const CasinoGameLobby: React.FC = () => {
     setPromotionsModalOpen,
     setVipModalOpen,
   ]);
+
+  if (state.isLoading) {
+    return <LoadingSpinner />;
+  }
+
+
+
+  const categoryChips: {
+    label: string;
+    icon: React.ReactNode;
+    value: Category | "favorites" | "sports" | "promotions" | "vip";
+  }[] = [
+    { label: currentLanguage === "BN" ? "লবি" : "All Lobby", icon: <LayoutDashboard size={18} />, value: "all" },
+    { label: currentLanguage === "BN" ? "স্পোর্টস" : "Sports Book", icon: <Trophy size={18} />, value: "sports" },
+    { label: currentLanguage === "BN" ? "লাইভ ক্যাসিনো" : "Live Casino", icon: <Gamepad2 size={18} />, value: "live" },
+    { label: currentLanguage === "BN" ? "স্লট" : "Slots Engine", icon: <Cherry size={18} />, value: "slots" },
+    { label: currentLanguage === "BN" ? "টেবিল গেম" : "Table Games", icon: <Spade size={18} />, value: "table" },
+    { label: currentLanguage === "BN" ? "ফিশিং" : "Fishing", icon: <Anchor size={18} />, value: "fishing" },
+    { label: currentLanguage === "BN" ? "ক্র্যাশ গেম" : "Crash Games", icon: <Zap size={18} />, value: "crash" },
+    { label: currentLanguage === "BN" ? "অফার ও প্রমো" : "Promotions", icon: <Gift size={18} />, value: "promotions" },
+    { label: currentLanguage === "BN" ? "ভিআইপি ক্লাব" : "VIP Club", icon: <Crown size={18} />, value: "vip" },
+    { label: currentLanguage === "BN" ? "ফেভারিটস" : "Favorites", icon: <Star size={18} />, value: "favorites" },
+  ];
+
 
   const currentLeaderboardList =
     activeLeaderboardTab === "recent"
