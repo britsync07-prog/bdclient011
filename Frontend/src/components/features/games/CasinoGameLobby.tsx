@@ -39,6 +39,7 @@ import { GameGrid } from "./GameGrid";
 import { Banners } from "../banners/Banners";
 import { logClientAction } from "@/lib/logger";
 
+import { escapeHtml } from "@/utils/security";
 import { TOAST_DURATION } from "@/constants";
 import { Game, Category } from "@/types/game";
 import { createFavoriteMessage } from "@/utils/helpers";
@@ -451,7 +452,7 @@ const CasinoGameLobby: React.FC = () => {
           gameWin.document.write(`
             <html>
               <head>
-                <title>Loading ${game.name}...</title>
+                <title>Loading ${escapeHtml(game.name)}...</title>
                 <style>
                   body {
                     background-color: #0b1329;
@@ -494,7 +495,7 @@ const CasinoGameLobby: React.FC = () => {
               </head>
               <body>
                 <div class="spinner"></div>
-                <div class="title">Launching ${game.name}...</div>
+                <div class="title">Launching ${escapeHtml(game.name)}...</div>
                 <div class="subtitle">Securing game session connection. Please wait...</div>
               </body>
             </html>
@@ -547,7 +548,7 @@ const CasinoGameLobby: React.FC = () => {
               gameWin.document.body.innerHTML = `
                 <div style="background-color: #0b1329; color: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: system-ui, sans-serif; text-align: center; padding: 24px;">
                   <div style="color: #ef4444; font-size: 20px; font-weight: 800; text-transform: uppercase;">Launch Failed</div>
-                  <div style="color: #cbd5e1; font-size: 14px; margin-top: 12px; max-width: 400px; line-height: 1.5;">${data.message || "Failed to launch game session. Please check your account status or balance."}</div>
+                  <div style="color: #cbd5e1; font-size: 14px; margin-top: 12px; max-width: 400px; line-height: 1.5;">${escapeHtml(data.message || "Failed to launch game session. Please check your account status or balance.")}</div>
                   <button onclick="window.close()" style="margin-top: 24px; padding: 10px 20px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Close Window</button>
                 </div>
               `;
