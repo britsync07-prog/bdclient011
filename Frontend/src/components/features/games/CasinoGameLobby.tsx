@@ -41,7 +41,7 @@ import { logClientAction } from "@/lib/logger";
 
 import { TOAST_DURATION } from "@/constants";
 import { Game, Category } from "@/types/game";
-import { createFavoriteMessage } from "@/utils/helpers";
+import { createFavoriteMessage, renderGameErrorToWindow } from "@/utils/helpers";
 
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000/api";
@@ -544,13 +544,11 @@ const CasinoGameLobby: React.FC = () => {
             
             // Show error in the open window
             if (gameWin) {
-              gameWin.document.body.innerHTML = `
-                <div style="background-color: #0b1329; color: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: system-ui, sans-serif; text-align: center; padding: 24px;">
-                  <div style="color: #ef4444; font-size: 20px; font-weight: 800; text-transform: uppercase;">Launch Failed</div>
-                  <div style="color: #cbd5e1; font-size: 14px; margin-top: 12px; max-width: 400px; line-height: 1.5;">${data.message || "Failed to launch game session. Please check your account status or balance."}</div>
-                  <button onclick="window.close()" style="margin-top: 24px; padding: 10px 20px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Close Window</button>
-                </div>
-              `;
+              renderGameErrorToWindow(
+                gameWin,
+                "Launch Failed",
+                data.message || "Failed to launch game session. Please check your account status or balance."
+              );
             }
           }
         } catch (err) {
@@ -559,13 +557,11 @@ const CasinoGameLobby: React.FC = () => {
           showToastMessage("Error launching game");
           
           if (gameWin) {
-            gameWin.document.body.innerHTML = `
-              <div style="background-color: #0b1329; color: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: system-ui, sans-serif; text-align: center; padding: 24px;">
-                <div style="color: #ef4444; font-size: 20px; font-weight: 800; text-transform: uppercase;">Connection Error</div>
-                <div style="color: #cbd5e1; font-size: 14px; margin-top: 12px;">Failed to connect to the operator server.</div>
-                <button onclick="window.close()" style="margin-top: 24px; padding: 10px 20px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Close Window</button>
-              </div>
-            `;
+            renderGameErrorToWindow(
+              gameWin,
+              "Connection Error",
+              "Failed to connect to the operator server."
+            );
           }
         }
       }

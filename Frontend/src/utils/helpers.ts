@@ -110,3 +110,65 @@ export const formatMessage = (
     return variables[key]?.toString() || match;
   });
 };
+
+export const renderGameErrorToWindow = (
+  win: Window,
+  title: string,
+  message: string
+): void => {
+  const doc = win.document;
+
+  // Clear existing content safely
+  while (doc.body.firstChild) {
+    doc.body.removeChild(doc.body.firstChild);
+  }
+
+  doc.body.style.backgroundColor = "#0b1329";
+  doc.body.style.color = "#f8fafc";
+  doc.body.style.margin = "0";
+  doc.body.style.fontFamily = "system-ui, sans-serif";
+
+  const container = doc.createElement("div");
+  container.style.display = "flex";
+  container.style.flexDirection = "column";
+  container.style.justifyContent = "center";
+  container.style.alignItems = "center";
+  container.style.height = "100vh";
+  container.style.textAlign = "center";
+  container.style.padding = "24px";
+
+  const titleEl = doc.createElement("div");
+  titleEl.style.color = "#ef4444";
+  titleEl.style.fontSize = "20px";
+  titleEl.style.fontWeight = "800";
+  titleEl.style.textTransform = "uppercase";
+  titleEl.textContent = title;
+
+  const messageEl = doc.createElement("div");
+  messageEl.style.color = "#cbd5e1";
+  messageEl.style.fontSize = "14px";
+  messageEl.style.marginTop = "12px";
+  messageEl.style.maxWidth = "400px";
+  messageEl.style.lineHeight = "1.5";
+  messageEl.textContent = message;
+
+  const closeBtn = doc.createElement("button");
+  closeBtn.style.marginTop = "24px";
+  closeBtn.style.padding = "10px 20px";
+  closeBtn.style.backgroundColor = "#3b82f6";
+  closeBtn.style.color = "white";
+  closeBtn.style.border = "none";
+  closeBtn.style.borderRadius = "8px";
+  closeBtn.style.fontWeight = "bold";
+  closeBtn.style.cursor = "pointer";
+  closeBtn.textContent = "Close Window";
+  closeBtn.addEventListener("click", () => {
+    win.close();
+  });
+
+  container.appendChild(titleEl);
+  container.appendChild(messageEl);
+  container.appendChild(closeBtn);
+
+  doc.body.appendChild(container);
+};
