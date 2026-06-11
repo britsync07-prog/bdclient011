@@ -54,7 +54,8 @@ exports.register = async (req, res, next) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.warn(`[AUTH_REGISTER_FAIL] Registration input validation failed for: ${req.body?.username || 'unknown'}`);
-      return res.status(400).json({ message: error.errors[0]?.message || "Invalid input", errors: error.errors });
+      const errs = error.errors || error.issues || [];
+      return res.status(400).json({ message: errs[0]?.message || "Invalid input", errors: errs });
     }
     console.error(`[AUTH_REGISTER_ERROR] Exception during registration: ${error.message}`);
     next(error);

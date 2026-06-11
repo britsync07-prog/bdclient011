@@ -299,7 +299,7 @@ async function runAllTiers() {
   assertTest(launchRes.status === 200 && launchRes.data?.launchUrl, 'Launching game returns game launch URL');
 
   // Register a normal user for wallet callbacks
-  const registerRes = await post(`${BACKEND_URL}/api/auth/register`, { username: 'testuser', password: 'password123' });
+  const registerRes = await post(`${BACKEND_URL}/api/auth/register`, { username: 'testuser', password: 'Password123!' });
   assertTest(registerRes.status === 201 && registerRes.data?.token, 'Normal user register successfully returns JWT');
   userToken = registerRes.data?.token;
   userId = registerRes.data?.user?.id;
@@ -332,7 +332,7 @@ async function runAllTiers() {
   await resetDatabaseState();
 
   // Create a user with 0 balance
-  const zeroUserRegister = await post(`${BACKEND_URL}/api/auth/register`, { username: 'zerouser', password: 'password123' });
+  const zeroUserRegister = await post(`${BACKEND_URL}/api/auth/register`, { username: 'zerouser', password: 'Password123!' });
   const zeroUserId = zeroUserRegister.data?.user?.id;
   // Update balance to 0 in database directly via prisma
   await prisma.user.update({
@@ -366,7 +366,7 @@ async function runAllTiers() {
   );
 
   // 3. Overflow Amounts (extremely high bet exceeding balance)
-  const overflowUser = await post(`${BACKEND_URL}/api/auth/register`, { username: 'overflowuser', password: 'password123' });
+  const overflowUser = await post(`${BACKEND_URL}/api/auth/register`, { username: 'overflowuser', password: 'Password123!' });
   const overflowUserId = overflowUser.data?.user?.id;
   const simOverflow = await post(`${MOCK_URL}/sim/play`, {
     userCode: String(overflowUserId),
@@ -412,7 +412,7 @@ async function runAllTiers() {
   console.log('==================================================');
   await resetDatabaseState();
 
-  const crossUser = await post(`${BACKEND_URL}/api/auth/register`, { username: 'crossuser', password: 'password123' });
+  const crossUser = await post(`${BACKEND_URL}/api/auth/register`, { username: 'crossuser', password: 'Password123!' });
   const crossUserId = crossUser.data?.user?.id;
   const crossUserToken = crossUser.data?.token;
 
@@ -479,7 +479,7 @@ async function runAllTiers() {
   adminToken = loginRes4.data?.token;
 
   // 1. User Signup
-  const signupRes = await post(`${BACKEND_URL}/api/auth/register`, { username: 'realuser', password: 'password123' });
+  const signupRes = await post(`${BACKEND_URL}/api/auth/register`, { username: 'realuser', password: 'Password123!' });
   assertTest(signupRes.status === 201 && signupRes.data?.token, 'Real-world signup succeeds');
   const realUserToken = signupRes.data?.token;
   const realUserId = signupRes.data?.user?.id;
@@ -504,7 +504,8 @@ async function runAllTiers() {
 
   // Admin gets financial requests
   const financialRequests = await get(`${BACKEND_URL}/api/admin/financial-requests`, { 'Authorization': `Bearer ${adminToken}` });
-  assertTest(financialRequests.status === 200 && financialRequests.data?.some(r => r.id === manualTx.id), 'Admin lists pending requests and finds the deposit');
+  const requestsList = Array.isArray(financialRequests.data) ? financialRequests.data : (financialRequests.data?.requests || []);
+  assertTest(financialRequests.status === 200 && requestsList.some(r => r.id === manualTx.id), 'Admin lists pending requests and finds the deposit');
 
   // Admin approves financial request
   const approveRes = await post(`${BACKEND_URL}/api/admin/financial-requests/${manualTx.id}/approve`, {}, { 'Authorization': `Bearer ${adminToken}` });
