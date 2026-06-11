@@ -402,6 +402,17 @@ async function runAllTiers() {
 
   const rtpResTooHigh = await post(`${MOCK_URL}/api/v2/game/user/set-rtp`, { vendorCode: 'slot-pragmatic', userCode: 'testuser', rtp: 120 }, { 'Authorization': `Bearer ${oroToken}` });
   assertTest(rtpResTooHigh.status === 200 && rtpResTooHigh.data?.success === false && rtpResTooHigh.data?.errorCode === 1, 'Mock OroPlay setUserRtp rejects RTP > 99');
+  // 7. Invalid KYC Status (Validation check)
+  const loginKYC = await post(`${BACKEND_URL}/api/auth/login`, { username: 'admin', password: 'admin123' });
+  const resKYC = await fetch(`${BACKEND_URL}/api/admin/users/${overflowUserId}/kyc`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${loginKYC.data?.token}` },
+    body: JSON.stringify({ kycStatus: 'INVALID' })
+  });
+  const dataKYC = await resKYC.json();
+  assertTest(resKYC.status === 400, 'Admin updating KYC with invalid enum value returns 400 status');
+
+
 
 
   // ----------------------------------------------------
