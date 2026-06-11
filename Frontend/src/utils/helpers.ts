@@ -61,17 +61,18 @@ export const formatRating = (rating: number): string => {
   return rating.toFixed(1);
 };
 
-export const normalizeSearchTerm = (term: string): string => {
-  return term.toLowerCase().trim();
+export const normalizeSearchTerm = (term: string | null | undefined): string => {
+  return (term ?? "").toLowerCase().trim();
 };
 
 export const matchesSearchTerm = (
-  searchTerm: string,
-  name: string,
-  provider: string
+  searchTerm: string | null | undefined,
+  name: string | null | undefined,
+  provider: string | null | undefined
 ): boolean => {
-  if (!searchTerm) return true;
   const normalizedTerm = normalizeSearchTerm(searchTerm);
+  if (!normalizedTerm) return true;
+
   return (
     normalizeSearchTerm(name).includes(normalizedTerm) ||
     normalizeSearchTerm(provider).includes(normalizedTerm)
