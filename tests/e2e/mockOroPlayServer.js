@@ -361,6 +361,10 @@ app.post('/api/v2/user/balance-history', (req, res) => {
 // 15. setUserRtp
 app.post('/api/v2/game/user/set-rtp', (req, res) => {
   const { vendorCode, userCode, rtp } = req.body;
+
+  if (userCode === 'rtp_error_user') {
+    return res.status(500).json({ success: false, message: 'Simulated OroPlay Error', errorCode: 500 });
+  }
   const rtpInt = parseInt(rtp);
   if (isNaN(rtpInt) || rtpInt < 30 || rtpInt > 99) {
     return res.json({
