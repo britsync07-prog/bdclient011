@@ -19,3 +19,9 @@ export function isDuplicateTransaction(code: string): boolean {
 export function markTransaction(code: string): void {
   processedTransactions.add(code);
 }
+
+export function resetStore(): void {
+  balances.clear();
+  balances.set("testuser1", 10000);
+  processedTransactions.clear();
+}
