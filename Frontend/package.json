@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "test:unit": "tsx --test src/lib/seamless-store.test.ts",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
@@ -27,6 +28,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.1",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }
