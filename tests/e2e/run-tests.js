@@ -541,6 +541,10 @@ async function runAllTiers() {
   const getRtpMock = await post(`${MOCK_URL}/api/v2/game/user/get-rtp`, { vendorCode: 'slot-pragmatic', userCode: 'realuser' }, { 'Authorization': `Bearer ${oroToken}` });
   assertTest(getRtpMock.status === 200 && getRtpMock.data?.message === 92, 'Mock OroPlay verifies realuser RTP is indeed 92');
 
+  // 7. Error handling for RTP update failure from OroPlay
+  const rtpErrorRes = await post(`${BACKEND_URL}/api/admin/game/set-rtp`, { vendorCode: 'slot-pragmatic', username: 'rtp_error_user', rtp: 92 }, { 'Authorization': `Bearer ${adminToken}` });
+  assertTest(rtpErrorRes.status === 500 && rtpErrorRes.data?.message?.includes('Failed to set RTP via OroPlay'), 'Admin RTP update fails gracefully when OroPlay returns 500');
+
 
   // ----------------------------------------------------
   // SUMMARY OF ALL RUNS
