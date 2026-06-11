@@ -41,7 +41,7 @@ import { logClientAction } from "@/lib/logger";
 
 import { TOAST_DURATION } from "@/constants";
 import { Game, Category } from "@/types/game";
-import { createFavoriteMessage } from "@/utils/helpers";
+import { createFavoriteMessage, renderGameErrorToWindow } from "@/utils/helpers";
 
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000/api";
