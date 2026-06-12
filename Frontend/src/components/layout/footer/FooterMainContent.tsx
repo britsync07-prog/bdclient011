@@ -10,6 +10,49 @@ import {
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000/api";
 
+const paymentLogos = [
+  { src: "/images/payments/pay34.png", alt: "bKash" },
+  { src: "/images/payments/pay22.png", alt: "Nagad" },
+  { src: "/images/payments/pay33.png", alt: "Rocket" },
+  { src: "/images/payments/pay61.png", alt: "Upay" },
+  { src: "/images/payments/pay59.png", alt: "Tether USDT" },
+  { src: "/images/payments/pay45.png", alt: "Bank Transfer" },
+];
+
+const providerLogos = [
+  { src: "/images/providers/provider-awcv2_combo.png", alt: "AWC Combo" },
+  { src: "/images/providers/provider-saba.png", alt: "SABA" },
+  { src: "/images/providers/provider-jdb.png", alt: "JDB" },
+  { src: "/images/providers/provider-cq9.png", alt: "CQ9" },
+  { src: "/images/providers/provider-pg.png", alt: "PG Soft" },
+  { src: "/images/providers/provider-evo.png", alt: "Evolution" },
+  { src: "/images/providers/provider-joker.png", alt: "Joker" },
+  { src: "/images/providers/provider-cricket.png", alt: "Cricket" },
+  { src: "/images/providers/provider-sbov2.png", alt: "SBO" },
+  { src: "/images/providers/provider-bpoker.png", alt: "B-Poker" },
+  { src: "/images/providers/provider-ka.png", alt: "KA Gaming" },
+  { src: "/images/providers/provider-awcv2_sexybcrt.png", alt: "Sexy Baccarat" },
+  { src: "/images/providers/provider-awcv2_rt.png", alt: "RT" },
+  { src: "/images/providers/provider-awcv2_spade.png", alt: "Spadegaming" },
+  { src: "/images/providers/provider-awcv2_kingmaker.png", alt: "Kingmaker" },
+  { src: "/images/providers/provider-awcv2_jili.png", alt: "JILI" },
+  { src: "/images/providers/provider-awcv2_play8.png", alt: "Play8" },
+  { src: "/images/providers/provider-awcv2_fc.png", alt: "FC" },
+  { src: "/images/providers/provider-awcv2_yl.png", alt: "YL" },
+  { src: "/images/providers/provider-awcv2_pp.png", alt: "Pragmatic Play" },
+  { src: "/images/providers/provider-awcv2_pt.png", alt: "Playtech" },
+  { src: "/images/providers/provider-awcv2_horsebook.png", alt: "Horsebook" },
+  { src: "/images/providers/provider-netent.png", alt: "NetEnt" },
+  { src: "/images/providers/provider-ps.png", alt: "PS" },
+  { src: "/images/providers/provider-playngo.png", alt: "Play'n GO" },
+  { src: "/images/providers/provider-rich88.png", alt: "Rich88" },
+  { src: "/images/providers/provider-worldmatch.png", alt: "WorldMatch" },
+  { src: "/images/providers/provider-awcv2_fastspin.png", alt: "Fastspin" },
+  { src: "/images/providers/provider-awcv2_yesbingo.png", alt: "YesBingo" },
+  { src: "/images/providers/provider-jdbaspribe.png", alt: "JDB Aspribe" },
+  { src: "/images/providers/provider-hotroad.png", alt: "Hotroad" },
+];
+
 const TwitterXIcon = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -240,7 +283,7 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
         onOpenPolicy={onOpenPolicy}
       />
 
-      {/* Payment Partners & Game Providers Section (Stake / PBC88 style) */}
+      {/* Payment Partners & Game Providers Section */}
       <div className="col-span-1 md:col-span-2 lg:col-span-4 border-t border-slate-800 pt-8 mt-4 space-y-6">
         {/* Payment Methods */}
         <div>
@@ -248,33 +291,17 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
             {lang === "BN" ? "মুল্য পরিশোধ পদ্ধতি" : "Payment Methods"}
           </h5>
           <div className="flex flex-wrap items-center gap-4 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-            {/* bKash */}
-            <div className="bg-[#0f172a] px-3 py-1.5 rounded-lg border border-slate-800 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#E11D48] select-none">
-              <span className="w-2 h-2 rounded-full bg-[#E11D48]" />
-              bKash
-            </div>
-            {/* Nagad */}
-            <div className="bg-[#0f172a] px-3 py-1.5 rounded-lg border border-slate-800 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#EA580C] select-none">
-              <span className="w-2 h-2 rounded-full bg-[#EA580C]" />
-              Nagad
-            </div>
-            {/* Rocket */}
-            <div className="bg-[#0f172a] px-3 py-1.5 rounded-lg border border-slate-800 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#8B5CF6] select-none">
-              <span className="w-2 h-2 rounded-full bg-[#8B5CF6]" />
-              Rocket
-            </div>
-            {/* Astropay */}
-            <div className="bg-[#0f172a] px-3 py-1.5 rounded-lg border border-slate-800 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#0369A1] select-none">
-              Astropay
-            </div>
-            {/* USDT Tether */}
-            <div className="bg-[#0f172a] px-3 py-1.5 rounded-lg border border-slate-800 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#0F766E] select-none">
-              USDT (Tether)
-            </div>
-            {/* Visa/Mastercard */}
-            <div className="bg-[#0f172a] px-3 py-1.5 rounded-lg border border-slate-800 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-slate-400 select-none">
-              Visa / MasterCard
-            </div>
+            {paymentLogos.map((logo, index) => (
+              <div key={index} className="bg-[#0f172a] p-1.5 px-3 rounded-lg border border-slate-800 shadow-sm flex items-center justify-center">
+                <img
+                  src={logo.src}
+                  alt={logo.alt}
+                  title={logo.alt}
+                  className="h-[24px] w-auto object-contain select-none"
+                  loading="lazy"
+                />
+              </div>
+            ))}
           </div>
         </div>
 
@@ -283,14 +310,17 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
           <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5">
             {lang === "BN" ? "পার্টনার" : "Partners"}
           </h5>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 grayscale opacity-45 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">PRAGMATIC PLAY</span>
-            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">PG SOFT</span>
-            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">EVOLUTION</span>
-            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">JILI GAMES</span>
-            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">SPRIBE</span>
-            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">JDB</span>
-            <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">HACKSAW</span>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-4 grayscale opacity-45 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+            {providerLogos.map((logo, index) => (
+              <img
+                key={index}
+                src={logo.src}
+                alt={logo.alt}
+                title={logo.alt}
+                className="h-[22px] md:h-[24px] w-auto object-contain select-none"
+                loading="lazy"
+              />
+            ))}
           </div>
         </div>
       </div>
