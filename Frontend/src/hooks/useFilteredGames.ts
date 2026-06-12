@@ -40,7 +40,7 @@ export const useFilteredGames = () => {
             )
         );
       } else {
-        filtered = filtered.filter((game) => game.category === selectedCategory);
+        filtered = filtered.filter((game) => (game.category as string) === selectedCategory);
       }
     }
 

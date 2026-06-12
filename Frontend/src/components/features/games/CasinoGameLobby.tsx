@@ -154,6 +154,7 @@ const CasinoGameLobby: React.FC = () => {
   const [userChatMessage, setUserChatMessage] = useState("");
   const [botTyping, setBotTyping] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState<"EN" | "BN">("BN");
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
 
   // Load player transaction history when profile is opened
   useEffect(() => {
@@ -712,17 +713,19 @@ const CasinoGameLobby: React.FC = () => {
   const categoryChips: {
     label: string;
     icon: React.ReactNode;
-    value: Category | "favorites" | "sports" | "promotions" | "vip";
+    value: Category | "favorites" | "promotions" | "vip";
   }[] = [
     { label: currentLanguage === "BN" ? "গরম খেলা" : "Hot Games", icon: <LayoutDashboard size={18} />, value: "all" },
-    { label: currentLanguage === "BN" ? "স্পোর্ট" : "Sport", icon: <Trophy size={18} />, value: "sports" },
+    { label: currentLanguage === "BN" ? "স্পোর্টস" : "Sports", icon: <Trophy size={18} />, value: "sports" },
     { label: currentLanguage === "BN" ? "ক্যাসিনো" : "Casino", icon: <Gamepad2 size={18} />, value: "live" },
     { label: currentLanguage === "BN" ? "স্লট" : "Slot", icon: <Cherry size={18} />, value: "slots" },
     { label: currentLanguage === "BN" ? "টেবিল" : "Table", icon: <Spade size={18} />, value: "table" },
     { label: currentLanguage === "BN" ? "ফিসিং" : "Fishing", icon: <Anchor size={18} />, value: "fishing" },
     { label: currentLanguage === "BN" ? "ক্র্যাশ" : "Crash", icon: <Zap size={18} />, value: "crash" },
+    { label: currentLanguage === "BN" ? "লটারি" : "Lottery", icon: <Dices size={18} />, value: "lottery" },
+    { label: currentLanguage === "BN" ? "আর্কেড" : "Arcade", icon: <Crown size={18} />, value: "arcade" },
     { label: currentLanguage === "BN" ? "প্রমোশন" : "Promotions", icon: <Gift size={18} />, value: "promotions" },
-    { label: currentLanguage === "BN" ? "আর্কেড" : "Arcade", icon: <Crown size={18} />, value: "vip" },
+    { label: currentLanguage === "BN" ? "ভিআইপি" : "VIP", icon: <Crown size={18} />, value: "vip" },
     { label: currentLanguage === "BN" ? "প্রিয়" : "Favorites", icon: <Star size={18} />, value: "favorites" },
   ];
 
@@ -886,36 +889,50 @@ const CasinoGameLobby: React.FC = () => {
        </header>
 
         {/* Flex layout container for Sidebar + Main Content */}
-        <div className="flex-1 flex flex-row min-w-0 w-full">
+        <div className="flex-1 flex flex-row min-w-0 w-full relative">
           {/* Left Sidebar (visible on larger screens) */}
-          <aside className="hidden lg:block w-64 shrink-0 bg-[#0f172a]/40 border-r border-slate-800/80 p-4 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+          <aside className={`hidden lg:block shrink-0 bg-[#0f172a]/40 border-r border-slate-800/80 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto transition-all duration-300 ${sidebarExpanded ? "w-64 p-4" : "w-12 p-2"}`}>
             <div className="space-y-6">
-              <div>
-                <h4 className="text-slate-500 text-[10px] font-extrabold uppercase tracking-widest mb-3 px-3">
-                  {currentLanguage === "BN" ? "গেম ক্যাটাগরি" : "Game Categories"}
-                </h4>
-                <nav className="space-y-1">
-                  {categoryChips.map(({ label, icon, value }) => {
-                    const active = isCategoryActive(value);
-                    return (
-                      <button
-                        key={value}
-                        onClick={() => handleCategoryClick(value)}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                          active
-                            ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-500/10"
-                            : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
-                        }`}
-                      >
-                        <span className={`${active ? "text-white" : "text-slate-500 group-hover:text-white"}`}>
-                          {icon}
-                        </span>
-                        <span>{label}</span>
-                      </button>
-                    );
-                  })}
-                </nav>
+              <div className="flex items-center justify-between px-3">
+                {sidebarExpanded && (
+                  <h4 className="text-slate-500 text-[10px] font-extrabold uppercase tracking-widest">
+                    {currentLanguage === "BN" ? "গেম ক্যাটাগরি" : "Game Categories"}
+                  </h4>
+                )}
+                <button
+                  onClick={() => setSidebarExpanded(!sidebarExpanded)}
+                  className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer mx-auto flex items-center justify-center w-8 h-8 font-extrabold text-sm"
+                  title={sidebarExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
+                >
+                  {sidebarExpanded ? "❮" : "❯"}
+                </button>
               </div>
+
+              {sidebarExpanded && (
+                <div>
+                  <nav className="space-y-1">
+                    {categoryChips.map(({ label, icon, value }) => {
+                      const active = isCategoryActive(value);
+                      return (
+                        <button
+                          key={value}
+                          onClick={() => handleCategoryClick(value)}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                            active
+                              ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-500/10"
+                              : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
+                          }`}
+                        >
+                          <span className={`${active ? "text-white" : "text-slate-500 group-hover:text-white"}`}>
+                            {icon}
+                          </span>
+                          <span>{label}</span>
+                        </button>
+                      );
+                    })}
+                  </nav>
+                </div>
+              )}
             </div>
           </aside>
 
@@ -1013,7 +1030,7 @@ const CasinoGameLobby: React.FC = () => {
         )}
 
         {/* ── QUICK CHIPS NAVIGATION ───────────────────────────────────────── */}
-        <section className="px-4 sm:px-6 lg:px-8 pt-4 pb-2" aria-label="Game lobby tabs">
+        <section className="px-4 sm:px-6 lg:hidden pt-4 pb-2" aria-label="Game lobby tabs">
           <div className="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-hide">
             {categoryChips.map(({ label, icon, value }) => (
               <CategoryChip
@@ -1035,16 +1052,6 @@ const CasinoGameLobby: React.FC = () => {
             <SearchBar
               searchTerm={state.searchTerm}
               onSearchChange={setSearchTerm}
-            />
-            <FilterControls
-              selectedCategory={state.selectedCategory}
-              onCategoryChange={setCategory}
-              showFavoritesOnly={state.showFavoritesOnly}
-              onToggleFavoritesOnly={toggleFavoritesOnly}
-              onClearFilters={clearFilters}
-              hasActiveFilters={hasActiveFilters}
-              games={state.games}
-              favoritesCount={favoritesCount}
             />
           </div>
 

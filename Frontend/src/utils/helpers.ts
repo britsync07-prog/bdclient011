@@ -54,7 +54,7 @@ export const getCategoryColor = (category: string): string => {
 };
 
 export const getCategoryLabel = (category: Category): string => {
-  return CATEGORY_CONFIG[category]?.label || "Unknown";
+  return CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG]?.label || "Unknown";
 };
 
 export const formatRating = (rating: number): string => {
