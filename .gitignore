@@ -39,3 +39,7 @@ coverage/
 # Databases
 *.db
 *.db-journal
+
+# Game Caches
+server/src/config/games-cache.json
+server/src/config/games-cache-optimized.json
