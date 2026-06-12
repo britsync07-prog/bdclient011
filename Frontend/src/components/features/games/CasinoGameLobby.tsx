@@ -1059,11 +1059,27 @@ const CasinoGameLobby: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="text-lg font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
               <span className="w-1.5 h-6 rounded-full bg-[#2563EB]" />
-              {state.selectedCategory !== "all"
+              {state.showFavoritesOnly
+                ? (currentLanguage === "BN" ? "পছন্দসই গেম তালিকা" : "My Favorites List")
+                : state.selectedCategory !== "all"
                 ? state.selectedCategory === "live"
                   ? (currentLanguage === "BN" ? "লাইভ ক্যাসিনো গেমস" : "Live Casino Games")
                   : state.selectedCategory === "slots"
                   ? (currentLanguage === "BN" ? "ভাইব্রেন্ট স্লট ইঞ্জিন" : "Vibrant Slots Engine")
+                  : state.selectedCategory === "megaways"
+                  ? (currentLanguage === "BN" ? "মেগাওয়েজ স্লটস" : "Megaways Slots")
+                  : state.selectedCategory === "cards"
+                  ? (currentLanguage === "BN" ? "কার্ড গেমস" : "Card Games")
+                  : state.selectedCategory === "fishing"
+                  ? (currentLanguage === "BN" ? "ফিশিং হান্টার" : "Fishing Hunter")
+                  : state.selectedCategory === "crash"
+                  ? (currentLanguage === "BN" ? "ক্র্যাশ ও মাইন্স গেমস" : "Crash & Mines Games")
+                  : state.selectedCategory === "sports"
+                  ? (currentLanguage === "BN" ? "স্পোর্টস গেমস লবি" : "Sports Games Lobby")
+                  : state.selectedCategory === "lottery"
+                  ? (currentLanguage === "BN" ? "লটারি ও স্ক্র্যাচকার্ড" : "Lottery & Scratchcards")
+                  : state.selectedCategory === "arcade"
+                  ? (currentLanguage === "BN" ? "আর্কেড ক্যাজুয়ালস" : "Arcade Casuals")
                   : state.selectedCategory.toUpperCase()
                 : (currentLanguage === "BN" ? "স্ট্যান্ডার্ড প্ল্যাটফর্ম গ্রিড" : "Standard Platform Grid")}
             </h3>
@@ -1386,7 +1402,9 @@ const CasinoGameLobby: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-2">
                 <Crown size={20} className="text-[#F59E0B]" />
-                <h3 className="text-lg font-bold text-white">PBBET VIP Club</h3>
+                <h3 className="text-lg font-bold text-white">
+                  {currentLanguage === "BN" ? "পিবিইটি ভিআইপি ক্লাব" : "PBBET VIP Club"}
+                </h3>
               </div>
               <button
                 onClick={() => setVipModalOpen(false)}
@@ -1400,45 +1418,73 @@ const CasinoGameLobby: React.FC = () => {
               {/* Rank Detail Card */}
               <div className="bg-gradient-to-br from-amber-500/10 to-[#0b1329] rounded-2xl p-5 border border-amber-900/30 flex flex-col items-center text-center">
                 <span className="text-[9px] bg-amber-500/20 text-[#D97706] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest mb-2">
-                  Current Rank
+                  {currentLanguage === "BN" ? "বর্তমান র্যাঙ্ক" : "Current Rank"}
                 </span>
-                <span className="text-2xl font-black text-amber-400 tracking-tight">GOLD VIP MEMBER</span>
-                <p className="text-xs text-slate-300 mt-1 max-w-xs leading-relaxed">
-                  Congratulations! You are on our premier VIP Gold rank. Enjoy exclusive rebate wagers and higher withdrawal limits.
+                <span className="text-2xl font-black text-amber-400 tracking-tight">
+                  {currentLanguage === "BN" ? "গোল্ড ভিআইপি সদস্য" : "GOLD VIP MEMBER"}
+                </span>
+                <p className="text-xs text-slate-300 mt-1 max-w-xs leading-relaxed font-semibold">
+                  {currentLanguage === "BN" 
+                    ? "অভিনন্দন! আপনি আমাদের প্রিমিয়াম গোল্ড ভিআইপি র্যাঙ্কে আছেন। একচেটিয়া রিবেট এবং উচ্চ উত্তোলনের সীমা উপভোগ করুন।" 
+                    : "Congratulations! You are on our premier VIP Gold rank. Enjoy exclusive rebate wagers and higher withdrawal limits."}
                 </p>
               </div>
 
               {/* Progress bar */}
               <div>
                 <div className="flex justify-between items-center mb-2 text-xs font-bold text-slate-400">
-                  <span>Progress to PLATINUM VIP</span>
+                  <span>
+                    {currentLanguage === "BN" ? "প্ল্যাটিনাম ভিআইপি-তে উন্নীত হওয়ার অগ্রগতি" : "Progress to PLATINUM VIP"}
+                  </span>
                   <span>75%</span>
                 </div>
                 <div className="w-full bg-[#0b1329] rounded-full h-3 overflow-hidden border border-slate-800">
                   <div className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] h-full" style={{ width: "75%" }} />
                 </div>
-                <span className="text-[10px] text-slate-550 mt-1 block">Accumulate $2,500 more in wagers to level up!</span>
+                <span className="text-[10px] text-slate-550 mt-1 block">
+                  {currentLanguage === "BN" 
+                    ? "লেভেল আপ করতে আরো $২,৫০০ বাজি ধরুন!" 
+                    : "Accumulate $2,500 more in wagers to level up!"}
+                </span>
               </div>
 
               {/* VIP Benefits List */}
               <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Exclusive Gold Benefits</h4>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  {currentLanguage === "BN" ? "বিশেষ গোল্ড সুবিধা সমূহ" : "Exclusive Gold Benefits"}
+                </h4>
                 <div className="grid grid-cols-2 gap-3 text-xs font-semibold text-slate-300">
                   <div className="p-3 bg-[#0b1329] rounded-xl border border-slate-800">
-                    <div className="text-amber-400 font-bold">1.2% Rebate</div>
-                    <div className="text-[10px] text-slate-500 font-medium">On every slot wager</div>
+                    <div className="text-amber-400 font-bold">
+                      {currentLanguage === "BN" ? "১.২% রিবেট" : "1.2% Rebate"}
+                    </div>
+                    <div className="text-[10px] text-slate-500 font-medium">
+                      {currentLanguage === "BN" ? "প্রতিটি স্লট বাজিতে" : "On every slot wager"}
+                    </div>
                   </div>
                   <div className="p-3 bg-[#0b1329] rounded-xl border border-slate-800">
-                    <div className="text-amber-400 font-bold">Priority Support</div>
-                    <div className="text-[10px] text-slate-500 font-medium">Direct live chat assistance</div>
+                    <div className="text-amber-400 font-bold">
+                      {currentLanguage === "BN" ? "অগ্রাধিকার সাপোর্ট" : "Priority Support"}
+                    </div>
+                    <div className="text-[10px] text-slate-500 font-medium">
+                      {currentLanguage === "BN" ? "সরাসরি লাইভ চ্যাট সহায়তা" : "Direct live chat assistance"}
+                    </div>
                   </div>
                   <div className="p-3 bg-[#0b1329] rounded-xl border border-slate-800">
-                    <div className="text-amber-400 font-bold">Weekly Bonus</div>
-                    <div className="text-[10px] text-slate-500 font-medium">Free $100 loyalty chip</div>
+                    <div className="text-amber-400 font-bold">
+                      {currentLanguage === "BN" ? "সাপ্তাহিক বোনাস" : "Weekly Bonus"}
+                    </div>
+                    <div className="text-[10px] text-slate-500 font-medium">
+                      {currentLanguage === "BN" ? "ফ্রি $১০০ লয়্যালটি চিপ" : "Free $100 loyalty chip"}
+                    </div>
                   </div>
                   <div className="p-3 bg-[#0b1329] rounded-xl border border-slate-800">
-                    <div className="text-amber-400 font-bold">Fast Cashouts</div>
-                    <div className="text-[10px] text-slate-500 font-medium">Reviewed under 10 minutes</div>
+                    <div className="text-amber-400 font-bold">
+                      {currentLanguage === "BN" ? "দ্রুত ক্যাশআউট" : "Fast Cashouts"}
+                    </div>
+                    <div className="text-[10px] text-slate-500 font-medium">
+                      {currentLanguage === "BN" ? "১০ মিনিটের কম সময়ে রিভিউ" : "Reviewed under 10 minutes"}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1449,7 +1495,7 @@ const CasinoGameLobby: React.FC = () => {
                 onClick={() => setVipModalOpen(false)}
                 className="w-full py-3 rounded-xl text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-md transition-all cursor-pointer"
               >
-                Close VIP Dashboard
+                {currentLanguage === "BN" ? "ভিআইপি ড্যাশবোর্ড বন্ধ করুন" : "Close VIP Dashboard"}
               </button>
             </div>
           </div>
