@@ -169,8 +169,16 @@ exports.getGames = async (req, res, next) => {
       const code = (game.gameCode || '').toLowerCase();
       const provider = (game.provider || '').toLowerCase();
 
-      // Table games / Poker
-      if (name.includes('poker') || name.includes('blackjack') || name.includes('baccarat') || name.includes('roulette') || name.includes('sicbo') || name.includes('dragon tiger') || name.includes('holdem') || name.includes('teen patti') || name.includes('andar bahar') || name.includes('card') || name.includes('table') || name.includes('dice') || name.includes('roulet') || name.includes('wheels')) {
+      // Megaways Slots
+      if (name.includes('megaways') || name.includes('mega ways') || name.includes('multiways') || name.includes('multi ways')) {
+        cat = 'megaways';
+      }
+      // Card Games (strictly card games, distinct from non-card table games like roulette/sicbo)
+      else if (name.includes('poker') || name.includes('blackjack') || name.includes('baccarat') || name.includes('holdem') || name.includes('teen patti') || name.includes('andar bahar') || name.includes('card') || name.includes('bj') || name.includes('texas')) {
+        cat = name.includes('live') || provider.includes('evolution') || provider.includes('pragmatic play live') ? 'live' : 'cards';
+      }
+      // Table games / Poker (non-card table games)
+      else if (name.includes('roulette') || name.includes('sicbo') || name.includes('dragon tiger') || name.includes('table') || name.includes('dice') || name.includes('roulet') || name.includes('wheels') || name.includes('wheel') || name.includes('sic bo')) {
         cat = name.includes('live') || provider.includes('evolution') || provider.includes('pragmatic play live') ? 'live' : 'table';
       }
       // Fishing Games

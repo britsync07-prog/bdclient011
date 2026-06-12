@@ -719,6 +719,8 @@ const CasinoGameLobby: React.FC = () => {
     { label: currentLanguage === "BN" ? "স্পোর্টস" : "Sports", icon: <Trophy size={18} />, value: "sports" },
     { label: currentLanguage === "BN" ? "ক্যাসিনো" : "Casino", icon: <Gamepad2 size={18} />, value: "live" },
     { label: currentLanguage === "BN" ? "স্লট" : "Slot", icon: <Cherry size={18} />, value: "slots" },
+    { label: currentLanguage === "BN" ? "মেগাওয়েজ" : "Megaways", icon: <Sparkles size={18} />, value: "megaways" },
+    { label: currentLanguage === "BN" ? "কার্ড গেম" : "Card Games", icon: <Spade size={18} />, value: "cards" },
     { label: currentLanguage === "BN" ? "টেবিল" : "Table", icon: <Spade size={18} />, value: "table" },
     { label: currentLanguage === "BN" ? "ফিসিং" : "Fishing", icon: <Anchor size={18} />, value: "fishing" },
     { label: currentLanguage === "BN" ? "ক্র্যাশ" : "Crash", icon: <Zap size={18} />, value: "crash" },
