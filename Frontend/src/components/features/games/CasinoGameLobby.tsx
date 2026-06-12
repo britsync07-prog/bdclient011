@@ -146,6 +146,8 @@ const CasinoGameLobby: React.FC = () => {
   const [sportsModalOpen, setSportsModalOpen] = useState(false);
   const [sportsWager, setSportsWager] = useState("");
   const [selectedMatch, setSelectedMatch] = useState<SelectedSportsBet | null>(null);
+  const [sportsSelectedCategory, setSportsSelectedCategory] = useState<string>("All");
+  const [detailedMatchView, setDetailedMatchView] = useState<any | null>(null);
 
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<{ sender: "user" | "bot"; text: string; time: string }[]>([
@@ -896,11 +898,6 @@ const CasinoGameLobby: React.FC = () => {
           <aside className={`hidden lg:block shrink-0 bg-[#0f172a]/40 border-r border-slate-800/80 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto transition-all duration-300 ${sidebarExpanded ? "w-64 p-4" : "w-12 p-2"}`}>
             <div className="space-y-6">
               <div className="flex items-center justify-between px-3">
-                {sidebarExpanded && (
-                  <h4 className="text-slate-500 text-[10px] font-extrabold uppercase tracking-widest">
-                    {currentLanguage === "BN" ? "গেম ক্যাটাগরি" : "Game Categories"}
-                  </h4>
-                )}
                 <button
                   onClick={() => setSidebarExpanded(!sidebarExpanded)}
                   className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer mx-auto flex items-center justify-center w-8 h-8 font-extrabold text-sm"
@@ -1054,6 +1051,7 @@ const CasinoGameLobby: React.FC = () => {
             <SearchBar
               searchTerm={state.searchTerm}
               onSearchChange={setSearchTerm}
+              placeholder={currentLanguage === "BN" ? "গেম বা প্রোভাইডার খুঁজুন..." : "Find games or providers..."}
             />
           </div>
 
@@ -1585,120 +1583,310 @@ const CasinoGameLobby: React.FC = () => {
       {/* Sports Book Betting Modal */}
       {sportsModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-[#0f172a] rounded-3xl p-8 max-w-xl w-full mx-4 shadow-2xl border border-slate-800 flex flex-col max-h-[85vh]">
+          <div className="bg-[#0f172a] rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl border border-slate-800 flex flex-col max-h-[85vh]">
+            
+            {/* Header */}
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
               <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <Trophy size={20} className="text-[#2563EB]" />
-                Sportsbook Lobby
+                {detailedMatchView ? (
+                  <button 
+                    onClick={() => setDetailedMatchView(null)}
+                    className="text-slate-400 hover:text-white flex items-center gap-1.5 text-sm font-extrabold uppercase transition-all"
+                  >
+                    ❮ Back to Sportsbook
+                  </button>
+                ) : (
+                  <span>Sportsbook Lobby</span>
+                )}
               </h3>
               <button
-                onClick={() => { setSportsModalOpen(false); setSelectedMatch(null); setSportsWager(""); }}
+                onClick={() => { 
+                  setSportsModalOpen(false); 
+                  setSelectedMatch(null); 
+                  setSportsWager(""); 
+                  setDetailedMatchView(null);
+                }}
                 className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto pr-2 space-y-5">
-              {/* Match Card Grid */}
-              <div className="space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-450">Live & Upcoming Match Odds</h4>
-                {[
-                  { id: 1, home: "Real Madrid", away: "Barcelona", league: "La Liga (Spain)", oddsHome: 1.85, oddsDraw: 3.40, oddsAway: 4.10, date: "Live Now - 2nd Half" },
-                  { id: 2, home: "Manchester City", away: "Liverpool", league: "Premier League (England)", oddsHome: 2.10, oddsDraw: 3.25, oddsAway: 3.10, date: "Today 22:45" },
-                  { id: 3, home: "Golden State Warriors", away: "Los Angeles Lakers", league: "NBA Basketball", oddsHome: 1.70, oddsDraw: 9.00, oddsAway: 2.30, date: "Tomorrow 06:00" },
-                ].map((match) => (
-                  <div key={match.id} className="p-4 bg-[#0b1329] border border-slate-800 rounded-2xl flex flex-col gap-3">
-                    <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold">
-                      <span className="uppercase">{match.league}</span>
-                      <span className="text-rose-500 flex items-center gap-1 font-extrabold">{match.date}</span>
+            {detailedMatchView ? (
+              /* Detailed Match View (Google style live info summary) */
+              <div className="flex-1 overflow-y-auto pr-2 space-y-6">
+                <div className="p-6 bg-gradient-to-br from-[#0b1329] to-[#0f172a] border border-slate-800 rounded-3xl text-center relative overflow-hidden">
+                  <div className="absolute top-3 right-3 text-[10px] uppercase font-bold px-2 py-1 bg-red-600/20 text-red-400 border border-red-500/30 rounded-lg">
+                    {detailedMatchView.isLive ? "Live Match Info" : "Scheduled Match"}
+                  </div>
+                  <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">{detailedMatchView.league}</div>
+                  
+                  <div className="flex items-center justify-around py-4">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-16 h-16 rounded-full bg-[#1e293b] flex items-center justify-center font-black text-xl text-white border border-slate-700">
+                        {detailedMatchView.home.substring(0, 2).toUpperCase()}
+                      </div>
+                      <div className="font-extrabold text-sm text-slate-200">{detailedMatchView.home}</div>
                     </div>
-                    <div className="flex justify-between items-center font-bold text-sm text-white">
-                      <span>{match.home} vs {match.away}</span>
+
+                    <div className="text-center">
+                      {detailedMatchView.isLive ? (
+                        <div className="space-y-1">
+                          <div className="text-4xl font-black text-white tracking-widest">{detailedMatchView.score}</div>
+                          <div className="text-[10px] text-rose-500 font-extrabold animate-pulse uppercase">{detailedMatchView.time}</div>
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          <div className="text-lg font-bold text-blue-400">VS</div>
+                          <div className="text-[10px] text-slate-400 font-semibold">{detailedMatchView.time}</div>
+                        </div>
+                      )}
                     </div>
-                    {/* Odds Selector buttons */}
+
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-16 h-16 rounded-full bg-[#1e293b] flex items-center justify-center font-black text-xl text-white border border-slate-700">
+                        {detailedMatchView.away.substring(0, 2).toUpperCase()}
+                      </div>
+                      <div className="font-extrabold text-sm text-slate-200">{detailedMatchView.away}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Match Stats, Commentary, and Live Info Tabs */}
+                <div className="space-y-4">
+                  <div className="bg-[#0b1329] border border-slate-800 rounded-2xl p-5 space-y-3">
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800 pb-2">Match statistics (Live feeds)</h4>
+                    <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-slate-300">
+                      <div>Possession / Control:</div>
+                      <div className="text-right text-white font-extrabold">{detailedMatchView.stats?.possession || "50% - 50%"}</div>
+                      <div>Attempts / Shots:</div>
+                      <div className="text-right text-white font-extrabold">{detailedMatchView.stats?.shots || "12 - 9"}</div>
+                      <div>Fouls / Infractions:</div>
+                      <div className="text-right text-white font-extrabold">{detailedMatchView.stats?.fouls || "4 - 6"}</div>
+                      <div>Yellow / Red Cards:</div>
+                      <div className="text-right text-white font-extrabold">{detailedMatchView.stats?.cards || "0 - 1"}</div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#0b1329] border border-slate-800 rounded-2xl p-5 space-y-3">
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800 pb-2">Live Play Commentary</h4>
+                    <div className="space-y-2.5">
+                      {(detailedMatchView.commentary || [
+                        "Match started with intense pressure from both sides.",
+                        "Direct build-up play creates close opportunity inside box.",
+                        "Substitute readying at touchline for tactical adjustment."
+                      ]).map((c: string, idx: number) => (
+                        <div key={idx} className="flex gap-2 text-xs">
+                          <span className="text-blue-500 font-extrabold shrink-0">•</span>
+                          <span className="text-slate-400 font-medium">{c}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Bet Odds inside details view */}
+                  <div className="bg-[#0b1329] border border-slate-800 rounded-2xl p-5 space-y-3">
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800 pb-2">Place quick wager on this match</h4>
                     <div className="grid grid-cols-3 gap-2">
                       <button
-                        onClick={() => setSelectedMatch({ match, choice: "Home", team: match.home, odds: match.oddsHome })}
-                        className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Home" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
+                        onClick={() => setSelectedMatch({ match: detailedMatchView, choice: "Home", team: detailedMatchView.home, odds: detailedMatchView.oddsHome })}
+                        className={`py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === detailedMatchView.id && selectedMatch?.choice === "Home" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
                       >
-                        1 ({match.oddsHome})
+                        1 ({detailedMatchView.oddsHome})
                       </button>
                       <button
-                        onClick={() => setSelectedMatch({ match, choice: "Draw", team: "Draw Match", odds: match.oddsDraw })}
-                        className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Draw" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
+                        onClick={() => setSelectedMatch({ match: detailedMatchView, choice: "Draw", team: "Draw Match", odds: detailedMatchView.oddsDraw })}
+                        className={`py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === detailedMatchView.id && selectedMatch?.choice === "Draw" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
                       >
-                        X ({match.oddsDraw})
+                        X ({detailedMatchView.oddsDraw})
                       </button>
                       <button
-                        onClick={() => setSelectedMatch({ match, choice: "Away", team: match.away, odds: match.oddsAway })}
-                        className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Away" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
+                        onClick={() => setSelectedMatch({ match: detailedMatchView, choice: "Away", team: detailedMatchView.away, odds: detailedMatchView.oddsAway })}
+                        className={`py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === detailedMatchView.id && selectedMatch?.choice === "Away" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
                       >
-                        2 ({match.oddsAway})
+                        2 ({detailedMatchView.oddsAway})
                       </button>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              {/* Betslip details */}
-              {selectedMatch && (
-                <div className="bg-[#0b1329] rounded-2xl p-5 border border-slate-800 space-y-4">
-                  <div className="flex justify-between items-center text-xs font-bold text-slate-400 border-b border-slate-800 pb-2">
-                    <span>Selected Betslip</span>
-                    <button onClick={() => setSelectedMatch(null)} className="text-slate-500 hover:text-slate-300">Remove</button>
-                  </div>
-                  <div className="text-xs font-semibold space-y-1">
-                    <div className="text-white font-extrabold">{selectedMatch.match.home} vs {selectedMatch.match.away}</div>
-                    <div className="text-slate-450">Choice: <span className="text-slate-200 font-bold">{selectedMatch.team}</span> @ <span className="text-[#2563EB] font-black">{selectedMatch.odds}</span></div>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-450 uppercase mb-2">Wager Amount (USD)</label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-450 font-extrabold">$</div>
-                      <input
-                        type="number"
-                        min="1"
-                        value={sportsWager}
-                        onChange={(e) => setSportsWager(e.target.value)}
-                        placeholder="Enter wager amount"
-                        className="w-full pl-7 pr-4 py-2.5 bg-[#0f172a] border border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] font-bold text-white text-xs"
-                      />
-                    </div>
-                  </div>
-                  {sportsWager && !isNaN(parseFloat(sportsWager)) && (
-                    <div className="flex justify-between items-center text-xs font-bold text-slate-400">
-                      <span>Est. Return payout:</span>
-                      <span className="text-emerald-400 font-extrabold">${(parseFloat(sportsWager) * selectedMatch.odds).toFixed(2)} USD</span>
-                    </div>
-                  )}
-                  <button
-                    onClick={() => {
-                      const amount = parseFloat(sportsWager);
-                      if (isNaN(amount) || amount <= 0) {
-                        showToastMessage("Please enter a valid wager amount.");
-                        return;
-                      }
-                      if (user && parseFloat(String(user.balance)) < amount) {
-                        showToastMessage("Insufficient balance to place this wager.");
-                        return;
-                      }
-                      showToastMessage(`Wager placed successfully! $${amount} bet registered on ${selectedMatch.team}.`);
-                      setSelectedMatch(null);
-                      setSportsWager("");
-                      setSportsModalOpen(false);
-                    }}
-                    className="w-full py-3 rounded-xl text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-md transition-all cursor-pointer uppercase tracking-wider"
-                  >
-                    Confirm Bet Slip
-                  </button>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              /* Sportsbook Lobby list with Filter Tabs */
+              <div className="flex-1 overflow-y-auto pr-2 space-y-5">
+                {/* Sports Category Scrollable Tabs */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-800 scrollbar-hide">
+                  {["All", "Cricket", "Football", "Tennis", "Basketball", "Kabaddi", "Horse Racing"].map((sport) => (
+                    <button
+                      key={sport}
+                      onClick={() => setSportsSelectedCategory(sport)}
+                      className={`px-4 py-2 rounded-xl text-xs font-extrabold uppercase shrink-0 transition-all cursor-pointer select-none border ${
+                        sportsSelectedCategory === sport 
+                          ? "bg-[#2563EB] text-white border-transparent shadow-md"
+                          : "bg-[#0b1329] text-slate-400 border-slate-800 hover:text-white hover:border-slate-700"
+                      }`}
+                    >
+                      {sport}
+                    </button>
+                  ))}
+                </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end">
+                {/* Match Cards List */}
+                <div className="space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Match Events</h4>
+                  {(() => {
+                    // Comprehensive mocked live-feed list (Live + Future 1-2 days after)
+                    const mockMatches = [
+                      // Cricket
+                      { id: 101, sport: "Cricket", home: "India", away: "Australia", league: "ICC ODI World Cup Championship", oddsHome: 1.65, oddsDraw: 25.0, oddsAway: 2.20, time: "Live - 42.4 Overs", date: "Live Now", score: "248/4 (IND) vs AUS", isLive: true, stats: { possession: "IND 60% - AUS 40%", shots: "Run Rate: 5.8", fouls: "Extras: 12", cards: "Wickets: 4" }, commentary: ["Kohli reaches half-century with a majestic cover drive.", "Maxwell introduced back into attack, trying to break partnership.", "Starc bowls a tight bouncer checking batsman's reflexes."] },
+                      { id: 102, sport: "Cricket", home: "England", away: "Pakistan", league: "T20 International Series", oddsHome: 1.55, oddsDraw: 15.0, oddsAway: 2.40, time: "Tomorrow 15:30", date: "Tomorrow", score: "Upcoming match", isLive: false, stats: { possession: "ENG 55% - PAK 45%", shots: "Projected Temp: 22C", fouls: "Pitch Type: Batting Friendly", cards: "Humidity: 60%" }, commentary: ["Both squads are conducting warmup drills on target pitch.", "Weather reports indicate clean conditions with zero rainfall probability."] },
+                      { id: 103, sport: "Cricket", home: "Bangladesh", away: "Sri Lanka", league: "Asia Cup Super Four", oddsHome: 1.90, oddsDraw: 20.0, oddsAway: 1.90, time: "June 14th 14:00", date: "2 days after", score: "Upcoming match", isLive: false, stats: { possession: "BD 50% - SL 50%", shots: "Location: Mirpur Sher-e-Bangla Stadium", fouls: "Series Status: Super 4", cards: "Expected attendance: Full House" }, commentary: ["Squad rosters finalized for high stakes encounter.", "Press conferences finished at team headquarters."] },
+                      
+                      // Football
+                      { id: 201, sport: "Football", home: "Real Madrid", away: "Barcelona", league: "La Liga (Spain)", oddsHome: 1.85, oddsDraw: 3.40, oddsAway: 4.10, time: "Live - 64 Mins", date: "Live Now", score: "2 - 1", isLive: true, stats: { possession: "Real Madrid 54% - Barcelona 46%", shots: "Shots: 14 - 11", fouls: "Fouls: 8 - 9", cards: "Yellows: 2 - 1" }, commentary: ["Vinicius Jr scoring from a brilliant solo run down left channel.", "Lewandowski fires a penalty challenge over the crossbar.", "Pedri controlling play midfield searching for final pass option."] },
+                      { id: 202, sport: "Football", home: "Manchester City", away: "Liverpool", league: "Premier League (England)", oddsHome: 2.10, oddsDraw: 3.25, oddsAway: 3.10, time: "Live - 12 Mins", date: "Live Now", score: "0 - 0", isLive: true, stats: { possession: "Man City 58% - Liverpool 42%", shots: "Shots: 3 - 2", fouls: "Fouls: 2 - 1", cards: "Yellows: 0 - 0" }, commentary: ["De Bruyne tests goalkeeper with a long range effort.", "Salah counters fast down flank blocked by defender sliding tackle."] },
+                      { id: 203, sport: "Football", home: "Chelsea", away: "Arsenal", league: "Premier League (England)", oddsHome: 2.80, oddsDraw: 3.20, oddsAway: 2.30, time: "Tomorrow 21:00", date: "Tomorrow", score: "Upcoming match", isLive: false, stats: { possession: "Chelsea 48% - Arsenal 52%", shots: "Tactical Setup: 4-3-3 vs 4-2-3-1", fouls: "Suspended Players: None", cards: "Injury Status: Saka fit" }, commentary: ["Pre-match analysis shows Chelsea matching Arsenal's center defense.", "Rivalry record: Last 5 matches ended in 3 Arsenal wins, 2 draws."] },
+                      
+                      // Basketball
+                      { id: 301, sport: "Basketball", home: "Golden State Warriors", away: "Los Angeles Lakers", league: "NBA Championship Finals", oddsHome: 1.70, oddsDraw: 9.00, oddsAway: 2.30, time: "Live - 4th Quarter", date: "Live Now", score: "102 - 98", isLive: true, stats: { possession: "GSW 52% - LAL 48%", shots: "Field Goals: 48% - 45%", fouls: "Rebounds: 38 - 41", cards: "Timeouts left: 1 - 2" }, commentary: ["Curry hits a deep 3-pointer off a stepback screen.", "LeBron responds driving inside for an active layup challenge."] },
+                      
+                      // Tennis
+                      { id: 401, sport: "Tennis", home: "Novak Djokovic", away: "Carlos Alcaraz", league: "Wimbledon Men Singles Grand Slam", oddsHome: 1.80, oddsDraw: 50.0, oddsAway: 2.00, time: "Live - Set 3", date: "Live Now", score: "6-4, 3-6, 4-3", isLive: true, stats: { possession: "Djokovic 51% - Alcaraz 49%", shots: "Aces: 8 - 6", fouls: "Double Faults: 2 - 3", cards: "Unforced Errors: 14 - 18" }, commentary: ["Djokovic holds service game with a clean volley down line.", "Alcaraz executes outstanding baseline drop-shot rallying point."] },
+                      
+                      // Kabaddi
+                      { id: 501, sport: "Kabaddi", home: "Bengal Warriors", away: "Dabang Delhi", league: "Pro Kabaddi League", oddsHome: 1.80, oddsDraw: 5.0, oddsAway: 2.10, time: "Live - 2nd Half", date: "Live Now", score: "28 - 24", isLive: true, stats: { possession: "Warriors 55% - Delhi 45%", shots: "Raid Points: 18 - 15", fouls: "Tackle Points: 8 - 7", cards: "All-outs: 1 - 0" }, commentary: [" Bengal Warriors captain pulls off a multi-point raid.", "Delhi defense holds strong with an ankle grab stop on line."] },
+                      
+                      // Horse Racing
+                      { id: 601, sport: "Horse Racing", home: "Red Rum Rider", away: "Secretariat Star", league: "Derby Cup Gold Trophy Race", oddsHome: 3.50, oddsDraw: 0.0, oddsAway: 4.50, time: "Tomorrow 18:00", date: "Tomorrow", score: "Upcoming race", isLive: false, stats: { possession: "Track type: Turf", shots: "Weather conditions: Dry/Fast", fouls: "Distance: 1.2 miles", cards: "Competitors: 8 horses" }, commentary: ["Jockeys weighed and confirmed on starter grids.", "Pre-race favorite odds shifting slightly closer to Secretariat Star."] }
+                    ];
+
+                    const filtered = mockMatches.filter(m => sportsSelectedCategory === "All" || m.sport === sportsSelectedCategory);
+
+                    if (filtered.length === 0) {
+                      return (
+                        <div className="py-12 text-center text-slate-500 font-medium text-xs">
+                          No active events logged for this sport category right now.
+                        </div>
+                      );
+                    }
+
+                    return filtered.map((match) => (
+                      <div key={match.id} className="p-4 bg-[#0b1329] border border-slate-800 hover:border-blue-500/40 rounded-2xl flex flex-col gap-3 transition-all">
+                        <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold">
+                          <span className="uppercase tracking-wider">{match.league}</span>
+                          <span className={`flex items-center gap-1 font-extrabold ${match.isLive ? "text-rose-500 animate-pulse" : "text-blue-400"}`}>
+                            {match.date === "Live Now" ? "🔴 " + match.time : match.time}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-sm">
+                          <div className="font-extrabold text-white flex flex-col gap-1">
+                            <span>{match.home} vs {match.away}</span>
+                            {match.isLive && (
+                              <span className="text-emerald-400 font-black text-xs">
+                                Score: {match.score}
+                              </span>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => setDetailedMatchView(match)}
+                            className="px-3.5 py-1.5 rounded-lg bg-blue-600/10 text-blue-400 border border-blue-500/20 hover:bg-blue-600 hover:text-white transition-all text-[10px] font-extrabold tracking-wider uppercase select-none cursor-pointer"
+                          >
+                            Live Info & Stats
+                          </button>
+                        </div>
+
+                        {/* Odds Selector buttons */}
+                        <div className="grid grid-cols-3 gap-2">
+                          <button
+                            onClick={() => setSelectedMatch({ match, choice: "Home", team: match.home, odds: match.oddsHome })}
+                            className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Home" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
+                          >
+                            1 ({match.oddsHome})
+                          </button>
+                          <button
+                            onClick={() => setSelectedMatch({ match, choice: "Draw", team: "Draw Match", odds: match.oddsDraw })}
+                            className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Draw" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
+                          >
+                            X ({match.oddsDraw})
+                          </button>
+                          <button
+                            onClick={() => setSelectedMatch({ match, choice: "Away", team: match.away, odds: match.oddsAway })}
+                            className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedMatch?.match.id === match.id && selectedMatch?.choice === "Away" ? "bg-[#2563EB] text-white" : "bg-[#0f172a] border border-slate-800 text-slate-300 hover:border-[#2563EB] hover:text-white"}`}
+                          >
+                            2 ({match.oddsAway})
+                          </button>
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {/* Betslip details */}
+            {selectedMatch && (
+              <div className="bg-[#0b1329] rounded-2xl p-5 border border-slate-800 space-y-4 mt-4 shrink-0">
+                <div className="flex justify-between items-center text-xs font-bold text-slate-400 border-b border-slate-800 pb-2">
+                  <span>Selected Betslip</span>
+                  <button onClick={() => setSelectedMatch(null)} className="text-slate-500 hover:text-slate-300">Remove</button>
+                </div>
+                <div className="text-xs font-semibold space-y-1">
+                  <div className="text-white font-extrabold">{selectedMatch.match.home} vs {selectedMatch.match.away}</div>
+                  <div className="text-slate-450">Choice: <span className="text-slate-200 font-bold">{selectedMatch.team}</span> @ <span className="text-[#2563EB] font-black">{selectedMatch.odds}</span></div>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-450 uppercase mb-2">Wager Amount (USD)</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-450 font-extrabold">$</div>
+                    <input
+                      type="number"
+                      min="1"
+                      value={sportsWager}
+                      onChange={(e) => setSportsWager(e.target.value)}
+                      placeholder="Enter wager amount"
+                      className="w-full pl-7 pr-4 py-2.5 bg-[#0f172a] border border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] font-bold text-white text-xs"
+                    />
+                  </div>
+                </div>
+                {sportsWager && !isNaN(parseFloat(sportsWager)) && (
+                  <div className="flex justify-between items-center text-xs font-bold text-slate-400">
+                    <span>Est. Return payout:</span>
+                    <span className="text-emerald-400 font-extrabold">${(parseFloat(sportsWager) * selectedMatch.odds).toFixed(2)} USD</span>
+                  </div>
+                )}
+                <button
+                  onClick={() => {
+                    const amount = parseFloat(sportsWager);
+                    if (isNaN(amount) || amount <= 0) {
+                      showToastMessage("Please enter a valid wager amount.");
+                      return;
+                    }
+                    if (user && parseFloat(String(user.balance)) < amount) {
+                      showToastMessage("Insufficient balance to place this wager.");
+                      return;
+                    }
+                    showToastMessage(`Wager placed successfully! $${amount} bet registered on ${selectedMatch.team}.`);
+                    setSelectedMatch(null);
+                    setSportsWager("");
+                    setSportsModalOpen(false);
+                    setDetailedMatchView(null);
+                  }}
+                  className="w-full py-3 rounded-xl text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-md transition-all cursor-pointer uppercase tracking-wider"
+                >
+                  Confirm Bet Slip
+                </button>
+              </div>
+            )}
+
+            <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end shrink-0">
               <button
-                onClick={() => { setSportsModalOpen(false); setSelectedMatch(null); setSportsWager(""); }}
+                onClick={() => { 
+                  setSportsModalOpen(false); 
+                  setSelectedMatch(null); 
+                  setSportsWager(""); 
+                  setDetailedMatchView(null);
+                }}
                 className="px-6 py-2.5 rounded-xl font-bold text-slate-400 hover:text-white text-xs cursor-pointer border border-slate-800 hover:bg-slate-800 transition-colors"
               >
                 Close Sportsbook
