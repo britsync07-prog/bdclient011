@@ -24,7 +24,9 @@ export const useFilteredGames = () => {
       );
     }
 
-    if (selectedCategory !== "all") {
+    if (showFavoritesOnly) {
+      filtered = filtered.filter((game) => favorites.includes(game.id));
+    } else if (selectedCategory !== "all") {
       if (selectedCategory === "fishing") {
         filtered = filtered.filter(
           (game) =>
@@ -44,9 +46,7 @@ export const useFilteredGames = () => {
       }
     }
 
-    if (showFavoritesOnly) {
-      filtered = filtered.filter((game) => favorites.includes(game.id));
-    }
+
 
     return filtered;
   }, [state, favorites]);
