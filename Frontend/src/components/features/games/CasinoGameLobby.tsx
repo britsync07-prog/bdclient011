@@ -1876,8 +1876,36 @@ const CasinoGameLobby: React.FC = () => {
                         </div>
 
                         <div className="flex justify-between items-center text-sm">
-                          <div className="font-extrabold text-white flex flex-col gap-1">
-                            <span>{match.home} vs {match.away}</span>
+                          <div className="font-extrabold text-white flex flex-col gap-1.5">
+                            <div className="flex items-center gap-2">
+                              <span>
+                                {match.home === "India" ? "🇮🇳" :
+                                 match.home === "Australia" ? "🇦🇺" :
+                                 match.home === "Bangladesh" ? "🇧🇩" :
+                                 match.home === "Germany" ? "🇩🇪" :
+                                 match.home === "Spain" ? "🇪🇸" :
+                                 match.home === "Argentina" ? "🇦🇷" :
+                                 match.home === "Boston Celtics" ? "🏀" :
+                                 match.home === "Jannik Sinner" ? "🎾" :
+                                 match.home === "Patna Pirates" ? "🇮🇳" :
+                                 match.home === "Royal Champion" ? "🏇" : "🏁"}
+                              </span>
+                              <span>{match.home}</span>
+                              <span className="text-slate-500 font-bold px-1 text-xs">vs</span>
+                              <span>
+                                {match.away === "Pakistan" ? "🇵🇰" :
+                                 match.away === "England" ? "🏴󠁧󠁢󠁥󠁮󠁧󠁿" :
+                                 match.away === "South Africa" ? "🇿🇦" :
+                                 match.away === "Scotland" ? "🏴󠁧󠁢󠁳󠁣󠁴󠁿" :
+                                 match.away === "Croatia" ? "🇭🇷" :
+                                 match.away === "Canada" ? "🇨🇦" :
+                                 match.away === "Dallas Mavericks" ? "🏀" :
+                                 match.away === "Carlos Alcaraz" ? "🎾" :
+                                 match.away === "Puneri Paltan" ? "🇮🇳" :
+                                 match.away === "Golden Galloper" ? "🏇" : "🏁"}
+                              </span>
+                              <span>{match.away}</span>
+                            </div>
                             {match.isLive && (
                               <span className="text-emerald-400 font-black text-xs">
                                 Score: {match.score}
