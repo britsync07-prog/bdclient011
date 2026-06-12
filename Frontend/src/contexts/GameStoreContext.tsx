@@ -97,7 +97,7 @@ export const GameStoreProvider: React.FC<GameStoreProviderProps> = ({
           const mappedGames = data.games.map((g: { gameCode: string, gameName: string, provider: string, thumbnail: string, vendorCode: string, category?: string }) => ({
             id: `${g.vendorCode}_${g.gameCode}`,
             gameCode: g.gameCode,
-            name: g.gameName,
+            name: g.name || (g as any).gameName || "",
             provider: g.provider,
             category: (g.category || "slots") as "slots" | "table" | "live",
             rating: 4.5,
