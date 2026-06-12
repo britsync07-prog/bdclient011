@@ -162,7 +162,49 @@ exports.getGames = async (req, res, next) => {
     if (!cachedGames) await updateGamesCache();
     else if (Date.now() - lastCacheFetchTime > CACHE_TTL) updateGamesCache();
 
-    res.json({ games: cachedGames || [] });
+    // Secondary runtime classification pass to clean up any remaining mismatched slots
+    const classifiedGames = (cachedGames || []).map(game => {
+      let cat = game.category || 'slots';
+      const name = (game.name || '').toLowerCase();
+      const code = (game.gameCode || '').toLowerCase();
+      const provider = (game.provider || '').toLowerCase();
+
+      // Table games / Poker
+      if (name.includes('poker') || name.includes('blackjack') || name.includes('baccarat') || name.includes('roulette') || name.includes('sicbo') || name.includes('dragon tiger') || name.includes('holdem') || name.includes('teen patti') || name.includes('andar bahar') || name.includes('card') || name.includes('table') || name.includes('dice') || name.includes('roulet') || name.includes('wheels')) {
+        cat = name.includes('live') || provider.includes('evolution') || provider.includes('pragmatic play live') ? 'live' : 'table';
+      }
+      // Fishing Games
+      else if (name.includes('fish') || name.includes('fishing') || name.includes('hunter') || name.includes('shark') || name.includes('ocean') || name.includes('sea') || name.includes('marine') || name.includes('underwater')) {
+        cat = 'fishing';
+      }
+      // Crash / Arcade / Mini / Mines / Fast games
+      else if (name.includes('crash') || name.includes('plinko') || name.includes('aviator') || name.includes('mines') || name.includes('limbo') || name.includes('jetx') || name.includes('spaceman') || name.includes('zeppelin')) {
+        cat = 'crash';
+      }
+      // Sports / Virtual Sports
+      else if (name.includes('sport') || name.includes('football') || name.includes('soccer') || name.includes('cricket') || name.includes('tennis') || name.includes('basketball') || name.includes('race') || name.includes('racing') || name.includes('virtual') || name.includes('cup') || name.includes('league')) {
+        cat = 'sports';
+      }
+      // Lottery / Lotto / Bingo / Keno / Scratch
+      else if (name.includes('lotto') || name.includes('lottery') || name.includes('bingo') || name.includes('keno') || name.includes('scratch') || name.includes('draw') || name.includes('raffle') || name.includes('ticket') || name.includes('ball')) {
+        cat = 'lottery';
+      }
+      // Arcade / Casual Games
+      else if (name.includes('arcade') || name.includes('candy') || name.includes('fruit') || name.includes('jewel') || name.includes('pop') || name.includes('gem') || name.includes('tetris') || name.includes('pacman') || name.includes('bubble') || name.includes('shoot') || name.includes('casual')) {
+        cat = 'arcade';
+      }
+      // Live Dealer/Casino games
+      else if (name.includes('live') || name.includes('dealer') || name.includes('lobby') || provider.includes('live') || provider.includes('ezugi') || provider.includes('sexy baccarat') || provider.includes('evolution')) {
+        cat = 'live';
+      }
+
+      return {
+        ...game,
+        category: cat
+      };
+    });
+
+    res.json({ games: classifiedGames });
   } catch (error) {
     next(error);
   }
