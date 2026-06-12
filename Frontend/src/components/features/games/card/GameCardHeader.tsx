@@ -75,7 +75,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
   }, [game.category, lang]);
 
   return (
-    <div className="relative h-48 overflow-hidden bg-slate-900 border-b border-slate-800">
+    <div className="relative aspect-square w-full overflow-hidden bg-slate-900 border-b border-slate-800">
       {/* Game background */}
       {game.thumbnail && !imageError ? (
         <img
