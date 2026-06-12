@@ -32,7 +32,7 @@ let lastCacheFetchTime = 0;
 let activeCachePromise = null;
 
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour TTL
-const CACHE_FILE = path.join(__dirname, '../config/games-cache.json');
+const CACHE_FILE = path.join(__dirname, '../config/games-cache-optimized.json');
 
 try {
   const dir = path.dirname(CACHE_FILE);
@@ -117,6 +117,9 @@ function updateGamesCache() {
                   finalCategory = 'arcade';
                 }
 
+                const popularKeywords = ['bonanza', 'olympus', 'baccarat', 'roulette', 'crazy time', 'monopoly', 'mega wheel', 'sweet', 'fruit', 'lightning', 'spribe', 'plinko', 'aviator', 'dragon tiger', 'andar bahar', 'lobby'];
+                const isPopular = popularKeywords.some(kw => gName.includes(kw));
+
                 return {
                   id: `${vendor.vendorCode}_${game.gameCode}`,
                   gameCode: game.gameCode,
@@ -125,8 +128,8 @@ function updateGamesCache() {
                   thumbnail: game.thumbnail,
                   vendorCode: vendor.vendorCode,
                   category: finalCategory,
-                  isPopular: Math.random() > 0.8,
-                  rating: 4 + Math.random()
+                  isPopular,
+                  rating: Number((4.1 + Math.random() * 0.9).toFixed(2))
                 };
               });
             }
@@ -217,7 +220,8 @@ exports.getGames = async (req, res, next) => {
 
       return {
         ...game,
-        category: cat
+        category: cat,
+        isPopular: game.isPopular === true
       };
     });
 
