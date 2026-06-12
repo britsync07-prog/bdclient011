@@ -88,7 +88,7 @@ function updateGamesCache() {
               let category = 'slots';
               const vCode = vendor.vendorCode.toLowerCase();
 
-              if (vendor.type === 1) category = 'casino';
+              if (vendor.type === 1) category = 'live'; // vendor type 1 is live casino/lobby
               else if (vendor.type === 4) category = 'fishing';
               else if (vCode.includes('crash') || vCode.includes('spribe')) category = 'crash';
               else if (vCode.includes('sport') || vCode.includes('sbo') || vCode.includes('bti')) category = 'sports';
@@ -97,17 +97,38 @@ function updateGamesCache() {
               else if (vCode.includes('arcade') || vCode.includes('jdb')) category = 'arcade';
               else if (vendor.type === 2) category = 'slots';
 
-              return res.data.message.map(game => ({
-                id: `${vendor.vendorCode}_${game.gameCode}`,
-                gameCode: game.gameCode,
-                name: game.gameName,
-                provider: vendor.name || vendor.vendorCode,
-                thumbnail: game.thumbnail,
-                vendorCode: vendor.vendorCode,
-                category: category,
-                isPopular: Math.random() > 0.8, // Mocking some popular for variety
-                rating: 4 + Math.random()
-              }));
+              return res.data.message.map(game => {
+                let finalCategory = category;
+                const gName = (game.gameName || "").toLowerCase();
+                const gCode = (game.gameCode || "").toLowerCase();
+
+                // Dynamic override based on game metadata
+                if (gName.includes('fishing') || gName.includes('fish') || gName.includes('ocean') || gName.includes('hunter')) {
+                  finalCategory = 'fishing';
+                } else if (gName.includes('crash') || gName.includes('plinko') || gName.includes('aviator') || gName.includes('mines') || gName.includes('limbo')) {
+                  finalCategory = 'crash';
+                } else if (gName.includes('baccarat') || gName.includes('roulette') || gName.includes('blackjack') || gName.includes('sic bo') || gName.includes('dragon tiger') || gName.includes('live')) {
+                  finalCategory = 'live';
+                } else if (gName.includes('poker') || gName.includes('table') || gName.includes('card') || gName.includes('holdem') || gName.includes('texas')) {
+                  finalCategory = 'table';
+                } else if (gName.includes('lotto') || gName.includes('lottery') || gName.includes('keno') || gName.includes('bingo') || gName.includes('scratch') || gName.includes('dice')) {
+                  finalCategory = 'lottery';
+                } else if (gName.includes('arcade') || gName.includes('fruit') || gName.includes('candy') || gName.includes('jewel') || gName.includes('pop') || gName.includes('gem')) {
+                  finalCategory = 'arcade';
+                }
+
+                return {
+                  id: `${vendor.vendorCode}_${game.gameCode}`,
+                  gameCode: game.gameCode,
+                  name: game.gameName,
+                  provider: vendor.name || vendor.vendorCode,
+                  thumbnail: game.thumbnail,
+                  vendorCode: vendor.vendorCode,
+                  category: finalCategory,
+                  isPopular: Math.random() > 0.8,
+                  rating: 4 + Math.random()
+                };
+              });
             }
             return [];
           } catch (err) {
