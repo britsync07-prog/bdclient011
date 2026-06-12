@@ -885,8 +885,42 @@ const CasinoGameLobby: React.FC = () => {
          </div>
        </header>
 
-       {/* ── MAIN CONTENT AREA ────────────────────────────────────────────── */}
-       <main className="flex-1 flex flex-col min-w-0">
+        {/* Flex layout container for Sidebar + Main Content */}
+        <div className="flex-1 flex flex-row min-w-0 w-full">
+          {/* Left Sidebar (visible on larger screens) */}
+          <aside className="hidden lg:block w-64 shrink-0 bg-[#0f172a]/40 border-r border-slate-800/80 p-4 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-slate-500 text-[10px] font-extrabold uppercase tracking-widest mb-3 px-3">
+                  {currentLanguage === "BN" ? "গেম ক্যাটাগরি" : "Game Categories"}
+                </h4>
+                <nav className="space-y-1">
+                  {categoryChips.map(({ label, icon, value }) => {
+                    const active = isCategoryActive(value);
+                    return (
+                      <button
+                        key={value}
+                        onClick={() => handleCategoryClick(value)}
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                          active
+                            ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-500/10"
+                            : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
+                        }`}
+                      >
+                        <span className={`${active ? "text-white" : "text-slate-500 group-hover:text-white"}`}>
+                          {icon}
+                        </span>
+                        <span>{label}</span>
+                      </button>
+                    );
+                  })}
+                </nav>
+              </div>
+            </div>
+          </aside>
+
+          {/* ── MAIN CONTENT AREA ────────────────────────────────────────────── */}
+          <main className="flex-1 flex flex-col min-w-0">
          {/* ── ANNOUNCEMENT MARQUEE TICKER ────────────────────────────────── */}
           <section className="px-4 sm:px-6 lg:px-8 py-2.5 bg-[#0b1329] border-b border-slate-800 shadow-sm" aria-label="Announcement banner">
             <div className="max-w-7xl mx-auto flex items-center gap-3 px-4 py-2 rounded-2xl bg-gradient-to-r from-blue-950/20 via-slate-900/50 to-slate-900/20 border border-slate-800 backdrop-blur-md">
@@ -1152,7 +1186,8 @@ const CasinoGameLobby: React.FC = () => {
 
         {/* ── FOOTER ──────────────────────────────────────────────────────── */}
         <Footer lang={currentLanguage} onOpenPolicy={(title, key) => setPolicyModal({ isOpen: true, title, contentKey: key })} />
-      </main>
+        </main>
+      </div>
 
       {/* Toast popup */}
       <Toast
