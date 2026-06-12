@@ -107,42 +107,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
         aria-hidden="true"
       />
 
-      {/* Badges */}
-      <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-        <span
-          className="px-2.5 py-1 rounded-full text-[10px] font-700 uppercase tracking-wider bg-slate-950/80 text-slate-300 border border-slate-800 shadow-sm"
-          role="img"
-          aria-label={`Category: ${game.category}`}
-        >
-          {categoryText}
-        </span>
-
-        {game.isNew && (
-          <span
-            className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-amber-900 border border-amber-300 shadow-sm flex items-center gap-1"
-            role="img"
-            aria-label="New game"
-          >
-            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-            </svg>
-            {t.NEW}
-          </span>
-        )}
-
-        {game.isPopular && (
-          <span
-            className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-600 text-white border border-blue-500 shadow-sm flex items-center gap-1"
-            role="img"
-            aria-label="Popular game"
-          >
-            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
-            </svg>
-            {t.HOT}
-          </span>
-        )}
-      </div>
+      {/* Badges removed per user request */}
 
       {/* Favorite Button */}
       <button
