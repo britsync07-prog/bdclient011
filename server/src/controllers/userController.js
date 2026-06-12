@@ -167,22 +167,31 @@ exports.getGames = async (req, res, next) => {
 
     // Secondary runtime classification pass to clean up any remaining mismatched slots
     const classifiedGames = (cachedGames || []).map(game => {
-      let cat = game.category || 'slots';
       const name = (game.name || '').toLowerCase();
       const code = (game.gameCode || '').toLowerCase();
       const provider = (game.provider || '').toLowerCase();
+      const vendorCode = (game.vendorCode || '').toLowerCase();
+      let cat = game.category || 'slots';
 
+      // 1. Live Dealer/Casino games check first to make sure they are matched with Casino category
+      if (
+        name.includes('live') || name.includes('dealer') || name.includes('lobby') ||
+        provider.includes('live') || provider.includes('ezugi') || provider.includes('sexy baccarat') ||
+        provider.includes('evolution') || vendorCode.startsWith('casino-')
+      ) {
+        cat = 'live';
+      }
       // Megaways Slots
-      if (name.includes('megaways') || name.includes('mega ways') || name.includes('multiways') || name.includes('multi ways')) {
+      else if (name.includes('megaways') || name.includes('mega ways') || name.includes('multiways') || name.includes('multi ways')) {
         cat = 'megaways';
       }
       // Card Games (strictly card games, distinct from non-card table games like roulette/sicbo)
       else if (name.includes('poker') || name.includes('blackjack') || name.includes('baccarat') || name.includes('holdem') || name.includes('teen patti') || name.includes('andar bahar') || name.includes('card') || name.includes('bj') || name.includes('texas')) {
-        cat = name.includes('live') || provider.includes('evolution') || provider.includes('pragmatic play live') ? 'live' : 'cards';
+        cat = 'cards';
       }
       // Table games / Poker (non-card table games)
       else if (name.includes('roulette') || name.includes('sicbo') || name.includes('dragon tiger') || name.includes('table') || name.includes('dice') || name.includes('roulet') || name.includes('wheels') || name.includes('wheel') || name.includes('sic bo')) {
-        cat = name.includes('live') || provider.includes('evolution') || provider.includes('pragmatic play live') ? 'live' : 'table';
+        cat = 'table';
       }
       // Fishing Games
       else if (name.includes('fish') || name.includes('fishing') || name.includes('hunter') || name.includes('shark') || name.includes('ocean') || name.includes('sea') || name.includes('marine') || name.includes('underwater')) {
@@ -203,10 +212,6 @@ exports.getGames = async (req, res, next) => {
       // Arcade / Casual Games
       else if (name.includes('arcade') || name.includes('candy') || name.includes('fruit') || name.includes('jewel') || name.includes('pop') || name.includes('gem') || name.includes('tetris') || name.includes('pacman') || name.includes('bubble') || name.includes('shoot') || name.includes('casual')) {
         cat = 'arcade';
-      }
-      // Live Dealer/Casino games
-      else if (name.includes('live') || name.includes('dealer') || name.includes('lobby') || provider.includes('live') || provider.includes('ezugi') || provider.includes('sexy baccarat') || provider.includes('evolution')) {
-        cat = 'live';
       }
 
       // Final check: if game has sports keywords or wheel features, enforce strict separation out of slots

@@ -909,7 +909,7 @@ const CasinoGameLobby: React.FC = () => {
                 </button>
               </div>
 
-              {sidebarExpanded && (
+              {sidebarExpanded ? (
                 <div>
                   <nav className="space-y-1">
                     {categoryChips.map(({ label, icon, value }) => {
@@ -932,6 +932,26 @@ const CasinoGameLobby: React.FC = () => {
                       );
                     })}
                   </nav>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2">
+                  {categoryChips.map(({ label, icon, value }) => {
+                    const active = isCategoryActive(value);
+                    return (
+                      <button
+                        key={value}
+                        onClick={() => handleCategoryClick(value)}
+                        className={`p-2.5 rounded-xl transition-all duration-200 cursor-pointer flex items-center justify-center ${
+                          active
+                            ? "bg-blue-650 text-white shadow-md shadow-blue-500/10"
+                            : "text-slate-500 hover:bg-slate-850 hover:text-white"
+                        }`}
+                        title={label}
+                      >
+                        {icon}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
