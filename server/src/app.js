@@ -20,6 +20,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', walletRoutes);
+app.use('/api/api', walletRoutes);
 
 // Health Check
 app.get('/health', (req, res) => {
