@@ -99,8 +99,9 @@ export const GameStoreProvider: React.FC<GameStoreProviderProps> = ({
             gameCode: g.gameCode,
             name: g.name || g.gameName || "",
             provider: g.provider,
-            category: (g.category || "slots") as "slots" | "table" | "live",
-            rating: 4.5,
+            category: g.category || "slots",
+            isPopular: g.isPopular === true,
+            rating: g.rating || 4.5,
             thumbnail: g.thumbnail,
             vendorCode: g.vendorCode,
           }));
