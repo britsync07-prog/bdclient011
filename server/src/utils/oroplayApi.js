@@ -105,6 +105,21 @@ exports.getLaunchUrl = async (payload) => {
   return { status: response.status, data };
 };
 
+exports.createUser = async (userCode) => {
+  const token = await getBearerToken();
+  const response = await fetch(`${API_BASE_URL}/user/create`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ userCode }),
+  });
+
+  const data = await response.json();
+  return { status: response.status, data };
+};
+
 /**
  * Sets RTP for a specific user
  * @param {string} vendorCode

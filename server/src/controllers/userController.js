@@ -148,7 +148,6 @@ exports.getGames = async (req, res, next) => {
 };
 
 exports.launchGame = async (req, res, next) => {
-  const { vendorCode, gameCode, language = 'en', lobbyUrl, theme = 1 } = req.body;
   try {
     const { vendorCode, gameCode, language = 'bn', lobbyUrl, theme = 1 } = req.body;
     
@@ -165,10 +164,19 @@ exports.launchGame = async (req, res, next) => {
       theme
     };
 
+    // Ensure the user exists on the OroPlay system before attempting to launch
+    try {
+      await oroplayApi.createUser(req.user.username);
+    } catch (createErr) {
+      console.warn(`[OroPlay] Proactive user registration failed or user already exists for: ${req.user.username}`, createErr.message);
+    }
+
     const result = await oroplayApi.getLaunchUrl(payload);
+    console.log("OROPLAY LAUNCH API RESPONSE:", JSON.stringify(result));
 
     if (result.status !== 200 || !result.data.success) {
-      return res.status(result.status || 500).json({ 
+      const errorStatus = result.status === 200 ? 500 : (result.status || 500);
+      return res.status(errorStatus).json({ 
         message: 'গেম লঞ্চ ইউআরএল পেতে ব্যর্থ হয়েছে',
         details: result.data 
       });
