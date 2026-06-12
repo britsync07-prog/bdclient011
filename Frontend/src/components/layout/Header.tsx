@@ -50,12 +50,12 @@ export const Header: React.FC<HeaderProps> = () => {
         <div className="flex items-center gap-4">
            {!user ? (
              <>
-               <Link href="/login" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold transition-colors">
-                  <LogIn size={18} />
+               <Link href="/login" className="flex items-center gap-2 px-4 py-2 rounded-[5px] bg-gradient-to-br from-[#1d4ed8] via-[#3b82f6] to-[#1d4ed8] shadow-[0_5px_10px_rgba(0,0,0,0.15),inset_0_0_5px_rgba(255,255,255,0.6)] border-none text-white text-xs font-extrabold transition-all duration-200 hover:brightness-110 active:scale-95">
+                  <LogIn size={14} />
                   {BANGLA_TEXT.LOGIN}
                </Link>
-               <Link href="/register" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#263668] hover:bg-[#32457a] text-white text-sm font-bold transition-colors border border-slate-700/50">
-                  <UserPlus size={18} />
+               <Link href="/register" className="flex items-center gap-2 px-4 py-2 rounded-[5px] bg-gradient-to-br from-[#f59e0b] via-[#fcd34d] to-[#f59e0b] shadow-[0_5px_10px_rgba(0,0,0,0.15),inset_0_0_5px_rgba(255,255,255,0.6)] border-none text-black text-xs font-extrabold transition-all duration-200 hover:brightness-110 active:scale-95">
+                  <UserPlus size={14} />
                   {BANGLA_TEXT.SIGNUP}
                </Link>
              </>

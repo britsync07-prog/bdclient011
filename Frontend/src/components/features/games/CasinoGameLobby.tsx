@@ -876,19 +876,19 @@ const CasinoGameLobby: React.FC = () => {
                  </button>
 
                  <button
-                   onClick={() => router.push("/login")}
-                   className="px-4 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
-                 >
-                   {currentLanguage === "BN" ? "লগইন" : "Login"}
-                 </button>
-                 <button
-                   onClick={() => router.push("/register")}
-                   className="px-4 py-2 rounded-xl text-xs font-bold bg-[#3b82f6] text-white hover:bg-[#1d4ed8] transition-colors shadow-md shadow-[#3b82f6]/25 cursor-pointer"
-                 >
-                   {currentLanguage === "BN" ? "নিবন্ধন" : "Sign Up"}
-                 </button>
-               </div>
-             )}
+                    onClick={() => router.push("/login")}
+                    className="px-4 py-2.5 rounded-[5px] text-xs font-extrabold text-white bg-gradient-to-br from-[#1d4ed8] via-[#3b82f6] to-[#1d4ed8] shadow-[0_5px_10px_rgba(0,0,0,0.15),inset_0_0_5px_rgba(255,255,255,0.6)] border-none select-none transition-all duration-200 hover:brightness-110 active:scale-95 cursor-pointer"
+                  >
+                    {currentLanguage === "BN" ? "লগইন" : "Login"}
+                  </button>
+                  <button
+                    onClick={() => router.push("/register")}
+                    className="px-4 py-2.5 rounded-[5px] text-xs font-extrabold text-black bg-gradient-to-br from-[#f59e0b] via-[#fcd34d] to-[#f59e0b] shadow-[0_5px_10px_rgba(0,0,0,0.15),inset_0_0_5px_rgba(255,255,255,0.6)] border-none select-none transition-all duration-200 hover:brightness-110 active:scale-95 cursor-pointer"
+                  >
+                    {currentLanguage === "BN" ? "নিবন্ধন" : "Sign Up"}
+                  </button>
+                </div>
+              )}
            </div>
          </div>
        </header>
@@ -906,7 +906,7 @@ const CasinoGameLobby: React.FC = () => {
                 )}
                 <button
                   onClick={() => setSidebarExpanded(!sidebarExpanded)}
-                  className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer flex items-center justify-center w-8 h-8 font-extrabold text-sm"
+                  className="p-1.5 rounded-[5px] border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer flex items-center justify-center w-8 h-8 font-extrabold text-sm"
                   title={sidebarExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
                 >
                   {sidebarExpanded ? "❮" : "❯"}
@@ -922,10 +922,10 @@ const CasinoGameLobby: React.FC = () => {
                         <button
                           key={value}
                           onClick={() => handleCategoryClick(value)}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-xs font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                             active
-                              ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-500/10"
-                              : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
+                              ? "bg-blue-600/15 text-[#3b82f6] border-l-4 border-[#f59e0b]"
+                              : "text-slate-400 border-l-4 border-transparent hover:bg-slate-800/30 hover:text-white"
                           }`}
                         >
                           <span className={`${active ? "text-white" : "text-slate-500 group-hover:text-white"}`}>
@@ -945,10 +945,10 @@ const CasinoGameLobby: React.FC = () => {
                       <button
                         key={value}
                         onClick={() => handleCategoryClick(value)}
-                        className={`p-2.5 rounded-xl transition-all duration-200 cursor-pointer flex items-center justify-center ${
+                        className={`p-2.5 rounded-[5px] transition-all duration-200 cursor-pointer flex items-center justify-center ${
                           active
-                            ? "bg-blue-650 text-white shadow-md shadow-blue-500/10"
-                            : "text-slate-500 hover:bg-slate-850 hover:text-white"
+                            ? "bg-blue-600/15 text-[#3b82f6] border-l-2 border-[#f59e0b]"
+                            : "text-slate-500 border-l-2 border-transparent hover:bg-slate-850 hover:text-white"
                         }`}
                         title={label}
                       >

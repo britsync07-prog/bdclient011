@@ -60,8 +60,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               {menuItems.map((item, idx) => (
                 <li key={idx}>
                   <button
-                    className={`w-full flex items-center px-3 py-3 gap-4 rounded-xl transition-all duration-200 hover:bg-[#263668] ${
-                      item.active ? "bg-blue-600 text-white shadow-lg" : "text-slate-400"
+                    className={`w-full flex items-center px-3 py-2.5 gap-4 rounded-[5px] transition-all duration-200 hover:bg-[#263668]/30 hover:text-white ${
+                      item.active
+                        ? "bg-blue-600/15 text-[#3b82f6] border-l-4 border-[#f59e0b]"
+                        : "text-slate-400 border-l-4 border-transparent"
                     }`}
                   >
                     <span className="shrink-0">{item.icon}</span>

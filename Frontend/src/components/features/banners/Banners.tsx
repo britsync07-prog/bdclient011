@@ -47,7 +47,7 @@ export const Banners: React.FC = () => {
   if (loading || banners.length === 0) return null;
 
   return (
-    <div className="mb-6 overflow-hidden rounded-2xl shadow-2xl border border-slate-700/50 relative group aspect-[21/9] sm:aspect-[21/7]">
+    <div className="mb-6 overflow-hidden rounded-lg shadow-xl border border-slate-700/50 relative group aspect-[21/9] sm:aspect-[21/7]">
       <div 
         className="flex w-full h-full transition-transform duration-700 ease-in-out"
         style={{ transform: `translateX(-${activeIndex * 100}%)` }}

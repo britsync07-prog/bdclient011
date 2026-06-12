@@ -32,7 +32,7 @@ export const GameCard = memo<ExtendedGameCardProps>(
     return (
       <article 
         onClick={handleCardClick}
-        className="group cursor-pointer relative rounded-2xl overflow-hidden bg-[#0f172a] border border-slate-800 shadow-sm hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 hover:-translate-y-1"
+        className="group cursor-pointer relative rounded-lg overflow-hidden bg-[#0f172a] border border-slate-800 shadow-sm hover:shadow-md hover:border-blue-500/30 transition-all duration-200 hover:-translate-y-0.5"
       >
         <GameCardHeader
           game={game}
