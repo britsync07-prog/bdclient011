@@ -1116,45 +1116,40 @@ const CasinoGameLobby: React.FC = () => {
 
           {/* Game catalog grid */}
           {state.selectedCategory === "home" && !state.searchTerm && !state.showFavoritesOnly ? (
-            <div className="space-y-10">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pt-2">
               {categoryChips
                 .filter(chip => chip.value !== "home" && chip.value !== "favorites" && chip.value !== "promotions" && chip.value !== "vip")
                 .map(chip => {
-                  // Filter games for this specific category
-                  let catGames = state.games;
+                  // Count matches
+                  let count = state.games.length;
                   if (chip.value === "all") {
-                    catGames = catGames.filter(g => g.isPopular);
+                    count = state.games.filter(g => g.isPopular).length;
                   } else if (chip.value === "fishing") {
-                    catGames = catGames.filter(g => (g.vendorCode && g.vendorCode.toLowerCase().startsWith("fishing-")) || g.name.toLowerCase().includes("fish"));
+                    count = state.games.filter(g => (g.vendorCode && g.vendorCode.toLowerCase().startsWith("fishing-")) || g.name.toLowerCase().includes("fish")).length;
                   } else if (chip.value === "crash") {
-                    catGames = catGames.filter(g => (g.vendorCode && g.vendorCode.toLowerCase().startsWith("mini-")) || ["crash", "plinko", "aviator", "dice", "mines", "limbo"].some(kw => g.name.toLowerCase().includes(kw)));
+                    count = state.games.filter(g => (g.vendorCode && g.vendorCode.toLowerCase().startsWith("mini-")) || ["crash", "plinko", "aviator", "dice", "mines", "limbo"].some(kw => g.name.toLowerCase().includes(kw))).length;
                   } else {
-                    catGames = catGames.filter(g => g.category === chip.value);
+                    count = state.games.filter(g => g.category === chip.value).length;
                   }
 
-                  if (catGames.length === 0) return null;
-
                   return (
-                    <div key={chip.value} className="space-y-3 bg-[#0b1329]/30 p-4 sm:p-6 rounded-3xl border border-slate-800/40">
-                      <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
-                        <h4 className="text-sm sm:text-base font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
-                          <span className="text-blue-500">{chip.icon}</span>
-                          {chip.label}
-                        </h4>
-                        <span className="text-[10px] bg-[#0f172a] text-slate-400 font-bold px-2 py-0.5 rounded-full">
-                          {catGames.length} {currentLanguage === "BN" ? "টি উপলব্ধ" : "Games"}
-                        </span>
+                    <button
+                      key={chip.value}
+                      onClick={() => handleCategoryClick(chip.value)}
+                      className="group p-6 rounded-2xl bg-gradient-to-br from-[#0f172a] to-[#0f172a]/40 border border-slate-800 hover:border-blue-500/40 hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-center gap-3 cursor-pointer select-none hover:-translate-y-1"
+                    >
+                      <div className="p-4 rounded-full bg-blue-950/30 text-blue-400 group-hover:text-white group-hover:bg-blue-600 transition-all duration-300">
+                        {chip.icon}
                       </div>
-                      <GameGrid
-                        games={catGames}
-                        favorites={favorites}
-                        onToggleFavorite={handleToggleFavorite}
-                        onPlay={handlePlay}
-                        onClearFilters={clearFilters}
-                        totalGames={state.games.length}
-                        lang={currentLanguage}
-                      />
-                    </div>
+                      <div className="text-center space-y-1">
+                        <div className="text-xs sm:text-sm font-black text-white tracking-wide uppercase group-hover:text-blue-400 transition-colors">
+                          {chip.label}
+                        </div>
+                        <div className="text-[10px] text-slate-500 font-bold">
+                          {count} {currentLanguage === "BN" ? "টি গেম" : "Games"}
+                        </div>
+                      </div>
+                    </button>
                   );
                 })}
             </div>
