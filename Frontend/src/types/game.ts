@@ -13,7 +13,7 @@ export interface Game {
   vendorCode?: string;
 }
 
-export type Category = "all" | "slots" | "table" | "live" | "fishing" | "crash" | "sports" | "lottery" | "arcade" | "megaways" | "cards";
+export type Category = "home" | "all" | "slots" | "table" | "live" | "fishing" | "crash" | "sports" | "lottery" | "arcade" | "megaways" | "cards";
 
 export interface FilterState {
   searchTerm: string;

@@ -9,11 +9,12 @@ export const useFilteredGames = () => {
   const filteredGames = useMemo(() => {
     const { games, searchTerm, selectedCategory, showFavoritesOnly } = state;
 
-    if (!searchTerm && selectedCategory === "all" && !showFavoritesOnly) {
-      return games;
-    }
-
     let filtered = games;
+
+    if (selectedCategory === "all") {
+      // Hot Games category: show only popular games
+      filtered = filtered.filter((game) => game.isPopular);
+    }
 
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
@@ -26,7 +27,7 @@ export const useFilteredGames = () => {
 
     if (showFavoritesOnly) {
       filtered = filtered.filter((game) => favorites.includes(game.id));
-    } else if (selectedCategory !== "all") {
+    } else if (selectedCategory !== "home" && selectedCategory !== "all") {
       if (selectedCategory === "fishing") {
         filtered = filtered.filter(
           (game) =>
@@ -45,8 +46,6 @@ export const useFilteredGames = () => {
         filtered = filtered.filter((game) => (game.category as string) === selectedCategory);
       }
     }
-
-
 
     return filtered;
   }, [state, favorites]);

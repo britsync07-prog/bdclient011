@@ -41,7 +41,7 @@ interface GameStoreContextType {
 const initialState: GameState = {
   games: [],
   searchTerm: "",
-  selectedCategory: "all",
+  selectedCategory: "home",
   showFavoritesOnly: false,
   isLoading: true,
 };
@@ -60,7 +60,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       return {
         ...state,
         searchTerm: "",
-        selectedCategory: "all",
+        selectedCategory: "home",
         showFavoritesOnly: false,
       };
     case "SET_LOADING":
@@ -138,7 +138,7 @@ export const GameStoreProvider: React.FC<GameStoreProviderProps> = ({
   const hasActiveFilters = useMemo(() => {
     return (
       state.searchTerm !== "" ||
-      state.selectedCategory !== "all" ||
+      state.selectedCategory !== "home" ||
       state.showFavoritesOnly
     );
   }, [state.searchTerm, state.selectedCategory, state.showFavoritesOnly]);

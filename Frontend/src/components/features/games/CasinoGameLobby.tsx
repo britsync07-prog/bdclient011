@@ -25,6 +25,7 @@ import {
   Shield,
   Anchor,
   Zap,
+  Home,
 } from "lucide-react";
 
 import { Footer } from "@/components/layout/footer/Footer";
@@ -717,6 +718,7 @@ const CasinoGameLobby: React.FC = () => {
     icon: React.ReactNode;
     value: Category | "favorites" | "promotions" | "vip";
   }[] = [
+    { label: currentLanguage === "BN" ? "হোম" : "Home", icon: <Home size={18} />, value: "home" },
     { label: currentLanguage === "BN" ? "গরম খেলা" : "Hot Games", icon: <LayoutDashboard size={18} />, value: "all" },
     { label: currentLanguage === "BN" ? "স্পোর্টস" : "Sports", icon: <Trophy size={18} />, value: "sports" },
     { label: currentLanguage === "BN" ? "ক্যাসিনো" : "Casino", icon: <Gamepad2 size={18} />, value: "live" },
@@ -1061,27 +1063,29 @@ const CasinoGameLobby: React.FC = () => {
               <span className="w-1.5 h-6 rounded-full bg-[#2563EB]" />
               {state.showFavoritesOnly
                 ? (currentLanguage === "BN" ? "পছন্দসই গেম তালিকা" : "My Favorites List")
-                : state.selectedCategory !== "all"
-                ? state.selectedCategory === "live"
-                  ? (currentLanguage === "BN" ? "লাইভ ক্যাসিনো গেমস" : "Live Casino Games")
-                  : state.selectedCategory === "slots"
-                  ? (currentLanguage === "BN" ? "ভাইব্রেন্ট স্লট ইঞ্জিন" : "Vibrant Slots Engine")
-                  : state.selectedCategory === "megaways"
-                  ? (currentLanguage === "BN" ? "মেগাওয়েজ স্লটস" : "Megaways Slots")
-                  : state.selectedCategory === "cards"
-                  ? (currentLanguage === "BN" ? "কার্ড গেমস" : "Card Games")
-                  : state.selectedCategory === "fishing"
-                  ? (currentLanguage === "BN" ? "ফিশিং হান্টার" : "Fishing Hunter")
-                  : state.selectedCategory === "crash"
-                  ? (currentLanguage === "BN" ? "ক্র্যাশ ও মাইন্স গেমস" : "Crash & Mines Games")
-                  : state.selectedCategory === "sports"
-                  ? (currentLanguage === "BN" ? "স্পোর্টস গেমস লবি" : "Sports Games Lobby")
-                  : state.selectedCategory === "lottery"
-                  ? (currentLanguage === "BN" ? "লটারি ও স্ক্র্যাচকার্ড" : "Lottery & Scratchcards")
-                  : state.selectedCategory === "arcade"
-                  ? (currentLanguage === "BN" ? "আর্কেড ক্যাজুয়ালস" : "Arcade Casuals")
-                  : state.selectedCategory.toUpperCase()
-                : (currentLanguage === "BN" ? "স্ট্যান্ডার্ড প্ল্যাটফর্ম গ্রিড" : "Standard Platform Grid")}
+                : state.selectedCategory === "home"
+                ? (currentLanguage === "BN" ? "স্ট্যান্ডার্ড প্ল্যাটফর্ম গ্রিড" : "Standard Platform Grid")
+                : state.selectedCategory === "all"
+                ? (currentLanguage === "BN" ? "গরম খেলা" : "Hot Games")
+                : state.selectedCategory === "live"
+                ? (currentLanguage === "BN" ? "লাইভ ক্যাসিনো গেমস" : "Live Casino Games")
+                : state.selectedCategory === "slots"
+                ? (currentLanguage === "BN" ? "ভাইব্রেন্ট স্লট ইঞ্জিন" : "Vibrant Slots Engine")
+                : state.selectedCategory === "megaways"
+                ? (currentLanguage === "BN" ? "মেগাওয়েজ স্লটস" : "Megaways Slots")
+                : state.selectedCategory === "cards"
+                ? (currentLanguage === "BN" ? "কার্ড গেমস" : "Card Games")
+                : state.selectedCategory === "fishing"
+                ? (currentLanguage === "BN" ? "ফিশিং হান্টার" : "Fishing Hunter")
+                : state.selectedCategory === "crash"
+                ? (currentLanguage === "BN" ? "ক্র্যাশ ও মাইন্স গেমস" : "Crash & Mines Games")
+                : state.selectedCategory === "sports"
+                ? (currentLanguage === "BN" ? "স্পোর্টস গেমস লবি" : "Sports Games Lobby")
+                : state.selectedCategory === "lottery"
+                ? (currentLanguage === "BN" ? "লটারি ও স্ক্র্যাচকার্ড" : "Lottery & Scratchcards")
+                : state.selectedCategory === "arcade"
+                ? (currentLanguage === "BN" ? "আর্কেড ক্যাজুয়ালস" : "Arcade Casuals")
+                : state.selectedCategory.toUpperCase()}
             </h3>
             <span className="text-xs bg-[#0f172a]/80 text-[#3b82f6] border border-[#3b82f6]/30 font-bold px-2.5 py-1 rounded-full">
               {filteredGames.length} {currentLanguage === "BN" ? "টি গেম উপলব্ধ" : "Available"}
