@@ -1115,15 +1115,60 @@ const CasinoGameLobby: React.FC = () => {
           </div>
 
           {/* Game catalog grid */}
-          <GameGrid
-            games={filteredGames}
-            favorites={favorites}
-            onToggleFavorite={handleToggleFavorite}
-            onPlay={handlePlay}
-            onClearFilters={clearFilters}
-            totalGames={state.games.length}
-            lang={currentLanguage}
-          />
+          {state.selectedCategory === "home" && !state.searchTerm && !state.showFavoritesOnly ? (
+            <div className="space-y-10">
+              {categoryChips
+                .filter(chip => chip.value !== "home" && chip.value !== "favorites" && chip.value !== "promotions" && chip.value !== "vip")
+                .map(chip => {
+                  // Filter games for this specific category
+                  let catGames = state.games;
+                  if (chip.value === "all") {
+                    catGames = catGames.filter(g => g.isPopular);
+                  } else if (chip.value === "fishing") {
+                    catGames = catGames.filter(g => (g.vendorCode && g.vendorCode.toLowerCase().startsWith("fishing-")) || g.name.toLowerCase().includes("fish"));
+                  } else if (chip.value === "crash") {
+                    catGames = catGames.filter(g => (g.vendorCode && g.vendorCode.toLowerCase().startsWith("mini-")) || ["crash", "plinko", "aviator", "dice", "mines", "limbo"].some(kw => g.name.toLowerCase().includes(kw)));
+                  } else {
+                    catGames = catGames.filter(g => g.category === chip.value);
+                  }
+
+                  if (catGames.length === 0) return null;
+
+                  return (
+                    <div key={chip.value} className="space-y-3 bg-[#0b1329]/30 p-4 sm:p-6 rounded-3xl border border-slate-800/40">
+                      <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                        <h4 className="text-sm sm:text-base font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+                          <span className="text-blue-500">{chip.icon}</span>
+                          {chip.label}
+                        </h4>
+                        <span className="text-[10px] bg-[#0f172a] text-slate-400 font-bold px-2 py-0.5 rounded-full">
+                          {catGames.length} {currentLanguage === "BN" ? "টি উপলব্ধ" : "Games"}
+                        </span>
+                      </div>
+                      <GameGrid
+                        games={catGames}
+                        favorites={favorites}
+                        onToggleFavorite={handleToggleFavorite}
+                        onPlay={handlePlay}
+                        onClearFilters={clearFilters}
+                        totalGames={state.games.length}
+                        lang={currentLanguage}
+                      />
+                    </div>
+                  );
+                })}
+            </div>
+          ) : (
+            <GameGrid
+              games={filteredGames}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+              onPlay={handlePlay}
+              onClearFilters={clearFilters}
+              totalGames={state.games.length}
+              lang={currentLanguage}
+            />
+          )}
         </section>
 
         {/* ── STAKE.COM LIVE LEADERBOARD / BET HISTORY FEED ─────────────────── */}

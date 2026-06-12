@@ -25,17 +25,17 @@ export const GameGrid: React.FC<GameGridProps> = ({
   totalGames,
   lang = "BN",
 }) => {
-  const [visibleCount, setVisibleCount] = useState(24);
+  const [visibleCount, setVisibleCount] = useState(6);
   const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
-    setVisibleCount(24);
+    setVisibleCount(6);
   }, [games.length]);
 
   const loadMoreGames = () => {
     setLoadingMore(true);
     setTimeout(() => {
-      setVisibleCount((prev) => prev + 24);
+      setVisibleCount((prev) => prev + 12);
       setLoadingMore(false);
     }, 450);
   };

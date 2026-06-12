@@ -45,8 +45,8 @@ export const GameCard = memo<ExtendedGameCardProps>(
           lang={lang}
         />
         
-        <div className="p-3 bg-[#0f172a] border-t border-slate-800/50 flex flex-col justify-center min-h-[44px]">
-          <h3 className="font-bold text-xs sm:text-sm text-slate-200 group-hover:text-blue-400 transition-colors duration-200 line-clamp-2 text-center leading-snug">
+        <div className="px-2 py-2.5 bg-[#0f172a] border-t border-slate-800/50 flex flex-col justify-center min-h-[36px] max-h-[36px]">
+          <h3 className="font-bold text-[10px] sm:text-xs text-slate-300 group-hover:text-blue-400 transition-colors duration-200 truncate text-center leading-tight">
             {game.name}
           </h3>
         </div>
