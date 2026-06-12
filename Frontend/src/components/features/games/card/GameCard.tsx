@@ -44,12 +44,6 @@ export const GameCard = memo<ExtendedGameCardProps>(
           playAriaLabel={playAriaLabel}
           lang={lang}
         />
-
-        <div className="p-3 bg-[#0f172a] border-t border-slate-800/50 flex flex-col justify-center min-h-[48px]">
-          <h3 className="font-bold text-xs sm:text-sm text-slate-200 group-hover:text-blue-400 transition-colors duration-200 line-clamp-2 text-center leading-snug">
-            {game.name}
-          </h3>
-        </div>
       </article>
     );
   }
