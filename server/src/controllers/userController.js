@@ -206,6 +206,15 @@ exports.getGames = async (req, res, next) => {
         cat = 'live';
       }
 
+      // Final check: if game has sports keywords or wheel features, enforce strict separation out of slots
+      if (cat === 'slots') {
+        if (name.includes('wheel') || name.includes('wheels')) {
+          cat = 'table';
+        } else if (name.includes('football') || name.includes('soccer') || name.includes('cricket') || name.includes('sports')) {
+          cat = 'sports';
+        }
+      }
+
       return {
         ...game,
         category: cat
