@@ -720,7 +720,6 @@ const CasinoGameLobby: React.FC = () => {
   }[] = [
     { label: currentLanguage === "BN" ? "হোম" : "Home", icon: <Home size={18} />, value: "home" },
     { label: currentLanguage === "BN" ? "গরম খেলা" : "Hot Games", icon: <LayoutDashboard size={18} />, value: "all" },
-    { label: currentLanguage === "BN" ? "স্পোর্টস" : "Sports", icon: <Trophy size={18} />, value: "sports" },
     { label: currentLanguage === "BN" ? "ক্যাসিনো" : "Casino", icon: <Gamepad2 size={18} />, value: "live" },
     { label: currentLanguage === "BN" ? "স্লট" : "Slot", icon: <Cherry size={18} />, value: "slots" },
     { label: currentLanguage === "BN" ? "মেগাওয়েজ" : "Megaways", icon: <Sparkles size={18} />, value: "megaways" },
@@ -900,9 +899,14 @@ const CasinoGameLobby: React.FC = () => {
           <aside className={`hidden lg:block shrink-0 bg-[#0f172a]/40 border-r border-slate-800/80 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto transition-all duration-300 ${sidebarExpanded ? "w-64 p-4" : "w-12 p-2"}`}>
             <div className="space-y-6">
               <div className="flex items-center justify-between px-3">
+                {sidebarExpanded && (
+                  <span className="text-lg font-black tracking-widest bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent select-none animate-pulse">
+                    PBBET
+                  </span>
+                )}
                 <button
                   onClick={() => setSidebarExpanded(!sidebarExpanded)}
-                  className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer mx-auto flex items-center justify-center w-8 h-8 font-extrabold text-sm"
+                  className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer flex items-center justify-center w-8 h-8 font-extrabold text-sm"
                   title={sidebarExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
                 >
                   {sidebarExpanded ? "❮" : "❯"}
@@ -1099,13 +1103,11 @@ const CasinoGameLobby: React.FC = () => {
                 ? (currentLanguage === "BN" ? "ফিশিং হান্টার" : "Fishing Hunter")
                 : state.selectedCategory === "crash"
                 ? (currentLanguage === "BN" ? "ক্র্যাশ ও মাইন্স গেমস" : "Crash & Mines Games")
-                : state.selectedCategory === "sports"
-                ? (currentLanguage === "BN" ? "স্পোর্টস গেমস লবি" : "Sports Games Lobby")
                 : state.selectedCategory === "lottery"
                 ? (currentLanguage === "BN" ? "লটারি ও স্ক্র্যাচকার্ড" : "Lottery & Scratchcards")
                 : state.selectedCategory === "arcade"
                 ? (currentLanguage === "BN" ? "আর্কেড ক্যাজুয়ালস" : "Arcade Casuals")
-                : state.selectedCategory.toUpperCase()}
+                : (state.selectedCategory as string).toUpperCase()}
             </h3>
             <span className="text-xs bg-[#0f172a]/80 text-[#3b82f6] border border-[#3b82f6]/30 font-bold px-2.5 py-1 rounded-full">
               {filteredGames.length} {currentLanguage === "BN" ? "টি গেম উপলব্ধ" : "Available"}
