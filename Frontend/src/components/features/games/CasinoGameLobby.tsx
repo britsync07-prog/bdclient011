@@ -1116,7 +1116,7 @@ const CasinoGameLobby: React.FC = () => {
 
           {/* Game catalog grid */}
           {state.selectedCategory === "home" && !state.searchTerm && !state.showFavoritesOnly ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pt-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 pt-2">
               {categoryChips
                 .filter(chip => chip.value !== "home" && chip.value !== "favorites" && chip.value !== "promotions" && chip.value !== "vip")
                 .map(chip => {
@@ -1136,16 +1136,16 @@ const CasinoGameLobby: React.FC = () => {
                     <button
                       key={chip.value}
                       onClick={() => handleCategoryClick(chip.value)}
-                      className="group p-6 rounded-2xl bg-gradient-to-br from-[#0f172a] to-[#0f172a]/40 border border-slate-800 hover:border-blue-500/40 hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-center gap-3 cursor-pointer select-none hover:-translate-y-1"
+                      className="group p-3 sm:p-4 rounded-xl bg-gradient-to-br from-[#0f172a] to-[#0f172a]/40 border border-slate-800/80 hover:border-blue-500/30 hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center gap-2 cursor-pointer select-none hover:-translate-y-0.5"
                     >
-                      <div className="p-4 rounded-full bg-blue-950/30 text-blue-400 group-hover:text-white group-hover:bg-blue-600 transition-all duration-300">
-                        {chip.icon}
+                      <div className="p-2.5 rounded-lg bg-blue-950/20 text-blue-400 group-hover:text-white group-hover:bg-blue-600 transition-all duration-300">
+                        <div className="w-4 h-4 flex items-center justify-center [&>svg]:w-4 [&>svg]:h-4">{chip.icon}</div>
                       </div>
-                      <div className="text-center space-y-1">
-                        <div className="text-xs sm:text-sm font-black text-white tracking-wide uppercase group-hover:text-blue-400 transition-colors">
+                      <div className="text-center space-y-0.5">
+                        <div className="text-[10px] sm:text-xs font-black text-white tracking-wide uppercase group-hover:text-blue-400 transition-colors">
                           {chip.label}
                         </div>
-                        <div className="text-[10px] text-slate-500 font-bold">
+                        <div className="text-[9px] text-slate-500 font-bold">
                           {count} {currentLanguage === "BN" ? "টি গেম" : "Games"}
                         </div>
                       </div>
