@@ -2,7 +2,7 @@ import React from "react";
 import { Heart, Play } from "lucide-react";
 
 import { Game } from "@/types/game";
-import { GAME_CARD_HEADER } from "@/constants";
+import { TRANSLATIONS } from "@/constants";
 
 interface GameCardHeaderProps {
   game: Game;
@@ -12,7 +12,27 @@ interface GameCardHeaderProps {
   onPlay: (gameId: string) => void;
   favoriteAriaLabel: string;
   playAriaLabel: string;
+  lang?: "EN" | "BN";
 }
+
+const CATEGORY_TRANSLATIONS = {
+  BN: {
+    slots: "স্লট",
+    live: "ক্যাসিনো",
+    table: "টেবিল",
+    fishing: "ফিসিং",
+    crash: "ক্র্যাশ",
+    arcade: "আর্কেড",
+  },
+  EN: {
+    slots: "Slots",
+    live: "Casino",
+    table: "Table",
+    fishing: "Fishing",
+    crash: "Crash",
+    arcade: "Arcade",
+  }
+} as const;
 
 export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
   game,
@@ -22,6 +42,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
   onPlay,
   favoriteAriaLabel,
   playAriaLabel,
+  lang = "BN",
 }) => {
   const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -41,6 +62,17 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
       : "from-rose-400 via-pink-500 to-orange-400";
 
   const [imageError, setImageError] = React.useState(false);
+  const t = TRANSLATIONS[lang];
+
+  // Helper to translate category text
+  const categoryText = React.useMemo(() => {
+    const cat = game.category.toLowerCase() as keyof typeof CATEGORY_TRANSLATIONS.EN;
+    const langTrans = CATEGORY_TRANSLATIONS[lang];
+    if (cat in langTrans) {
+      return langTrans[cat];
+    }
+    return game.category.charAt(0).toUpperCase() + game.category.slice(1);
+  }, [game.category, lang]);
 
   return (
     <div className="relative h-48 overflow-hidden bg-slate-900 border-b border-slate-800">
@@ -82,7 +114,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
           role="img"
           aria-label={`Category: ${game.category}`}
         >
-          {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
+          {categoryText}
         </span>
 
         {game.isNew && (
@@ -94,7 +126,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
             <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
             </svg>
-            {GAME_CARD_HEADER.NEW}
+            {t.NEW}
           </span>
         )}
 
@@ -107,7 +139,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
             <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
             </svg>
-            {GAME_CARD_HEADER.HOT}
+            {t.HOT}
           </span>
         )}
       </div>
@@ -145,7 +177,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
         >
           <Play className="w-6 h-6 fill-current" aria-hidden="true" />
           <span className="sr-only">
-            {GAME_CARD_HEADER.PLAY} {game.name}
+            {t.PLAY} {game.name}
           </span>
         </button>
       </div>

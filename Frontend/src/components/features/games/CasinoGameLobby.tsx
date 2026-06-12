@@ -153,7 +153,7 @@ const CasinoGameLobby: React.FC = () => {
   ]);
   const [userChatMessage, setUserChatMessage] = useState("");
   const [botTyping, setBotTyping] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState<"EN" | "BN">("EN");
+  const [currentLanguage, setCurrentLanguage] = useState<"EN" | "BN">("BN");
 
   // Load player transaction history when profile is opened
   useEffect(() => {
@@ -1020,14 +1020,14 @@ const CasinoGameLobby: React.FC = () => {
               <span className="w-1.5 h-6 rounded-full bg-[#2563EB]" />
               {state.selectedCategory !== "all"
                 ? state.selectedCategory === "live"
-                  ? "Live Casino Games"
+                  ? (currentLanguage === "BN" ? "লাইভ ক্যাসিনো গেমস" : "Live Casino Games")
                   : state.selectedCategory === "slots"
-                  ? "Vibrant Slots Engine"
+                  ? (currentLanguage === "BN" ? "ভাইব্রেন্ট স্লট ইঞ্জিন" : "Vibrant Slots Engine")
                   : state.selectedCategory.toUpperCase()
-                : "Standard Platform Grid"}
+                : (currentLanguage === "BN" ? "স্ট্যান্ডার্ড প্ল্যাটফর্ম গ্রিড" : "Standard Platform Grid")}
             </h3>
             <span className="text-xs bg-[#0f172a]/80 text-[#3b82f6] border border-[#3b82f6]/30 font-bold px-2.5 py-1 rounded-full">
-              {filteredGames.length} Available
+              {filteredGames.length} {currentLanguage === "BN" ? "টি গেম উপলব্ধ" : "Available"}
             </span>
           </div>
 
@@ -1039,6 +1039,7 @@ const CasinoGameLobby: React.FC = () => {
             onPlay={handlePlay}
             onClearFilters={clearFilters}
             totalGames={state.games.length}
+            lang={currentLanguage}
           />
         </section>
 
@@ -1150,7 +1151,7 @@ const CasinoGameLobby: React.FC = () => {
         </section>
 
         {/* ── FOOTER ──────────────────────────────────────────────────────── */}
-        <Footer onOpenPolicy={(title, key) => setPolicyModal({ isOpen: true, title, contentKey: key })} />
+        <Footer lang={currentLanguage} onOpenPolicy={(title, key) => setPolicyModal({ isOpen: true, title, contentKey: key })} />
       </main>
 
       {/* Toast popup */}

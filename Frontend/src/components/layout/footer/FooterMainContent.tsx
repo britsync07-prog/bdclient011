@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FOOTER_MAIN_MESSAGES } from "@/constants";
+import { TRANSLATIONS } from "@/constants";
 import {
   Gamepad2,
   Building2,
@@ -91,10 +91,12 @@ const FooterLinkColumn: React.FC<FooterLinkColumnProps> = ({
 
 interface FooterMainContentProps {
   onOpenPolicy: (title: string, contentKey: string) => void;
+  lang?: "EN" | "BN";
 }
 
 export const FooterMainContent: React.FC<FooterMainContentProps> = ({
   onOpenPolicy,
+  lang = "BN",
 }) => {
   const [estYear, setEstYear] = useState(2024);
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -117,26 +119,44 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
     fetchSettings();
   }, []);
 
-  const gameLinks = [
+  const t = TRANSLATIONS[lang];
+
+  const gameLinks = lang === "BN" ? [
     { label: "ক্যাসিনো গেমস", href: "/#games" },
     { label: "লাইভ ডিলার", href: "/#games" },
     { label: "স্লট মেশিন", href: "/#games" },
     { label: "টুর্নামেন্ট" },
     { label: "ভিআইপি ক্লাব" },
+  ] : [
+    { label: "Casino Games", href: "/#games" },
+    { label: "Live Dealers", href: "/#games" },
+    { label: "Slot Machines", href: "/#games" },
+    { label: "Tournaments" },
+    { label: "VIP Club" },
   ];
 
-  const companyLinks = [
+  const companyLinks = lang === "BN" ? [
     { label: "আমাদের সম্পর্কে", key: "about_us" },
     { label: "ব্লগ ও খবর" },
     { label: "ক্যারিয়ার" },
     { label: "অধিভুক্ত প্রোগ্রাম" },
+  ] : [
+    { label: "About Us", key: "about_us" },
+    { label: "Blog & News" },
+    { label: "Careers" },
+    { label: "Affiliate Program" },
   ];
 
-  const supportLinks = [
+  const supportLinks = lang === "BN" ? [
     { label: "24/7 লাইভ সাপোর্ট" },
     { label: "দায়িত্বশীল গেম খেলা", key: "responsible_gaming" },
     { label: "নিরাপত্তা কেন্দ্র" },
     { label: "প্রশ্নাবলী (FAQ)" },
+  ] : [
+    { label: "24/7 Live Support" },
+    { label: "Play Responsibly", key: "responsible_gaming" },
+    { label: "Security Center" },
+    { label: "FAQ Help" },
   ];
 
   return (
@@ -155,21 +175,20 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
 
         {/* Tagline */}
         <p className="text-sm text-slate-400 leading-relaxed mb-4">
-          {settings.about_us ||
-            FOOTER_MAIN_MESSAGES.PREMIUM_GAMING_EXCELLENCE}
+          {settings.about_us || t.PREMIUM_GAMING_EXCELLENCE}
         </p>
 
         {/* Est badge */}
         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#3b82f6]/8 border border-[#3b82f6]/15 mb-6">
           <span className="text-[10px] font-bold text-[#3b82f6] uppercase tracking-widest">
-            {FOOTER_MAIN_MESSAGES.EST} {estYear}
+            {t.EST} {estYear}
           </span>
         </div>
 
         {/* Social links */}
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">
-            Follow Us
+            {lang === "BN" ? "আমাদের অনুসরণ করুন" : "Follow Us"}
           </p>
           <div className="flex items-center gap-2">
             <SocialLink
@@ -203,19 +222,19 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
 
       {/* Link columns */}
       <FooterLinkColumn
-        title="গেমস"
+        title={t.GAMES}
         icon={<Gamepad2 size={13} />}
         links={gameLinks}
         onOpenPolicy={onOpenPolicy}
       />
       <FooterLinkColumn
-        title="কোম্পানি"
+        title={lang === "BN" ? "কোম্পানি" : "Company"}
         icon={<Building2 size={13} />}
         links={companyLinks}
         onOpenPolicy={onOpenPolicy}
       />
       <FooterLinkColumn
-        title="গ্রাহক সেবা"
+        title={lang === "BN" ? "গ্রাহক সেবা" : "Support"}
         icon={<HeadphonesIcon size={13} />}
         links={supportLinks}
         onOpenPolicy={onOpenPolicy}
@@ -225,7 +244,9 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
       <div className="col-span-1 md:col-span-2 lg:col-span-4 border-t border-slate-800 pt-8 mt-4 space-y-6">
         {/* Payment Methods */}
         <div>
-          <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5">মুল্য পরিশোধ পদ্ধতি</h5>
+          <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5">
+            {lang === "BN" ? "মুল্য পরিশোধ পদ্ধতি" : "Payment Methods"}
+          </h5>
           <div className="flex flex-wrap items-center gap-4 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
             {/* bKash */}
             <div className="bg-[#0f172a] px-3 py-1.5 rounded-lg border border-slate-800 shadow-sm flex items-center gap-1.5 text-[11px] font-black text-[#E11D48] select-none">
@@ -259,7 +280,9 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
 
         {/* Game Providers */}
         <div>
-          <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5">Partners</h5>
+          <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5">
+            {lang === "BN" ? "পার্টনার" : "Partners"}
+          </h5>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 grayscale opacity-45 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
             <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">PRAGMATIC PLAY</span>
             <span className="text-[11px] font-extrabold text-slate-500 tracking-wider">PG SOFT</span>

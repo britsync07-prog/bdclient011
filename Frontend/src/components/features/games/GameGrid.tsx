@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Gamepad2, X } from "lucide-react";
+import { Gamepad2 } from "lucide-react";
 
 import { Game } from "@/types/game";
 import { GameCard } from "./card/GameCard";
 import { EmptyState } from "../../ui/EmptyState";
-import { formatMessage } from "@/utils/helpers";
+import { TRANSLATIONS } from "@/constants";
 
 interface GameGridProps {
   games: Game[];
@@ -13,6 +13,7 @@ interface GameGridProps {
   onPlay: (id: string) => void;
   onClearFilters: () => void;
   totalGames: number;
+  lang?: "EN" | "BN";
 }
 
 export const GameGrid: React.FC<GameGridProps> = ({
@@ -22,6 +23,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
   onPlay,
   onClearFilters,
   totalGames,
+  lang = "BN",
 }) => {
   const [visibleCount, setVisibleCount] = useState(24);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -38,11 +40,15 @@ export const GameGrid: React.FC<GameGridProps> = ({
     }, 450);
   };
 
-  // Performance Optimization: Convert favorites array to a Set for O(1) lookups
-  // during the render loop. This avoids O(n^2) complexity where n is the number of visible games.
   const favoritesSet = useMemo(() => new Set(favorites), [favorites]);
-
   const visibleGames = games.slice(0, visibleCount);
+
+  const t = TRANSLATIONS[lang];
+
+  // Helper to format showing count or found count
+  const gamesFoundText = useMemo(() => {
+    return t.GAMES_FOUND.replace("{count}", games.length.toString());
+  }, [t.GAMES_FOUND, games.length]);
 
   return (
     <div className="space-y-4">
@@ -51,7 +57,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
           <div className="flex items-center space-x-2">
             <Gamepad2 className="w-4 h-4 text-blue-400" />
             <span className="text-slate-400 text-xs font-bold">
-              {games.length} টি গেম পাওয়া গেছে
+              {gamesFoundText}
             </span>
           </div>
           {games.length !== totalGames && (
@@ -59,7 +65,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
               onClick={onClearFilters}
               className="text-blue-400 hover:text-blue-300 text-xs font-bold transition-colors cursor-pointer"
             >
-              সব দেখান
+              {t.RESET_FILTERS}
             </button>
           )}
         </div>
@@ -78,6 +84,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
               isFavorite={favoritesSet.has(game.id)}
               onToggleFavorite={onToggleFavorite}
               onPlay={onPlay}
+              lang={lang}
             />
           ))
         )}
@@ -90,7 +97,7 @@ export const GameGrid: React.FC<GameGridProps> = ({
             disabled={loadingMore}
             className="px-8 py-2.5 bg-[#263668] hover:bg-[#32457a] text-white font-bold text-xs rounded-lg transition-all cursor-pointer disabled:opacity-50"
           >
-            {loadingMore ? "লোড হচ্ছে..." : "আরো দেখুন"}
+            {loadingMore ? t.LOADING : t.SHOW_MORE}
           </button>
         </div>
       )}

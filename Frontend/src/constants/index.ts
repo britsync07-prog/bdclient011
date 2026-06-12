@@ -15,121 +15,259 @@ export const LOADING_DELAY = 1000;
 
 export const BDT_SYMBOL = "৳";
 
-export const BANGLA_TEXT = {
-  HOME: "হোম",
-  PROMOTIONS: "প্রমোশন",
-  WINNERS: "বিজয়ীদের তালিকা",
-  VIP: "ভিআইপি",
-  REFERRAL: "রেফার বোনাস",
-  DOWNLOAD: "ডাউনলোড",
-  CONTACT: "যোগাযোগ করুন",
-  SOCIAL_MEDIA: "সোশ্যাল মিডিয়া",
-  LOGIN: "লগ ইন",
-  SIGNUP: "সাইন আপ",
-  LOGOUT: "লগ আউট",
-  BALANCE: "ব্যালেন্স",
-  GAMES: "গেমস",
-  FAVORITES: "পছন্দসই",
-  SEARCH_PLACEHOLDER: "গেম বা প্রোভাইডার খুঁজুন...",
-  NO_GAMES_FOUND: "কোন গেম পাওয়া যায়নি",
-  RESET_FILTERS: "ফিল্টার মুছে ফেলুন",
-  LOADING: "লোড হচ্ছে...",
-  SHOW_MORE: "আরো দেখুন",
-  PLAY_NOW: "এখন খেলুন",
-  BY: "কর্তৃক",
-  PREMIUM: "প্রিমিয়াম",
-  HOT_GAMES: "গরম খেলা",
-  SPORTS: "স্পোর্ট",
-  CASINO: "ক্যাসিনো",
-  SLOTS: "স্লট",
-  TABLE: "টেবিল",
-  CRASH: "ক্রাশ",
-  LOTTERY: "লটারী",
-  FISHING: "ফিসিং",
-  ARCADE: "আর্কেড",
-  ALL_GAMES: "সব গেম",
-  RESPONSIBLE_GAMING: "দায়িত্বশীল গেম্বলিং",
-  COPYRIGHT: "সর্বস্বত্ব সংরক্ষিত।",
-  BEST_QUALITY: "Best Quality Platform for iGaming",
-  ABOUT_US: "আমাদের সম্পর্কে",
-  TERMS: "শর্তাবলী",
-  PRIVACY: "গোপনীয়তা নীতি",
-  FAQ: "FAQ",
-  PAYMENT_PARTNERS: "পেমেন্ট পার্টনার",
-} as const;
-
-export const PLACEHOLDER_MESSAGES = {
-  SEARCH: BANGLA_TEXT.SEARCH_PLACEHOLDER,
-  NO_GAMES: "দুঃখিত, আপনার অনুসন্ধান অনুযায়ী কোন ফলাফল পাওয়া যায়নি। অন্য কিছু চেষ্টা করুন।",
-  LOADING: BANGLA_TEXT.LOADING,
-  PLAY_SUCCESS: "🎮 {gameName} শুরু হচ্ছে! শুভকামনা!",
-  FAVORITE_ADDED: "{gameName} পছন্দসইতে যোগ করা হয়েছে!",
-  FAVORITE_REMOVED: "{gameName} পছন্দসই থেকে সরানো হয়েছে!",
-  PREMIUM_CASINO_GAMES: "প্রিমিয়াম ক্যাসিনো গেমস",
-  NO_GAMES_FOUND: BANGLA_TEXT.NO_GAMES_FOUND,
-  RESET_FILTERS: BANGLA_TEXT.RESET_FILTERS,
-} as const;
-
-export const ARIA_LABELS = {
-  SEARCH_INPUT: "গেম বা প্রোভাইডার অনুসন্ধান করুন",
-  CLEAR_SEARCH: "অনুসন্ধান মুছুন",
-  PLAY_GAME: "{gameName} খেলুন",
-  ADD_FAVORITE: "পছন্দসইতে যোগ করুন",
-  REMOVE_FAVORITE: "পছন্দসই থেকে সরান",
-  CLEAR_FILTERS: "সব ফিল্টার মুছুন",
-  GAME_GRID: "গেম গ্রিড",
-  FILTER_CONTROLS: "গেম ফিল্টার কন্ট্রোল",
-} as const;
-
-export const FOOTER_MAIN_MESSAGES = {
+export const TRANSLATIONS = {
+  BN: {
+    HOME: "হোম",
+    PROMOTIONS: "প্রমোশন",
+    WINNERS: "বিজয়ীদের তালিকা",
+    VIP: "ভিআইপি",
+    REFERRAL: "রেফার বোনাস",
+    DOWNLOAD: "ডাউনলোড",
+    CONTACT: "যোগাযোগ করুন",
+    SOCIAL_MEDIA: "সোশ্যাল মিডিয়া",
+    LOGIN: "লগ ইন",
+    SIGNUP: "সাইন আপ",
+    LOGOUT: "লগ আউট",
+    BALANCE: "ব্যালেন্স",
+    GAMES: "গেমস",
+    FAVORITES: "পছন্দসই",
+    SEARCH_PLACEHOLDER: "গেম বা প্রোভাইডার খুঁজুন...",
+    NO_GAMES_FOUND: "কোন গেম পাওয়া যায়নি",
+    RESET_FILTERS: "ফিল্টার মুছে ফেলুন",
+    LOADING: "লোড হচ্ছে...",
+    SHOW_MORE: "আরো দেখুন",
+    PLAY_NOW: "এখন খেলুন",
+    BY: "কর্তৃক",
+    PREMIUM: "প্রিমিয়াম",
+    HOT_GAMES: "গরম খেলা",
+    SPORTS: "স্পোর্ট",
+    CASINO: "ক্যাসিনো",
+    SLOTS: "স্লট",
+    TABLE: "টেবিল",
+    CRASH: "ক্রাশ",
+    LOTTERY: "লটারী",
+    FISHING: "ফিসিং",
+    ARCADE: "আর্কেড",
+    ALL_GAMES: "সব গেম",
+    RESPONSIBLE_GAMING: "দায়িত্বশীল গেম্বলিং",
+    COPYRIGHT: "সর্বস্বত্ব সংরক্ষিত।",
+    BEST_QUALITY: "Best Quality Platform for iGaming",
+    ABOUT_US: "আমাদের সম্পর্কে",
+    TERMS: "শর্তাবলী",
+    PRIVACY: "গোপনীয়তা নীতি",
+    FAQ: "FAQ",
+    PAYMENT_PARTNERS: "পেমেন্ট পার্টনার",
+    
+    // Messages / labels
+    SEARCH_INPUT_ARIA: "গেম বা প্রোভাইডার অনুসন্ধান করুন",
+    CLEAR_SEARCH_ARIA: "অনুসন্ধান মুছুন",
+    PLAY_GAME_ARIA: "{gameName} খেলুন",
+    ADD_FAVORITE_ARIA: "পছন্দসইতে যোগ করুন",
+    REMOVE_FAVORITE_ARIA: "পছন্দসই থেকে সরান",
+    CLEAR_FILTERS_ARIA: "সব ফিল্টার মুছুন",
+    GAME_GRID_ARIA: "গেম গ্রিড",
+    FILTER_CONTROLS_ARIA: "গেম ফিল্টার কন্ট্রোল",
+    
+    // Footer / headers
     PREMIUM_GAMING_EXCELLENCE: "২০২৬ সালে ক্রিকেট বেটিংয়ের জন্য পিবিসি৮৮ ক্যাসিনো সেরা পছন্দ। আমাদের গেমগুলি এবং বিভাগগুলি চমৎকার সেবা প্রদান করে।",
-    EST: "প্রতিষ্ঠিত."
-};
-
-export const FOOTER_BOTTOM_MESSAGES = {
+    EST: "প্রতিষ্ঠিত.",
     PLAY_RESPONSIBLY: "দায়িত্বশীল গেম্বলিং",
     PLAY_RESPONSIBLY_DETAILS: "গেম খেলা বিনোদন এবং মজার জন্য হওয়া উচিত। আপনি যদি মনে করেন আপনার জুয়ার সমস্যা হতে পারে, অনুগ্রহ করে অবিলম্বে পেশাদার সাহায্য নিন।",
     OVER18_ONLY: "১৮+ শুধুমাত্র",
     LICENSED_REGULATED: "লাইসেন্সপ্রাপ্ত এবং নিয়ন্ত্রিত",
     SECURE_GAMING: "নিরাপদ গেমিং",
     ROYAL_CASINO_CRAFTED: "২০২৬ পিবিসি৮৮ ক্যাসিনো - পিবিসি৮৮ স্পোর্টস বেটিং লবি।",
-    PREMIUM_GAMING_EXPERIENCE: "অত্যাধুনিক প্রযুক্তি দ্বারা চালিত প্রিমিয়াম গেমিং অভিজ্ঞতা"
+    PREMIUM_GAMING_EXPERIENCE: "অত্যাধুনিক প্রযুক্তি দ্বারা চালিত প্রিমিয়াম গেমিং অভিজ্ঞতা",
+    
+    // Game card/grid
+    NEW: "নতুন",
+    HOT: "গরম",
+    PLAY: "খেলুন",
+    GAMES_FOUND: "{count} টি গেম পাওয়া গেছে",
+    SHOW_ALL: "সব দেখান",
+    ROYAL_CASINO: "পিবিসি৮৮ ক্যাসিনো",
+    PREMIUM_GAMING_DESTINATION: "সেরা ক্রিকেট বেটিং এবং ক্যাসিনো লবি",
+    VIP_MEMBER: "ভিআইপি মেম্বার",
+    SOMETHING_WENT_WRONG: "ওহ! কিছু ভুল হয়েছে",
+    SOMETHING_UNEXPECTED_HAPPENED: "আমরা দুঃখিত, কিন্তু একটি অপ্রত্যাশিত সমস্যা ঘটেছে।",
+    RELOAD_PAGE: "পেজ রিলোড করুন",
+    FILTER_GAMES: "গেম ফিল্টার",
+    FAVORITES_ONLY: "শুধুমাত্র পছন্দসই",
+    CLEAR_ALL: "সব মুছুন",
+    CASH_BALANCE: "ক্যাশ ব্যালেন্স",
+    DEPOSIT: "ডিপোজিট",
+    NOTICE: "বিজ্ঞপ্তি",
+    AVAILABLE: "টি পাওয়া গেছে",
+    NO_GAMES_MESSAGE: "দুঃখিত, আপনার অনুসন্ধান অনুযায়ী কোন ফলাফল পাওয়া যায়নি। অন্য কিছু চেষ্টা করুন।",
+    PLAY_SUCCESS: "🎮 {gameName} শুরু হচ্ছে! শুভকামনা!",
+    FAVORITE_ADDED: "{gameName} পছন্দসইতে যোগ করা হয়েছে!",
+    FAVORITE_REMOVED: "{gameName} পছন্দসই থেকে সরানো হয়েছে!",
+    OUT_OF_FIVE_STARS: "৫ স্টারের মধ্যে",
+  },
+  EN: {
+    HOME: "Home",
+    PROMOTIONS: "Promotions",
+    WINNERS: "Winners List",
+    VIP: "VIP",
+    REFERRAL: "Referral Bonus",
+    DOWNLOAD: "Download",
+    CONTACT: "Contact Us",
+    SOCIAL_MEDIA: "Social Media",
+    LOGIN: "Login",
+    SIGNUP: "Sign Up",
+    LOGOUT: "Logout",
+    BALANCE: "Balance",
+    GAMES: "Games",
+    FAVORITES: "Favorites",
+    SEARCH_PLACEHOLDER: "Find games or providers...",
+    NO_GAMES_FOUND: "No games found",
+    RESET_FILTERS: "Clear Filters",
+    LOADING: "Loading...",
+    SHOW_MORE: "Show More",
+    PLAY_NOW: "Play Now",
+    BY: "by",
+    PREMIUM: "Premium",
+    HOT_GAMES: "Hot Games",
+    SPORTS: "Sports",
+    CASINO: "Casino",
+    SLOTS: "Slots",
+    TABLE: "Table",
+    CRASH: "Crash",
+    LOTTERY: "Lottery",
+    FISHING: "Fishing",
+    ARCADE: "Arcade",
+    ALL_GAMES: "All Games",
+    RESPONSIBLE_GAMING: "Responsible Gaming",
+    COPYRIGHT: "All rights reserved.",
+    BEST_QUALITY: "Best Quality Platform for iGaming",
+    ABOUT_US: "About Us",
+    TERMS: "Terms",
+    PRIVACY: "Privacy Policy",
+    FAQ: "FAQ",
+    PAYMENT_PARTNERS: "Payment Partners",
+    
+    // Messages / labels
+    SEARCH_INPUT_ARIA: "Search games or providers",
+    CLEAR_SEARCH_ARIA: "Clear search",
+    PLAY_GAME_ARIA: "Play {gameName}",
+    ADD_FAVORITE_ARIA: "Add to favorites",
+    REMOVE_FAVORITE_ARIA: "Remove from favorites",
+    CLEAR_FILTERS_ARIA: "Clear all filters",
+    GAME_GRID_ARIA: "Game grid",
+    FILTER_CONTROLS_ARIA: "Game filter controls",
+    
+    // Footer / headers
+    PREMIUM_GAMING_EXCELLENCE: "PBC88 Casino is the best choice for cricket betting in 2026. Our games and sections offer excellent services.",
+    EST: "Est.",
+    PLAY_RESPONSIBLY: "Play Responsibly",
+    PLAY_RESPONSIBLY_DETAILS: "Gaming should be for entertainment and fun. If you think you might have a gambling problem, please seek professional help immediately.",
+    OVER18_ONLY: "18+ Only",
+    LICENSED_REGULATED: "Licensed & Regulated",
+    SECURE_GAMING: "Secure Gaming",
+    ROYAL_CASINO_CRAFTED: "2026 PBC88 Casino - PBC88 Sports Betting Lobby.",
+    PREMIUM_GAMING_EXPERIENCE: "Premium gaming experience powered by state-of-the-art technology",
+    
+    // Game card/grid
+    NEW: "New",
+    HOT: "Hot",
+    PLAY: "Play",
+    GAMES_FOUND: "{count} games found",
+    SHOW_ALL: "Show All",
+    ROYAL_CASINO: "PBC88 Casino",
+    PREMIUM_GAMING_DESTINATION: "Best cricket betting and casino lobby",
+    VIP_MEMBER: "VIP Member",
+    SOMETHING_WENT_WRONG: "Oh! Something went wrong",
+    SOMETHING_UNEXPECTED_HAPPENED: "We are sorry, but an unexpected issue occurred.",
+    RELOAD_PAGE: "Reload Page",
+    FILTER_GAMES: "Filter Games",
+    FAVORITES_ONLY: "Favorites Only",
+    CLEAR_ALL: "Clear All",
+    CASH_BALANCE: "Cash Balance",
+    DEPOSIT: "Deposit",
+    NOTICE: "Notice",
+    AVAILABLE: "Available",
+    NO_GAMES_MESSAGE: "Sorry, no results found for your search. Try something else.",
+    PLAY_SUCCESS: "🎮 Starting {gameName}! Good luck!",
+    FAVORITE_ADDED: "{gameName} added to favorites!",
+    FAVORITE_REMOVED: "{gameName} removed from favorites!",
+    OUT_OF_FIVE_STARS: "out of 5 stars",
+  }
+} as const;
+
+// Legacy constants mapping to BN for backwards compatibility
+export const BANGLA_TEXT = TRANSLATIONS.BN;
+export const PLACEHOLDER_MESSAGES = {
+  SEARCH: BANGLA_TEXT.SEARCH_PLACEHOLDER,
+  NO_GAMES: BANGLA_TEXT.NO_GAMES_MESSAGE,
+  LOADING: BANGLA_TEXT.LOADING,
+  PLAY_SUCCESS: BANGLA_TEXT.PLAY_SUCCESS,
+  FAVORITE_ADDED: BANGLA_TEXT.FAVORITE_ADDED,
+  FAVORITE_REMOVED: BANGLA_TEXT.FAVORITE_REMOVED,
+  PREMIUM_CASINO_GAMES: BANGLA_TEXT.PREMIUM_GAMING_DESTINATION,
+  NO_GAMES_FOUND: BANGLA_TEXT.NO_GAMES_FOUND,
+  RESET_FILTERS: BANGLA_TEXT.RESET_FILTERS,
+} as const;
+
+export const ARIA_LABELS = {
+  SEARCH_INPUT: TRANSLATIONS.BN.SEARCH_INPUT_ARIA,
+  CLEAR_SEARCH: TRANSLATIONS.BN.CLEAR_SEARCH_ARIA,
+  PLAY_GAME: TRANSLATIONS.BN.PLAY_GAME_ARIA,
+  ADD_FAVORITE: TRANSLATIONS.BN.ADD_FAVORITE_ARIA,
+  REMOVE_FAVORITE: TRANSLATIONS.BN.REMOVE_FAVORITE_ARIA,
+  CLEAR_FILTERS: TRANSLATIONS.BN.CLEAR_FILTERS_ARIA,
+  GAME_GRID: TRANSLATIONS.BN.GAME_GRID_ARIA,
+  FILTER_CONTROLS: TRANSLATIONS.BN.FILTER_CONTROLS_ARIA,
+} as const;
+
+export const FOOTER_MAIN_MESSAGES = {
+  PREMIUM_GAMING_EXCELLENCE: TRANSLATIONS.BN.PREMIUM_GAMING_EXCELLENCE,
+  EST: TRANSLATIONS.BN.EST,
+};
+
+export const FOOTER_BOTTOM_MESSAGES = {
+  PLAY_RESPONSIBLY: TRANSLATIONS.BN.PLAY_RESPONSIBLY,
+  PLAY_RESPONSIBLY_DETAILS: TRANSLATIONS.BN.PLAY_RESPONSIBLY_DETAILS,
+  OVER18_ONLY: TRANSLATIONS.BN.OVER18_ONLY,
+  LICENSED_REGULATED: TRANSLATIONS.BN.LICENSED_REGULATED,
+  SECURE_GAMING: TRANSLATIONS.BN.SECURE_GAMING,
+  ROYAL_CASINO_CRAFTED: TRANSLATIONS.BN.ROYAL_CASINO_CRAFTED,
+  PREMIUM_GAMING_EXPERIENCE: TRANSLATIONS.BN.PREMIUM_GAMING_EXPERIENCE,
 };
 
 export const GAME_CARD_HEADER = {
-    NEW: "নতুন",
-    HOT: "গরম",
-    PLAY: "খেলুন"
+  NEW: TRANSLATIONS.BN.NEW,
+  HOT: TRANSLATIONS.BN.HOT,
+  PLAY: TRANSLATIONS.BN.PLAY,
 };
 
 export const GAME_GRID_MESSAGES = {
-    SHOWING_GAMES: "{totalGames} টি গেমের মধ্যে {gamesLength} টি দেখানো হচ্ছে",
-    SHOW_ALL_GAMES: "সব গেম দেখান"
+  SHOWING_GAMES: TRANSLATIONS.BN.GAMES_FOUND,
+  SHOW_ALL_GAMES: TRANSLATIONS.BN.SHOW_ALL,
 };
 
 export const HEADER_MESSAGES = {
-    ROYAL_CASINO: "পিবিসি৮৮ ক্যাসিনো",
-    PREMIUM_GAMING_DESTINATION: "সেরা ক্রিকেট বেটিং এবং ক্যাসিনো লবি",
-    GAMES: "গেমস",
-    FAVORITES: "পছন্দসই",
-    VIP_MEMBER: "ভিআইপি মেম্বার"
+  ROYAL_CASINO: TRANSLATIONS.BN.ROYAL_CASINO,
+  PREMIUM_GAMING_DESTINATION: TRANSLATIONS.BN.PREMIUM_GAMING_DESTINATION,
+  GAMES: TRANSLATIONS.BN.GAMES,
+  FAVORITES: TRANSLATIONS.BN.FAVORITES,
+  VIP_MEMBER: TRANSLATIONS.BN.VIP_MEMBER,
 };
 
 export const ERROR_BOUNDARY_MESSAGES = {
-  SOMETHING_WENT_WRONG: "ওহ! কিছু ভুল হয়েছে",
-  SOMETHING_UNEXPECTED_HAPPENED: "আমরা দুঃখিত, কিন্তু একটি অপ্রত্যাশিত সমস্যা ঘটেছে।",
-  RELOAD_PAGE: "পেজ রিলোড করুন",
+  SOMETHING_WENT_WRONG: TRANSLATIONS.BN.SOMETHING_WENT_WRONG,
+  SOMETHING_UNEXPECTED_HAPPENED: TRANSLATIONS.BN.SOMETHING_UNEXPECTED_HAPPENED,
+  RELOAD_PAGE: TRANSLATIONS.BN.RELOAD_PAGE,
 };
 
 export const FILTER_CONTROLS = {
-  FILTER_GAMES: "গেম ফিল্টার",
-  FAVORITES_ONLY: "শুধুমাত্র পছন্দসই",
-  CLEAR_ALL: "সব মুছুন",
+  FILTER_GAMES: TRANSLATIONS.BN.FILTER_GAMES,
+  FAVORITES_ONLY: TRANSLATIONS.BN.FAVORITES_ONLY,
+  CLEAR_ALL: TRANSLATIONS.BN.CLEAR_ALL,
 };
 
 export const GAME_CARD_CONTEXT = {
-  BY: "কর্তৃক",
-  PREMIUM: "প্রিমিয়াম",
-  PLAY_NOW: "এখন খেলুন",
-  OUT_OF_FIVE_STARS: "৫ স্টারের মধ্যে",
+  BY: TRANSLATIONS.BN.BY,
+  PREMIUM: TRANSLATIONS.BN.PREMIUM,
+  PLAY_NOW: TRANSLATIONS.BN.PLAY_NOW,
+  OUT_OF_FIVE_STARS: TRANSLATIONS.BN.OUT_OF_FIVE_STARS,
 };
