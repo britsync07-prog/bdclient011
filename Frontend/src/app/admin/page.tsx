@@ -84,6 +84,27 @@ const TAB_LABELS: Record<Tab, string> = {
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [users, setUsers] = useState<User[]>([]);
+
+  interface DashboardStats {
+    totalUsers: number;
+    pendingKYC: number;
+    totalLiquidity: number;
+    systemStatus: string;
+    todayHighlights: {
+      totalPlayers: number;
+      refPlayers: number;
+      agentPlayers: number;
+      agentDepositToday: number;
+    };
+    financialFlow: { date: string; deposits: number; withdrawals: number }[];
+    todayActivity: {
+      betsPlacedToday: number;
+      activeProviders: number;
+    };
+  }
+
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [transactions, setTransactions] = useState<FinancialRequest[]>([]);
   const [banners, setBanners] = useState<DBBanner[]>([]);
   const [loading, setLoading] = useState(true);
@@ -141,9 +162,15 @@ export default function AdminDashboard() {
 
       const headers = { Authorization: `Bearer ${token}` };
 
-      const usersRes = await fetch(`${BACKEND_URL}/admin/users`, { headers });
+      const usersRes = await fetch(`${BACKEND_URL}/admin/users?limit=10000`, { headers });
       const usersData = await usersRes.json();
       setUsers(usersData.users || []);
+
+      const statsRes = await fetch(`${BACKEND_URL}/admin/dashboard-stats`, { headers });
+      const statsJson = await statsRes.json();
+      if (statsJson.success) {
+        setDashboardStats(statsJson.data);
+      }
 
       const transRes = await fetch(`${BACKEND_URL}/admin/financial-requests`, {
         headers,
