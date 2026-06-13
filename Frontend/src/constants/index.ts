@@ -124,6 +124,13 @@ export const TRANSLATIONS = {
     DEPOSIT_AMOUNT: "জমার পরিমাণ প্রবেশ করুন",
     DEPOSIT_SUBMIT: "জমার অনুরোধ জমা দিন",
     DEPOSIT_SUCCESS: "জমার অনুরোধ সফলভাবে তৈরি হয়েছে! এডমিন অনুমোদনের পর ব্যালেন্স যুক্ত হবে।",
+    LIVE: "লাইভ ক্যাসিনো",
+    COMPANY: "কোম্পানি",
+    BLOG_NEWS: "ব্লগ ও খবর",
+    CAREERS: "ক্যারিয়ার",
+    LIVE_SUPPORT: "২৪/৭ লাইভ সাপোর্ট",
+    SECURITY_CENTER: "নিরাপত্তা কেন্দ্র",
+    HERO_TITLE: "অত্যাধুনিক ক্রিকেট বেটিং এবং প্রিমিয়াম ক্যাসিনো লবি",
   },
   EN: {
     HOME: "Home",
@@ -233,6 +240,13 @@ export const TRANSLATIONS = {
     DEPOSIT_AMOUNT: "Enter Deposit Amount",
     DEPOSIT_SUBMIT: "Submit Deposit Request",
     DEPOSIT_SUCCESS: "Deposit request created successfully! It will reflect in your balance upon admin approval.",
+    LIVE: "Live Casino",
+    COMPANY: "Company",
+    BLOG_NEWS: "Blog & News",
+    CAREERS: "Careers",
+    LIVE_SUPPORT: "24/7 Live Support",
+    SECURITY_CENTER: "Security Center",
+    HERO_TITLE: "THE ULTIMATE CRYPTO CASINO EXPERIENCE",
   }
 } as const;
 

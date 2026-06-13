@@ -114,11 +114,11 @@ export default function HomePage() {
       case "home": return t.HOME;
       case "casino": return t.CASINO;
       case "sports": return t.SPORTS;
-      case "live": return (t as any).LIVE || "Live Dealer";
+      case "live": return t.LIVE || "Live Dealer";
       case "promotions": return t.PROMOTIONS;
       case "vip": return t.VIP;
-      case "affiliate": return (t as any).REFERRAL || "Affiliate";
-      case "support": return (t as any).CONTACT || "Support";
+      case "affiliate": return t.REFERRAL || "Affiliate";
+      case "support": return t.CONTACT || "Support";
       default: return key;
     }
   }, [t]);
@@ -127,7 +127,7 @@ export default function HomePage() {
     switch (key) {
       case "home": return t.ALL_GAMES || "All Games";
       case "slots": return t.SLOTS || "Slots";
-      case "live": return (t as any).LIVE || "Live Casino";
+      case "live": return t.LIVE || "Live Casino";
       case "table": return t.TABLE || "Table Games";
       case "cards": return t.CARDS || "Card Games";
       case "crash": return t.CRASH || "Crash Games";
@@ -274,7 +274,7 @@ export default function HomePage() {
               onClick={handleLogout}
               className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-white text-xs py-2 rounded-lg hover:bg-white/5 transition-colors"
             >
-              <LogOut className="h-3 w-3" /> Logout
+              <LogOut className="h-3 w-3" /> {t.LOGOUT || "Logout"}
             </button>
           </div>
         )}
@@ -431,7 +431,7 @@ export default function HomePage() {
             {/* Hero Banner */}
             <div className="lg:col-span-6 xl:col-span-7 relative rounded-2xl overflow-hidden group card-hover min-h-[240px] sm:min-h-[280px]">
               <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/80 to-transparent z-10 p-6 sm:p-8 flex flex-col justify-center">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 leading-tight max-w-md">THE ULTIMATE CRYPTO CASINO EXPERIENCE</h1>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 leading-tight max-w-md">{t.HERO_TITLE || "THE ULTIMATE CRYPTO CASINO EXPERIENCE"}</h1>
                 <div>
                   {user ? (
                     <button
@@ -525,7 +525,7 @@ export default function HomePage() {
               className="category-chip bg-[#1e293b]/80 hover:bg-[#1e293b] text-slate-300 px-5 py-2.5 rounded-full flex items-center gap-2 text-sm font-medium whitespace-nowrap snap-start"
               style={{ display: "none" }}
             >
-              <Heart className="h-4 w-4" /> Favorites
+              <Heart className="h-4 w-4" /> {t.FAVORITES || "Favorites"}
             </button>
 
             <button className="ml-auto bg-white/5 hover:bg-white/10 p-2 rounded-full transition-colors flex-shrink-0">
@@ -763,7 +763,7 @@ export default function HomePage() {
                 <ul className="space-y-2.5">
                   {[
                     { label: t.HOME || "Casino Games", cat: "home" as Category },
-                    { label: (t as any).LIVE || "Live Dealers", cat: "live" as Category },
+                    { label: t.LIVE || "Live Dealers", cat: "live" as Category },
                     { label: t.SLOTS || "Slot Machines", cat: "slots" as Category },
                     { label: t.TABLE || "Table Games", cat: "table" as Category },
                     { label: t.CRASH || "Crash Games", cat: "crash" as Category },
@@ -783,14 +783,14 @@ export default function HomePage() {
               {/* Company links */}
               <div>
                 <h4 className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">
-                  <Building2 size={13} className="text-amber-400" /> {lang === "BN" ? "কোম্পানি" : "Company"}
+                  <Building2 size={13} className="text-amber-400" /> {t.COMPANY || "Company"}
                 </h4>
                 <ul className="space-y-2.5">
                   {[
                     { label: t.ABOUT_US || "About Us", href: "#" },
-                    { label: lang === "BN" ? "ব্লগ ও খবর" : "Blog & News", href: "#" },
-                    { label: lang === "BN" ? "ক্যারিয়ার" : "Careers", href: "#" },
-                    { label: (t as any).REFERRAL || "Affiliate Program", href: "#" }
+                    { label: t.BLOG_NEWS || "Blog & News", href: "#" },
+                    { label: t.CAREERS || "Careers", href: "#" },
+                    { label: t.REFERRAL || "Affiliate Program", href: "#" }
                   ].map((link) => (
                     <li key={link.label}>
                       <a href={link.href} className="text-sm text-slate-400 hover:text-amber-400 transition-colors font-medium">{link.label}</a>
@@ -806,9 +806,9 @@ export default function HomePage() {
                 </h4>
                 <ul className="space-y-2.5">
                   {[
-                    { label: lang === "BN" ? "২৪/৭ লাইভ সাপোর্ট" : "24/7 Live Support", href: "#" },
+                    { label: t.LIVE_SUPPORT || "24/7 Live Support", href: "#" },
                     { label: t.RESPONSIBLE_GAMING || "Play Responsibly", href: "#" },
-                    { label: lang === "BN" ? "নিরাপত্তা কেন্দ্র" : "Security Center", href: "#" },
+                    { label: t.SECURITY_CENTER || "Security Center", href: "#" },
                     { label: t.FAQ || "FAQ Help", href: "#" }
                   ].map((link) => (
                     <li key={link.label}>
