@@ -130,6 +130,7 @@ export default function AdminDashboard() {
   const [newProviderNameValue, setNewProviderNameValue] = useState("");
   const [editingGameId, setEditingGameId] = useState<string | null>(null);
   const [newGameNameValue, setNewGameNameValue] = useState("");
+  const [syncLoading, setSyncLoading] = useState(false);
   const [transactions, setTransactions] = useState<FinancialRequest[]>([]);
   const [banners, setBanners] = useState<DBBanner[]>([]);
   const [loading, setLoading] = useState(true);
@@ -386,6 +387,33 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       showToast("Failed to delete game", false);
+    }
+  };
+
+  const handleSyncGames = async () => {
+    setSyncLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${BACKEND_URL}/admin/games/sync`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message || "Synced from Oroplay successfully", true);
+        if (data.games) {
+          setGamesList(data.games);
+        }
+        setSelectedProvider(null);
+      } else {
+        showToast(data.message || "Failed to sync games from Oroplay", false);
+      }
+    } catch (err) {
+      showToast("Failed to sync games from Oroplay", false);
+    } finally {
+      setSyncLoading(false);
     }
   };
 
@@ -1211,9 +1239,19 @@ export default function AdminDashboard() {
                             <Building2 className="w-5 h-5 text-indigo-500" />
                             <h3 className="font-bold text-[#0F172A] text-base">Providers</h3>
                           </div>
-                          <span className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full">
-                            {uniqueProviders.length}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={handleSyncGames}
+                              disabled={syncLoading}
+                              className="flex items-center gap-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 disabled:opacity-60 font-semibold px-2 py-1 rounded-lg text-[10px] transition-all cursor-pointer"
+                            >
+                              <RefreshCw className={`w-3 h-3 ${syncLoading ? "animate-spin" : ""}`} />
+                              Sync Oroplay
+                            </button>
+                            <span className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full">
+                              {uniqueProviders.length}
+                            </span>
+                          </div>
                         </div>
 
                         {/* Provider Search Bar */}

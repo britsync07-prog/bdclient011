@@ -377,3 +377,14 @@ exports.deleteAdminProvider = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.syncAdminGames = async (req, res, next) => {
+  try {
+    console.log(`[ADMIN_SYNC_GAMES] [Admin: ${req.user.username}] Triggered Oroplay sync...`);
+    const games = await gameCacheHelper.forceRefreshGamesCache();
+    res.json({ success: true, message: 'Synced from Oroplay successfully', games });
+  } catch (error) {
+    console.error(`[ADMIN_SYNC_GAMES_ERROR] [Admin: ${req.user.username}] Sync failed - Error: ${error.message}`);
+    next(error);
+  }
+};

@@ -171,10 +171,17 @@ async function deleteProvider(name) {
   return true;
 }
 
+async function forceRefreshGamesCache() {
+  activeCachePromise = null;
+  await updateGamesCache();
+  return cachedGames || [];
+}
+
 module.exports = {
   getCachedGames,
   updateGame,
   deleteGame,
   renameProvider,
-  deleteProvider
+  deleteProvider,
+  forceRefreshGamesCache
 };

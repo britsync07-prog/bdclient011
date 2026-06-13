@@ -12,6 +12,7 @@ const {
   deleteAdminGame,
   renameAdminProvider,
   deleteAdminProvider,
+  syncAdminGames,
 } = require('../controllers/adminController');
 const adminCmsController = require('../controllers/adminCmsController');
 const { protect, adminOnly } = require('../middleware/authMiddleware');
@@ -30,6 +31,7 @@ router.post('/game/set-rtp', setGameRTP);
 router.get('/games', getAdminGames);
 router.patch('/games/:id', updateAdminGame);
 router.delete('/games/:id', deleteAdminGame);
+router.post('/games/sync', syncAdminGames);
 router.patch('/providers', renameAdminProvider);
 router.delete('/providers/:name', deleteAdminProvider);
 
