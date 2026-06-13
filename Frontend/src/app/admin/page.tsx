@@ -44,6 +44,8 @@ interface User {
   kycStatus: string;
   role: string;
   createdAt: string;
+  nidFront?: string;
+  nidBack?: string;
 }
 
 interface FinancialRequest {
