@@ -145,6 +145,12 @@ export const TRANSLATIONS = {
     EXCLUSIVE_EVENTS_DESC: "ভিআইপি-অনলি টুর্নামেন্ট এবং বাস্তব-বিশ্বের ইভেন্টগুলিতে আমন্ত্রণ।",
     PROMOTIONS_TITLE: "প্রমোশন ও অফার",
     READ_MORE: "আরও পড়ুন",
+    NOTIFICATION_WELCOME: "পিবিসি৮৮ ক্যাসিনোতে আপনাকে স্বাগতম!",
+    NOTIFICATION_KYC: "আপনার কেওয়াইসি (KYC) যাচাইকরণ অনুমোদিত হয়েছে",
+    NOTIFICATION_DEPOSIT: "ডিপোজিট সফল: ৳১,০০০ আপনার ওয়ালেটে যোগ করা হয়েছে",
+    NOTIFICATIONS_TITLE: "বিজ্ঞপ্তি",
+    MARK_ALL_READ: "সব পঠিত হিসেবে চিহ্নিত করুন",
+    NO_NOTIFICATIONS: "কোন নতুন বিজ্ঞপ্তি নেই",
   },
   EN: {
     HOME: "Home",
@@ -275,6 +281,12 @@ export const TRANSLATIONS = {
     EXCLUSIVE_EVENTS_DESC: "Invitations to VIP-only tournaments and real-world events.",
     PROMOTIONS_TITLE: "Promotions & Offers",
     READ_MORE: "Read More",
+    NOTIFICATION_WELCOME: "Welcome to PBC88 Casino!",
+    NOTIFICATION_KYC: "Your KYC Verification is Approved",
+    NOTIFICATION_DEPOSIT: "Deposit successful: ৳1,000 added to your wallet",
+    NOTIFICATIONS_TITLE: "Notifications",
+    MARK_ALL_READ: "Mark all as read",
+    NO_NOTIFICATIONS: "No notifications",
   }
 } as const;
 
