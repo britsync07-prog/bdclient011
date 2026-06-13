@@ -101,6 +101,7 @@ const TAB_LABELS: Record<Tab, string> = {
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [users, setUsers] = useState<User[]>([]);
+  const [activeKycViewerUser, setActiveKycViewerUser] = useState<User | null>(null);
 
   interface DashboardStats {
     totalUsers: number;
@@ -954,6 +955,7 @@ export default function AdminDashboard() {
                             <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
                               <th className="px-6 py-4">খেলোয়াড়</th>
                               <th className="px-6 py-4">ব্যালেন্স</th>
+                              <th className="px-6 py-4">Documents</th>
                               <th className="px-6 py-4">KYC Status</th>
                               <th className="px-6 py-4 text-right">অ্যাকশন</th>
                             </tr>
@@ -987,6 +989,42 @@ export default function AdminDashboard() {
                                   </td>
                                   <td className="px-6 py-4 font-mono font-semibold text-[#0F172A]">
                                     ৳{parseFloat(user.balance as string || "0").toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    {user.nidFront || user.nidBack ? (
+                                      <div className="flex items-center gap-2">
+                                        {user.nidFront && (
+                                          <div
+                                            onClick={() => setActiveKycViewerUser(user)}
+                                            className="cursor-pointer group relative w-10 h-7 rounded border border-slate-200 overflow-hidden bg-slate-100 hover:border-indigo-500 transition-all hover:scale-105"
+                                            title="Click to view front side"
+                                          >
+                                            <img
+                                              src={user.nidFront.startsWith('/uploads') ? `${BACKEND_URL.replace('/api', '')}${user.nidFront}` : user.nidFront}
+                                              alt="Front"
+                                              className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                          </div>
+                                        )}
+                                        {user.nidBack && (
+                                          <div
+                                            onClick={() => setActiveKycViewerUser(user)}
+                                            className="cursor-pointer group relative w-10 h-7 rounded border border-slate-200 overflow-hidden bg-slate-100 hover:border-indigo-500 transition-all hover:scale-105"
+                                            title="Click to view back side"
+                                          >
+                                            <img
+                                              src={user.nidBack.startsWith('/uploads') ? `${BACKEND_URL.replace('/api', '')}${user.nidBack}` : user.nidBack}
+                                              alt="Back"
+                                              className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <span className="text-slate-400 text-xs italic">No Documents</span>
+                                    )}
                                   </td>
                                   <td className="px-6 py-4">
                                     <KycBadge status={user.kycStatus} />
