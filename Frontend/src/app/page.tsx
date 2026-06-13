@@ -9,6 +9,7 @@ import {
   HelpCircle, ShieldCheck, Heart, X, LogOut, Wallet, Menu, Loader2,
   Gamepad2, Building2, HeadphonesIcon, Mail, AlertTriangle, BadgeCheck,
   Spade, Ticket, Target,
+  LayoutDashboard, Sparkles, Anchor, Zap, Dices,
 } from "lucide-react";
 import { useGameStore } from "@/contexts/GameStoreContext";
 import { useFavoritesContext } from "@/contexts/FavoritesContext";
@@ -111,8 +112,24 @@ const NAV_ITEMS = [
   { icon: Headphones, label: "Support", key: "support" },
 ];
 
+const SIDEBAR_ITEMS = [
+  { key: "all", icon: LayoutDashboard },
+  { key: "casino", icon: Gamepad2 },
+  { key: "slots", icon: Cherry },
+  { key: "megaways", icon: Sparkles },
+  { key: "cards", icon: Spade },
+  { key: "table", icon: Spade },
+  { key: "fishing", icon: Anchor },
+  { key: "crash", icon: Zap },
+  { key: "lottery", icon: Dices },
+  { key: "arcade", icon: Crown },
+  { key: "promotions", icon: Gift },
+  { key: "vip", icon: Crown },
+  { key: "favorites", icon: Star },
+];
+
 export default function HomePage() {
-  const { state, setSearchTerm, setCategory } = useGameStore();
+  const { state, setSearchTerm, setCategory, toggleFavoritesOnly } = useGameStore();
   const { isFavorite, toggleFavorite } = useFavoritesContext();
   const filteredGames = useFilteredGames();
 
@@ -134,14 +151,19 @@ export default function HomePage() {
 
   const getNavLabel = useCallback((key: string) => {
     switch (key) {
-      case "home": return t.HOME;
-      case "casino": return t.CASINO;
-      case "sports": return t.SPORTS;
-      case "live": return t.LIVE || "Live Dealer";
-      case "promotions": return t.PROMOTIONS;
-      case "vip": return t.VIP;
-      case "affiliate": return t.REFERRAL || "Affiliate";
-      case "support": return t.CONTACT || "Support";
+      case "all": return t.HOT_GAMES || "Hot Games";
+      case "casino": return t.CASINO || "Casino";
+      case "slots": return t.SLOTS || "Slots";
+      case "megaways": return t.MEGAWAYS || "Megaways";
+      case "cards": return t.CARDS || "Card Games";
+      case "table": return t.TABLE || "Table Games";
+      case "fishing": return t.FISHING || "Fishing";
+      case "crash": return t.CRASH || "Crash Games";
+      case "lottery": return t.LOTTERY || "Lottery";
+      case "arcade": return t.ARCADE || "Arcade";
+      case "promotions": return t.PROMOTIONS || "Promotions";
+      case "vip": return t.VIP || "VIP";
+      case "favorites": return t.FAVORITES || "Favorites";
       default: return key;
     }
   }, [t]);
@@ -279,12 +301,39 @@ export default function HomePage() {
 
   const handleNavClick = useCallback((key: string) => {
     setActiveNav(key);
-    if (key === "home") setCategory("home");
-    else if (key === "casino") setCategory("home");
-    else if (key === "live") setCategory("live");
-    else if (key === "sports") setCategory("sports");
+    
+    // Reset favorites filter if moving away from favorites
+    if (state.showFavoritesOnly && key !== "favorites") {
+      toggleFavoritesOnly();
+    }
+    
+    if (key === "favorites") {
+      if (!state.showFavoritesOnly) {
+        toggleFavoritesOnly();
+      }
+    } else if (key === "all") {
+      setCategory("all");
+    } else if (key === "casino") {
+      setCategory("live");
+    } else if (key === "slots") {
+      setCategory("slots");
+    } else if (key === "megaways") {
+      setCategory("megaways");
+    } else if (key === "cards") {
+      setCategory("cards");
+    } else if (key === "table") {
+      setCategory("table");
+    } else if (key === "fishing") {
+      setCategory("fishing");
+    } else if (key === "crash") {
+      setCategory("crash");
+    } else if (key === "lottery") {
+      setCategory("lottery");
+    } else if (key === "arcade") {
+      setCategory("arcade");
+    }
     setMobileMenuOpen(false);
-  }, [setCategory]);
+  }, [state.showFavoritesOnly, toggleFavoritesOnly, setCategory]);
 
   // Display games - limit to 12 unless show more
   const displayedGames = useMemo(() => {
