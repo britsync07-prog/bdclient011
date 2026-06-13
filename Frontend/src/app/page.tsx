@@ -188,7 +188,11 @@ export default function HomePage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [launchingGameId, setLaunchingGameId] = useState<string | null>(null);
   const [settings, setSettings] = useState<Record<string, string>>({});
-  const [showMoreGames, setShowMoreGames] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(12);
+
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [state.selectedCategory, state.showFavoritesOnly]);
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [depositAmount, setDepositAmount] = useState("");
   const [depositing, setDepositing] = useState(false);
@@ -342,11 +346,10 @@ export default function HomePage() {
     return state.selectedCategory === (key === "casino" ? "live" : key) && !state.showFavoritesOnly;
   }, [state.selectedCategory, state.showFavoritesOnly, activeNav]);
 
-  // Display games - limit to 12 unless show more
+  // Display games - limit to visibleCount
   const displayedGames = useMemo(() => {
-    if (showMoreGames) return filteredGames;
-    return filteredGames.slice(0, 12);
-  }, [filteredGames, showMoreGames]);
+    return filteredGames.slice(0, visibleCount);
+  }, [filteredGames, visibleCount]);
 
   const currentYear = new Date().getFullYear();
 
@@ -752,7 +755,7 @@ export default function HomePage() {
                     onClick={() => {
                       setCategory(cat.key);
                       setActiveNav(cat.key);
-                      setShowMoreGames(false);
+                      setVisibleCount(12);
                     }}
                     className={`${!isSidebarCollapsed ? "px-1.5 py-1.5 text-[10px] sm:text-xs" : "px-2 md:px-4 py-1.5 md:py-2 text-xs md:text-sm"} rounded-full flex items-center justify-center gap-1 md:gap-1.5 font-medium whitespace-nowrap shrink min-w-0 flex-auto ${
                       state.selectedCategory === cat.key
@@ -815,11 +818,6 @@ export default function HomePage() {
                             {t.NEW || "New"}
                           </div>
                         )}
-                        {game.isPopular && (
-                          <div className="absolute top-2 left-2 bg-amber-500 text-black text-[10px] font-bold px-2 py-0.5 rounded uppercase z-10">
-                            {t.HOT || "Hot"}
-                          </div>
-                        )}
                         {game.thumbnail ? (
                           <img
                             alt={game.name}
@@ -861,14 +859,14 @@ export default function HomePage() {
                 </div>
               )}
 
-              {/* Show More */}
-              {!showMoreGames && filteredGames.length > 12 && (
-                <div className="flex justify-center">
+              {/* Load More */}
+              {filteredGames.length > visibleCount && (
+                <div className="flex justify-center mt-6">
                   <button
-                    onClick={() => setShowMoreGames(true)}
+                    onClick={() => setVisibleCount((prev) => prev + 20)}
                     className="blue-gradient-btn px-8 py-3 rounded-full font-semibold text-sm tracking-wide"
                   >
-                    {t.SHOW_ALL || "Show All"} {filteredGames.length} {t.GAMES || "Games"}
+                    {t.SHOW_MORE || "Load More"}
                   </button>
                 </div>
               )}
