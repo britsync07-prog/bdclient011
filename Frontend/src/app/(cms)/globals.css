@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@layer base {
+  :root {
+    --bg-dark: #0b1329;
+    --text-main: #f8fafc;
+  }
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+  }
+}
