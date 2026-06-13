@@ -28,6 +28,7 @@ import {
   Plus,
   Trash2,
   Edit,
+  Search,
 } from "lucide-react";
 
 import { logClientAction } from "@/lib/logger";
@@ -619,134 +620,241 @@ export default function AdminDashboard() {
             <>
               {/* ── Dashboard Tab ── */}
               {activeTab === "dashboard" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <StatCard
-                    title="Total Users"
-                    value={users.length}
-                    icon={Users}
-                    accentColor="#E11D48"
-                    bgColor="bg-rose-50"
-                    textColor="text-[#E11D48]"
-                  />
-                  <StatCard
-                    title="Pending KYC"
-                    value={pendingKYC}
-                    icon={AlertCircle}
-                    accentColor="#F59E0B"
-                    bgColor="bg-amber-50"
-                    textColor="text-amber-500"
-                  />
-                  <StatCard
-                    title="Total Liquidity"
-                    value={`$${totalLiquidity}`}
-                    icon={DollarSign}
-                    accentColor="#2563EB"
-                    bgColor="bg-blue-50"
-                    textColor="text-blue-600"
-                  />
-                  <StatCard
-                    title="System Status"
-                    value="Live"
-                    icon={Activity}
-                    accentColor="#10B981"
-                    bgColor="bg-emerald-50"
-                    textColor="text-emerald-600"
-                  />
-                </div>
-              )}
-
-              {/* ── Users Tab ── */}
-              {activeTab === "users" && (
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                  <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-                    <h3 className="font-bold text-[#0F172A] text-base">All Users</h3>
-                    <span className="text-xs bg-slate-100 text-slate-600 font-semibold px-3 py-1 rounded-full">
-                      {users.length} total
-                    </span>
+                <div className="space-y-8">
+                  {/* Main Stat Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <StatCard
+                      title="Total Users"
+                      value={dashboardStats ? dashboardStats.totalUsers : users.length}
+                      icon={Users}
+                      accentColor="#E11D48"
+                      bgColor="bg-rose-50"
+                      textColor="text-[#E11D48]"
+                    />
+                    <StatCard
+                      title="Pending KYC"
+                      value={dashboardStats ? dashboardStats.pendingKYC : pendingKYC}
+                      icon={AlertCircle}
+                      accentColor="#F59E0B"
+                      bgColor="bg-amber-50"
+                      textColor="text-amber-500"
+                    />
+                    <StatCard
+                      title="Total Liquidity"
+                      value={`৳${dashboardStats ? dashboardStats.totalLiquidity.toLocaleString("en-US", { minimumFractionDigits: 2 }) : totalLiquidity}`}
+                      icon={DollarSign}
+                      accentColor="#2563EB"
+                      bgColor="bg-blue-50"
+                      textColor="text-blue-600"
+                    />
+                    <StatCard
+                      title="System Status"
+                      value={dashboardStats ? dashboardStats.systemStatus : "Live"}
+                      icon={Activity}
+                      accentColor="#10B981"
+                      bgColor="bg-emerald-50"
+                      textColor="text-emerald-600"
+                    />
                   </div>
-                  {users.length === 0 ? (
-                    <EmptyState message="No users found." />
-                  ) : (
+
+                  {/* Today's Highlights & Today's Activity */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Today's Highlights */}
+                    <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
+                      <h3 className="text-lg font-bold text-[#0F172A]">Today&apos;s Highlights</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1">
+                          <span className="text-xs text-slate-500 font-medium">Total Players</span>
+                          <span className="text-2xl font-bold text-[#0F172A]">{dashboardStats ? dashboardStats.todayHighlights.totalPlayers : 0}</span>
+                        </div>
+                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1">
+                          <span className="text-xs text-slate-500 font-medium">Ref Players</span>
+                          <span className="text-2xl font-bold text-[#0F172A]">{dashboardStats ? dashboardStats.todayHighlights.refPlayers : 0}</span>
+                        </div>
+                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1">
+                          <span className="text-xs text-slate-500 font-medium">Agent Players</span>
+                          <span className="text-2xl font-bold text-[#0F172A]">{dashboardStats ? dashboardStats.todayHighlights.agentPlayers : 0}</span>
+                        </div>
+                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1">
+                          <span className="text-xs text-slate-500 font-medium">Agent Deposit of the Day</span>
+                          <span className="text-2xl font-bold text-emerald-600">৳{(dashboardStats ? dashboardStats.todayHighlights.agentDepositToday : 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Today's Activity */}
+                    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
+                      <h3 className="text-lg font-bold text-[#0F172A]">Today&apos;s Activity</h3>
+                      <div className="space-y-4">
+                        <div className="p-4 rounded-xl bg-blue-50/50 border border-blue-100 flex justify-between items-center">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs text-slate-500 font-medium">Bets Placed Today</span>
+                            <span className="text-xl font-bold text-[#0F172A]">{dashboardStats ? dashboardStats.todayActivity.betsPlacedToday : 0}</span>
+                          </div>
+                          <Activity className="h-8 w-8 text-blue-500 opacity-60" />
+                        </div>
+                        <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 flex justify-between items-center">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs text-slate-500 font-medium">Active Providers</span>
+                            <span className="text-xl font-bold text-[#0F172A]">{dashboardStats ? dashboardStats.todayActivity.activeProviders : 0}</span>
+                          </div>
+                          <Users className="h-8 w-8 text-emerald-500 opacity-60" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Financial Flow (Last 7 Days) */}
+                  <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="px-6 py-5 border-b border-slate-100">
+                      <h3 className="text-lg font-bold text-[#0F172A]">Financial Flow (Last 7 Days)</h3>
+                    </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-sm">
                         <thead>
                           <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
-                            <th className="px-6 py-4">খেলোয়াড়</th>
-                            <th className="px-6 py-4">ব্যালেন্স</th>
-                            <th className="px-6 py-4">KYC Status</th>
-                            <th className="px-6 py-4 text-right">অ্যাকশন</th>
+                            <th className="px-6 py-4">Date</th>
+                            <th className="px-6 py-4">Deposits</th>
+                            <th className="px-6 py-4">Withdrawals</th>
+                            <th className="px-6 py-4">Net Flow</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
-                          {users.map((user, i) => {
-                            const colors = [
-                              "bg-rose-100 text-[#E11D48]",
-                              "bg-blue-100 text-blue-600",
-                              "bg-emerald-100 text-emerald-600",
-                              "bg-amber-100 text-amber-600",
-                              "bg-cyan-100 text-cyan-600",
-                            ];
-                            const avatarColor = colors[i % colors.length];
+                          {dashboardStats ? dashboardStats.financialFlow.map((flow, idx) => {
+                            const netFlow = flow.deposits - flow.withdrawals;
                             return (
-                              <tr
-                                key={user.id}
-                                className="hover:bg-slate-50/70 transition-colors"
-                              >
-                                <td className="px-6 py-4">
-                                  <div className="flex items-center gap-3">
-                                    <div
-                                      className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm uppercase ${avatarColor}`}
-                                    >
-                                      {user.username[0]}
-                                    </div>
-                                    <span className="font-semibold text-[#0F172A]">
-                                      {user.username}
-                                    </span>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 font-mono font-semibold text-[#0F172A]">
-                                  ${parseFloat(user.balance as string || "0").toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                                </td>
-                                <td className="px-6 py-4">
-                                  <KycBadge status={user.kycStatus} />
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                  {user.kycStatus === "PENDING" ? (
-                                    <div className="flex items-center justify-end gap-2">
-                                      <button
-                                        onClick={() =>
-                                          handleUpdateKYC(user.id, "APPROVED")
-                                        }
-                                        aria-label={`Approve KYC for ${user.username}`}
-                                        className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer"
-                                      >
-                                        <CheckCircle className="w-3.5 h-3.5" />
-                                        Approve
-                                      </button>
-                                      <button
-                                        onClick={() =>
-                                          handleUpdateKYC(user.id, "REJECTED")
-                                        }
-                                        aria-label={`Reject KYC for ${user.username}`}
-                                        className="flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer"
-                                      >
-                                        <XCircle className="w-3.5 h-3.5" />
-                                        Reject
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <span className="text-slate-300 text-xs font-medium">—</span>
-                                  )}
+                              <tr key={idx} className="hover:bg-slate-50/70 transition-colors">
+                                <td className="px-6 py-4 font-semibold text-[#0F172A]">{flow.date}</td>
+                                <td className="px-6 py-4 text-emerald-600 font-mono font-semibold">৳{flow.deposits.toLocaleString("en-US", { minimumFractionDigits: 2 })}</td>
+                                <td className="px-6 py-4 text-rose-600 font-mono font-semibold">৳{flow.withdrawals.toLocaleString("en-US", { minimumFractionDigits: 2 })}</td>
+                                <td className={`px-6 py-4 font-mono font-bold ${netFlow >= 0 ? "text-emerald-700" : "text-rose-700"}`}>
+                                  {netFlow >= 0 ? "+" : ""}৳{netFlow.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                                 </td>
                               </tr>
                             );
-                          })}
+                          }) : (
+                            <tr>
+                              <td colSpan={4} className="px-6 py-8 text-center text-slate-400 font-medium">No financial flow data available.</td>
+                            </tr>
+                          )}
                         </tbody>
                       </table>
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
+
+              {/* ── Users Tab ── */}
+              {activeTab === "users" && (() => {
+                const filteredUsers = users.filter((u) =>
+                  u.username.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+                return (
+                  <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div className="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-bold text-[#0F172A] text-base">All Users</h3>
+                        <span className="text-xs bg-slate-100 text-slate-600 font-semibold px-3 py-1 rounded-full">
+                          {searchQuery
+                            ? `${filteredUsers.length} matched / ${users.length} total`
+                            : `${users.length} total`}
+                        </span>
+                      </div>
+                      <div className="relative w-full sm:w-64">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="Search username..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full bg-slate-50/50 hover:bg-slate-50 transition-colors"
+                        />
+                      </div>
+                    </div>
+                    {filteredUsers.length === 0 ? (
+                      <EmptyState message="No users match your search." />
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                          <thead>
+                            <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
+                              <th className="px-6 py-4">খেলোয়াড়</th>
+                              <th className="px-6 py-4">ব্যালেন্স</th>
+                              <th className="px-6 py-4">KYC Status</th>
+                              <th className="px-6 py-4 text-right">অ্যাকশন</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-50">
+                            {filteredUsers.map((user, i) => {
+                              const colors = [
+                                "bg-rose-100 text-[#E11D48]",
+                                "bg-blue-100 text-blue-600",
+                                "bg-emerald-100 text-emerald-600",
+                                "bg-amber-100 text-amber-600",
+                                "bg-cyan-100 text-cyan-600",
+                              ];
+                              const avatarColor = colors[i % colors.length];
+                              return (
+                                <tr
+                                  key={user.id}
+                                  className="hover:bg-slate-50/70 transition-colors"
+                                >
+                                  <td className="px-6 py-4">
+                                    <div className="flex items-center gap-3">
+                                      <div
+                                        className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm uppercase ${avatarColor}`}
+                                      >
+                                        {user.username[0]}
+                                      </div>
+                                      <span className="font-semibold text-[#0F172A]">
+                                        {user.username}
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-4 font-mono font-semibold text-[#0F172A]">
+                                    ৳{parseFloat(user.balance as string || "0").toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <KycBadge status={user.kycStatus} />
+                                  </td>
+                                  <td className="px-6 py-4 text-right">
+                                    {user.kycStatus === "PENDING" ? (
+                                      <div className="flex items-center justify-end gap-2">
+                                        <button
+                                          onClick={() =>
+                                            handleUpdateKYC(user.id, "APPROVED")
+                                          }
+                                          aria-label={`Approve KYC for ${user.username}`}
+                                          className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer"
+                                        >
+                                          <CheckCircle className="w-3.5 h-3.5" />
+                                          Approve
+                                        </button>
+                                        <button
+                                          onClick={() =>
+                                            handleUpdateKYC(user.id, "REJECTED")
+                                          }
+                                          aria-label={`Reject KYC for ${user.username}`}
+                                          className="flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer"
+                                        >
+                                          <XCircle className="w-3.5 h-3.5" />
+                                          Reject
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <span className="text-slate-300 text-xs font-medium">—</span>
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* ── Financial Tab ── */}
               {activeTab === "financial" && (
