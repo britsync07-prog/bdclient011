@@ -23,9 +23,7 @@ export default function CMSLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body suppressHydrationWarning={true} className="bg-[#0b1329] text-slate-100 font-sans antialiased">      
-        <ErrorBoundary>
-          <AppProviders>{children}</AppProviders>
-        </ErrorBoundary>
+        {children}
       </body>
     </html>
   );
