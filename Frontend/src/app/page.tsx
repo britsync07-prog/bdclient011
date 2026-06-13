@@ -168,6 +168,10 @@ export default function HomePage() {
   const [launchingGameId, setLaunchingGameId] = useState<string | null>(null);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [showMoreGames, setShowMoreGames] = useState(false);
+  const [showDepositModal, setShowDepositModal] = useState(false);
+  const [depositAmount, setDepositAmount] = useState("");
+  const [depositing, setDepositing] = useState(false);
+  const [depositStatus, setDepositStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   // Check auth state
   useEffect(() => {
@@ -198,6 +202,49 @@ export default function HomePage() {
     setUser(null);
     window.location.reload();
   }, []);
+
+  const handleDepositSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setDepositStatus(null);
+    const amountNum = Number(depositAmount);
+    if (!depositAmount || isNaN(amountNum) || amountNum <= 0) {
+      setDepositStatus({ type: "error", message: lang === "BN" ? "দয়া করে একটি সঠিক পরিমাণ প্রবেশ করুন" : "Please enter a valid amount" });
+      return;
+    }
+    setDepositing(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setDepositStatus({ type: "error", message: lang === "BN" ? "অনুমোদন টোকেন পাওয়া যায়নি" : "Authorization token not found" });
+        setDepositing(false);
+        return;
+      }
+      const res = await fetch(`${BACKEND_URL}/user/deposit-request`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ amount: amountNum }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setDepositStatus({ type: "success", message: t.DEPOSIT_SUCCESS || "Deposit request submitted successfully!" });
+        setDepositAmount("");
+        // Optionally refresh profile/balance after a short delay
+        setTimeout(() => {
+          setShowDepositModal(false);
+          setDepositStatus(null);
+        }, 3000);
+      } else {
+        setDepositStatus({ type: "error", message: data.message || (lang === "BN" ? "জমার অনুরোধ জমা দিতে ব্যর্থ হয়েছে" : "Failed to submit deposit request") });
+      }
+    } catch {
+      setDepositStatus({ type: "error", message: lang === "BN" ? "সার্ভারের সাথে সংযোগ করতে ব্যর্থ হয়েছে" : "Failed to connect to server" });
+    } finally {
+      setDepositing(false);
+    }
+  };
 
   const handleLaunchGame = useCallback(async (gameId: string, vendorCode?: string, gameCode?: string) => {
     const token = localStorage.getItem("token");
@@ -283,8 +330,8 @@ export default function HomePage() {
 
         {/* User info in sidebar when logged in */}
         {user && (
-          <div className="p-4 border-t border-white/5">
-            <div className="flex items-center gap-3 mb-3">
+          <div className="p-4 border-t border-white/5 space-y-3">
+            <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center">
                 <User className="h-4 w-4 text-amber-400" />
               </div>
@@ -293,6 +340,12 @@ export default function HomePage() {
                 <p className="text-xs text-amber-400 font-semibold">৳{user.balance?.toLocaleString()}</p>
               </div>
             </div>
+            <button
+              onClick={() => setShowDepositModal(true)}
+              className="w-full gold-gradient-btn py-2.5 rounded-xl text-center text-sm font-semibold block shadow-lg"
+            >
+              {t.DEPOSIT || "Deposit"}
+            </button>
             <button
               onClick={handleLogout}
               className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-white text-xs py-2 rounded-lg hover:bg-white/5 transition-colors"
@@ -415,6 +468,12 @@ export default function HomePage() {
                   <Wallet className="h-4 w-4 text-amber-400" />
                   <span className="text-sm font-semibold text-amber-400">৳{user.balance?.toLocaleString()}</span>
                 </div>
+                <button
+                  onClick={() => setShowDepositModal(true)}
+                  className="gold-gradient-btn px-4 py-2 rounded-full font-semibold text-sm tracking-wide"
+                >
+                  {t.DEPOSIT || "Deposit"}
+                </button>
                 <Link
                   href="#"
                   onClick={(e) => { e.preventDefault(); handleLogout(); }}
@@ -557,17 +616,6 @@ export default function HomePage() {
               </button>
             ))}
 
-            {/* Favorites filter */}
-            <button
-              onClick={() => {
-                const { toggleFavoritesOnly } = useGameStore.prototype; // not used this way
-              }}
-              className="category-chip bg-[#1e293b]/80 hover:bg-[#1e293b] text-slate-300 px-5 py-2.5 rounded-full flex items-center gap-2 text-sm font-medium whitespace-nowrap snap-start"
-              style={{ display: "none" }}
-            >
-              <Heart className="h-4 w-4" /> {t.FAVORITES || "Favorites"}
-            </button>
-
             <button className="ml-auto bg-white/5 hover:bg-white/10 p-2 rounded-full transition-colors flex-shrink-0">
               <ChevronRight className="h-5 w-5 text-slate-400" />
             </button>
@@ -627,7 +675,7 @@ export default function HomePage() {
                   <div className="relative aspect-video overflow-hidden bg-slate-800">
                     {game.isNew && (
                       <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase z-10">
-                        {t.NEW || "Live"}
+                        {t.NEW || "New"}
                       </div>
                     )}
                     {game.isPopular && (
@@ -939,6 +987,67 @@ export default function HomePage() {
         {/* END: Main Scrollable Content */}
       </div>
       {/* END: Main Content Area */}
+
+      {showDepositModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
+          <div className="bg-[#151f38] border border-white/10 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+            <button
+              onClick={() => { setShowDepositModal(false); setDepositStatus(null); }}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <Wallet className="h-5 w-5 text-amber-400" />
+              {t.DEPOSIT || "Deposit Request"}
+            </h3>
+            <form onSubmit={handleDepositSubmit} className="space-y-6">
+              {depositStatus && (
+                <div className={`p-4 rounded-xl text-xs font-semibold ${depositStatus.type === "success" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"}`}>
+                  {depositStatus.message}
+                </div>
+              )}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
+                  {t.DEPOSIT_AMOUNT || "Deposit Amount (BDT)"}
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">৳</span>
+                  <input
+                    type="number"
+                    required
+                    disabled={depositing}
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                    placeholder="500"
+                    className="w-full pl-8 pr-4 py-3 rounded-xl border border-white/10 bg-[#0b1329]/80 text-white font-bold focus:outline-none focus:border-blue-500/50 transition-colors"
+                  />
+                </div>
+              </div>
+              {/* Quick select amounts */}
+              <div className="grid grid-cols-3 gap-2">
+                {[500, 1000, 2000, 5000, 10000].map((amt) => (
+                  <button
+                    key={amt}
+                    type="button"
+                    onClick={() => setDepositAmount(String(amt))}
+                    className="py-2 rounded-xl bg-white/5 border border-white/5 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition-all"
+                  >
+                    ৳{amt.toLocaleString()}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="submit"
+                disabled={depositing}
+                className="w-full py-3.5 rounded-xl font-bold bg-[#3b82f6] hover:bg-blue-600 text-white transition-all disabled:opacity-50"
+              >
+                {depositing ? (lang === "BN" ? "প্রক্রিয়াকরণ হচ্ছে..." : "Processing...") : (t.DEPOSIT_SUBMIT || "Submit Request")}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
