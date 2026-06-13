@@ -3,6 +3,33 @@ if (typeof dns.setDefaultResultOrder === 'function') {
   dns.setDefaultResultOrder('ipv4first');
 }
 
+// Force DNS lookup to resolve IPv4 addresses only
+const originalLookup = dns.lookup;
+dns.lookup = function(hostname, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  options = options || {};
+  if (typeof options === 'number') {
+    options = { family: options };
+  }
+  options.family = 4;
+  return originalLookup(hostname, options, callback);
+};
+
+const originalPromisesLookup = dns.promises ? dns.promises.lookup : null;
+if (dns.promises && typeof dns.promises.lookup === 'function') {
+  dns.promises.lookup = function(hostname, options) {
+    options = options || {};
+    if (typeof options === 'number') {
+      options = { family: options };
+    }
+    options.family = 4;
+    return originalPromisesLookup.call(dns.promises, hostname, options);
+  };
+}
+
 const API_BASE_URL = process.env.OROPLAY_BASE_URL || 'https://bs.sxvwlkohlv.com/api/v2';
 const CLIENT_ID = process.env.OROPLAY_CLIENT_ID;
 const CLIENT_SECRET = process.env.OROPLAY_CLIENT_SECRET;

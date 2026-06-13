@@ -3,6 +3,33 @@ if (typeof dns.setDefaultResultOrder === 'function') {
   dns.setDefaultResultOrder('ipv4first');
 }
 
+// Force DNS lookup to resolve IPv4 addresses only
+const originalLookup = dns.lookup;
+dns.lookup = function(hostname, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  options = options || {};
+  if (typeof options === 'number') {
+    options = { family: options };
+  }
+  options.family = 4;
+  return originalLookup(hostname, options, callback);
+};
+
+const originalPromisesLookup = dns.promises ? dns.promises.lookup : null;
+if (dns.promises && typeof dns.promises.lookup === 'function') {
+  dns.promises.lookup = function(hostname, options) {
+    options = options || {};
+    if (typeof options === 'number') {
+      options = { family: options };
+    }
+    options.family = 4;
+    return originalPromisesLookup.call(dns.promises, hostname, options);
+  };
+}
+
 const app = require('./app');
 
 const PORT = process.env.PORT || 5000;
