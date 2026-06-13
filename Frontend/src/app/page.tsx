@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import {
   Hexagon, Home, Coins, CircleDot, Users, Gift, Gem, Network, Headphones,
-  Search, Globe, ChevronDown, MessageSquare, Star, Crown, Bitcoin, Trophy,
+  Search, Globe, ChevronDown, MessageSquare, Bell, Star, Crown, Bitcoin, Trophy,
   LayoutGrid, Cherry, Radio, Grid3x3, DollarSign, ChevronRight, ChevronLeft, User,
   HelpCircle, ShieldCheck, Heart, X, LogOut, Wallet, Menu, Loader2,
   Gamepad2, Building2, HeadphonesIcon, Mail, AlertTriangle, BadgeCheck,
@@ -148,6 +148,7 @@ export default function HomePage() {
   const getNavLabel = useCallback((key: string) => {
     switch (key) {
       case "all": return t.HOT_GAMES || "Hot Games";
+      case "sports": return t.SPORTS || "Sports";
       case "casino": return t.CASINO || "Casino";
       case "slots": return t.SLOTS || "Slots";
       case "megaways": return t.MEGAWAYS || "Megaways";
@@ -570,7 +571,7 @@ export default function HomePage() {
                 onClick={() => setShowNotifications(!showNotifications)}
                 className="text-slate-300 hover:text-white transition-colors relative p-1.5 rounded-full hover:bg-white/5"
               >
-                <MessageSquare className="h-5 w-5" />
+                <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center animate-pulse">
                     {unreadCount}
