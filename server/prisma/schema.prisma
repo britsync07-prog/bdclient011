@@ -15,6 +15,8 @@ model User {
   balance       Float         @default(10000.0)
   kycStatus     String        @default("PENDING")
   referralCode  String?
+  nidFront      String?
+  nidBack       String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   transactions  Transaction[]

@@ -6,7 +6,7 @@ import {
   Hexagon, Home, Coins, CircleDot, Users, Gift, Gem, Network, Headphones,
   Search, Globe, ChevronDown, MessageSquare, Bell, Star, Crown, Bitcoin, Trophy,
   LayoutGrid, Cherry, Radio, Grid3x3, DollarSign, ChevronRight, ChevronLeft, User,
-  HelpCircle, ShieldCheck, Heart, X, LogOut, Wallet, Menu, Loader2,
+  HelpCircle, ShieldCheck, Heart, X, LogOut, Wallet, Menu, Loader2, UserCheck,
   Gamepad2, Building2, HeadphonesIcon, Mail, AlertTriangle, BadgeCheck,
   Spade, Ticket, Target,
   LayoutDashboard, Sparkles, Anchor, Zap, Dices,
@@ -183,7 +183,12 @@ export default function HomePage() {
     }
   }, [t]);
 
-  const [user, setUser] = useState<{ username: string; balance: number } | null>(null);
+  const [user, setUser] = useState<{ username: string; balance: number; kycStatus?: string; nidFront?: string; nidBack?: string } | null>(null);
+  const [showKycModal, setShowKycModal] = useState(false);
+  const [kycFront, setKycFront] = useState<string | null>(null);
+  const [kycBack, setKycBack] = useState<string | null>(null);
+  const [submittingKyc, setSubmittingKyc] = useState(false);
+  const [kycStatusMsg, setKycStatusMsg] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [activeNav, setActiveNav] = useState("casino");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -219,7 +224,15 @@ export default function HomePage() {
       })
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (data) setUser({ username: data.username, balance: data.balance });
+          if (data) {
+            setUser({
+              username: data.username,
+              balance: data.balance,
+              kycStatus: data.kycStatus,
+              nidFront: data.nidFront,
+              nidBack: data.nidBack
+            });
+          }
         })
         .catch(() => setUser(null));
     }
@@ -239,6 +252,50 @@ export default function HomePage() {
     setUser(null);
     window.location.reload();
   }, []);
+
+  const handleKycSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!kycFront || !kycBack) {
+      setKycStatusMsg({
+        type: "error",
+        message: lang === "BN" ? "দয়া করে এনআইডি কার্ডের উভয় পিঠের ছবি আপলোড করুন" : "Please upload both front and back photos of your NID card",
+      });
+      return;
+    }
+    setSubmittingKyc(true);
+    setKycStatusMsg(null);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${BACKEND_URL}/user/kyc-submit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ nidFront: kycFront, nidBack: kycBack }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setKycStatusMsg({
+          type: "success",
+          message: lang === "BN" ? "কেওয়াইসি সফলভাবে জমা দেওয়া হয়েছে!" : "KYC submitted successfully!",
+        });
+        setUser((prev) => prev ? { ...prev, kycStatus: "PENDING", nidFront: data.nidFront, nidBack: data.nidBack } : null);
+      } else {
+        setKycStatusMsg({
+          type: "error",
+          message: data.message || (lang === "BN" ? "কেওয়াইসি জমা ব্যর্থ হয়েছে" : "KYC submission failed"),
+        });
+      }
+    } catch (err) {
+      setKycStatusMsg({
+        type: "error",
+        message: lang === "BN" ? "সার্ভারের সাথে সংযোগ ব্যর্থ হয়েছে" : "Failed to connect to the server",
+      });
+    } finally {
+      setSubmittingKyc(false);
+    }
+  };
 
   const handleDepositSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -427,6 +484,25 @@ export default function HomePage() {
               className={`w-full gold-gradient-btn ${isSidebarCollapsed ? "p-2 aspect-square" : "py-2"} rounded-full text-center text-sm font-bold tracking-wide shadow-lg flex justify-center items-center`}
             >
               {isSidebarCollapsed ? <Wallet className="h-4 w-4" /> : (t.DEPOSIT || "Deposit")}
+            </button>
+            <button
+              onClick={() => setShowKycModal(true)}
+              title="KYC Verification"
+              className={`w-full ${isSidebarCollapsed ? "p-2 aspect-square flex items-center justify-center" : "py-2"} rounded-full text-center text-xs font-bold tracking-wide border transition-all ${
+                user.kycStatus === "APPROVED"
+                  ? "bg-emerald-500/20 border-emerald-500/35 text-emerald-400"
+                  : user.kycStatus === "PENDING" && (user.nidFront || user.nidBack)
+                  ? "bg-amber-500/20 border-amber-500/35 text-amber-400"
+                  : "bg-white/10 border-white/20 text-white hover:bg-white/20"
+              }`}
+            >
+              {isSidebarCollapsed ? (
+                <UserCheck className="h-4 w-4" />
+              ) : user.kycStatus === "APPROVED"
+                ? (t.KYC_VERIFIED || "KYC Verified")
+                : user.kycStatus === "PENDING" && (user.nidFront || user.nidBack)
+                ? (t.KYC_PENDING || "KYC Pending")
+                : (t.KYC_VERIFICATION || "KYC Verification")}
             </button>
             <button
               onClick={handleLogout}
@@ -640,6 +716,22 @@ export default function HomePage() {
                   className="gold-gradient-btn px-6 py-2 rounded-full font-semibold text-sm tracking-wide hidden sm:block"
                 >
                   {t.DEPOSIT || "Deposit"}
+                </button>
+                <button
+                  onClick={() => setShowKycModal(true)}
+                  className={`px-4 py-2 rounded-full font-semibold text-xs tracking-wide border transition-all ${
+                    user.kycStatus === "APPROVED"
+                      ? "bg-emerald-500/20 border-emerald-500/35 text-emerald-400"
+                      : user.kycStatus === "PENDING" && (user.nidFront || user.nidBack)
+                      ? "bg-amber-500/20 border-amber-500/35 text-amber-400"
+                      : "bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  }`}
+                >
+                  {user.kycStatus === "APPROVED"
+                    ? (t.KYC_VERIFIED || "KYC Verified")
+                    : user.kycStatus === "PENDING" && (user.nidFront || user.nidBack)
+                    ? (t.KYC_PENDING || "KYC Pending")
+                    : (t.KYC_VERIFICATION || "KYC Verification")}
                 </button>
                 <button
                   onClick={handleLogout}
@@ -1222,6 +1314,201 @@ export default function HomePage() {
                 {depositing ? (lang === "BN" ? "প্রক্রিয়াকরণ হচ্ছে..." : "Processing...") : (t.DEPOSIT_SUBMIT || "Submit Request")}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* KYC Modal */}
+      {showKycModal && user && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
+          <div className="bg-[#151f38] border border-white/10 rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => { setShowKycModal(false); setKycStatusMsg(null); }}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-blue-400" />
+              {lang === "BN" ? "কেওয়াইসি যাচাইকরণ" : "KYC Verification"}
+            </h3>
+
+            {/* KYC Status Approved */}
+            {user.kycStatus === "APPROVED" && (
+              <div className="text-center py-8 space-y-4">
+                <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/30">
+                  <BadgeCheck className="w-10 h-10" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-lg font-bold text-white">
+                    {lang === "BN" ? "আপনার প্রোফাইল যাচাইকৃত" : "Your Profile is Verified"}
+                  </h4>
+                  <p className="text-xs text-slate-400 max-w-xs mx-auto">
+                    {lang === "BN" ? "আপনার কেওয়াইসি ইতিমধ্যে অনুমোদিত হয়েছে। আপনি এখন সম্পূর্ণ সুবিধা ভোগ করতে পারবেন।" : "Your KYC Verification request has been approved. You have full access to all features."}
+                  </p>
+                </div>
+                {user.nidFront && (
+                  <div className="grid grid-cols-2 gap-4 mt-6">
+                    <div className="space-y-1.5 text-left">
+                      <span className="text-[10px] text-slate-500 uppercase font-semibold">NID Front</span>
+                      <img src={user.nidFront.startsWith('/uploads') ? `${BACKEND_URL.replace('/api', '')}${user.nidFront}` : user.nidFront} alt="NID Front" className="w-full h-24 object-cover rounded-xl border border-white/5 bg-slate-950/20" />
+                    </div>
+                    <div className="space-y-1.5 text-left">
+                      <span className="text-[10px] text-slate-500 uppercase font-semibold">NID Back</span>
+                      <img src={user.nidBack?.startsWith('/uploads') ? `${BACKEND_URL.replace('/api', '')}${user.nidBack}` : user.nidBack} alt="NID Back" className="w-full h-24 object-cover rounded-xl border border-white/5 bg-slate-950/20" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* KYC Status Pending (with uploaded files) */}
+            {user.kycStatus === "PENDING" && (user.nidFront || user.nidBack) && (
+              <div className="text-center py-6 space-y-4">
+                <div className="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto border border-amber-500/30">
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-base font-bold text-white">
+                    {lang === "BN" ? "কেওয়াইসি যাচাইকরণ অপেক্ষমান" : "Verification Under Review"}
+                  </h4>
+                  <p className="text-xs text-slate-400 max-w-xs mx-auto">
+                    {lang === "BN" ? "আপনার জমানো নথি আমাদের অ্যাডমিন প্যানেল পর্যালোচনা করছে। এটি সাধারণত ২৪ ঘণ্টার মধ্যে সম্পন্ন হয়।" : "Your NID documents are currently being reviewed by our administrative team. This usually takes under 24 hours."}
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  {user.nidFront && (
+                    <div className="space-y-1.5 text-left">
+                      <span className="text-[10px] text-slate-500 uppercase font-semibold">NID Front</span>
+                      <img src={user.nidFront.startsWith('/uploads') ? `${BACKEND_URL.replace('/api', '')}${user.nidFront}` : user.nidFront} alt="NID Front" className="w-full h-28 object-cover rounded-xl border border-white/10 bg-slate-950/30" />
+                    </div>
+                  )}
+                  {user.nidBack && (
+                    <div className="space-y-1.5 text-left">
+                      <span className="text-[10px] text-slate-500 uppercase font-semibold">NID Back</span>
+                      <img src={user.nidBack.startsWith('/uploads') ? `${BACKEND_URL.replace('/api', '')}${user.nidBack}` : user.nidBack} alt="NID Back" className="w-full h-28 object-cover rounded-xl border border-white/10 bg-slate-950/30" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* KYC Form: if rejected or not submitted yet */}
+            {((user.kycStatus === "PENDING" && !user.nidFront && !user.nidBack) || user.kycStatus === "REJECTED" || !user.kycStatus) && (
+              <form onSubmit={handleKycSubmit} className="space-y-6">
+                {user.kycStatus === "REJECTED" && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs font-semibold">
+                    {lang === "BN" ? "আপনার আগের কেওয়াইসি বাতিল করা হয়েছে। দয়া করে সঠিক পরিচয়পত্র আপলোড করুন।" : "Your previous KYC was rejected. Please re-upload correct NID card photos."}
+                  </div>
+                )}
+                {kycStatusMsg && (
+                  <div className={`p-4 rounded-xl text-xs font-semibold border ${kycStatusMsg.type === "success" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-red-500/10 text-red-400 border-red-500/20"}`}>
+                    {kycStatusMsg.message}
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    {lang === "BN" ? "আপনার অ্যাকাউন্ট যাচাই করতে আপনার জাতীয় পরিচয়পত্রের (NID) সামনের এবং পিছনের স্পষ্ট ছবি আপলোড করুন।" : "To verify your account, please upload clear photos of the front and back of your NID card."}
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Front Photo */}
+                    <div className="space-y-2">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        {lang === "BN" ? "এনআইডি সামনের ছবি" : "NID Card Front Side"}
+                      </label>
+                      <div className="border border-dashed border-white/10 hover:border-white/20 transition-all rounded-xl h-36 flex flex-col items-center justify-center p-2 bg-[#0b1329]/50 relative overflow-hidden group">
+                        {kycFront ? (
+                          <>
+                            <img src={kycFront} alt="NID Front Preview" className="w-full h-full object-cover rounded-lg" />
+                            <button
+                              type="button"
+                              onClick={() => setKycFront(null)}
+                              className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </>
+                        ) : (
+                          <label className="cursor-pointer flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-white transition-colors">
+                            <span className="text-2xl mb-1">+</span>
+                            <span className="text-[10px] font-semibold">{lang === "BN" ? "সামনের ছবি আপলোড" : "Upload Front Side"}</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onload = () => setKycFront(reader.result as string);
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Back Photo */}
+                    <div className="space-y-2">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        {lang === "BN" ? "এনআইডি পিছনের ছবি" : "NID Card Back Side"}
+                      </label>
+                      <div className="border border-dashed border-white/10 hover:border-white/20 transition-all rounded-xl h-36 flex flex-col items-center justify-center p-2 bg-[#0b1329]/50 relative overflow-hidden group">
+                        {kycBack ? (
+                          <>
+                            <img src={kycBack} alt="NID Back Preview" className="w-full h-full object-cover rounded-lg" />
+                            <button
+                              type="button"
+                              onClick={() => setKycBack(null)}
+                              className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </>
+                        ) : (
+                          <label className="cursor-pointer flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-white transition-colors">
+                            <span className="text-2xl mb-1">+</span>
+                            <span className="text-[10px] font-semibold">{lang === "BN" ? "পিছনের ছবি আপলোড" : "Upload Back Side"}</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onload = () => setKycBack(reader.result as string);
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submittingKyc || !kycFront || !kycBack}
+                  className="w-full py-3 rounded-xl font-bold bg-[#3b82f6] hover:bg-blue-600 disabled:bg-slate-700 text-white transition-all disabled:opacity-50 text-sm flex justify-center items-center gap-2"
+                >
+                  {submittingKyc ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>{lang === "BN" ? "জমা হচ্ছে..." : "Submitting..."}</span>
+                    </>
+                  ) : (
+                    lang === "BN" ? "পরিচয়পত্র সাবমিট করুন" : "Submit Verification"
+                  )}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       )}

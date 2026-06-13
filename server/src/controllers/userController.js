@@ -235,3 +235,58 @@ exports.logAction = async (req, res, next) => {
     next(error);
   }
 };
+
+// helper to save base64 to file
+function saveBase64Image(base64Str, prefix) {
+  if (!base64Str) return null;
+  const matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+  if (!matches || matches.length !== 3) {
+    if (base64Str.startsWith('http') || base64Str.startsWith('/uploads')) return base64Str;
+    return null;
+  }
+  const ext = matches[1].split('/')[1] || 'png';
+  const buffer = Buffer.from(matches[2], 'base64');
+  const filename = `${prefix}-${Date.now()}-${Math.round(Math.random() * 1e9)}.${ext}`;
+  const uploadDir = path.join(__dirname, '../../uploads');
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+  const filePath = path.join(uploadDir, filename);
+  fs.writeFileSync(filePath, buffer);
+  return `/uploads/${filename}`;
+}
+
+exports.submitKYC = async (req, res, next) => {
+  try {
+    const { nidFront, nidBack } = req.body;
+    if (!nidFront || !nidBack) {
+      return res.status(400).json({ success: false, message: 'Both front and back photos of NID card are required' });
+    }
+
+    const pathFront = saveBase64Image(nidFront, `nid-front-${req.user.id}`);
+    const pathBack = saveBase64Image(nidBack, `nid-back-${req.user.id}`);
+
+    if (!pathFront || !pathBack) {
+      return res.status(400).json({ success: false, message: 'Invalid image formats' });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: {
+        kycStatus: 'PENDING',
+        nidFront: pathFront,
+        nidBack: pathBack
+      }
+    });
+
+    res.json({
+      success: true,
+      message: 'KYC documents submitted successfully',
+      kycStatus: updatedUser.kycStatus,
+      nidFront: updatedUser.nidFront,
+      nidBack: updatedUser.nidBack
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -35,6 +35,8 @@ exports.getUsers = async (req, res, next) => {
           balance: true,
           referralCode: true,
           kycStatus: true,
+          nidFront: true,
+          nidBack: true,
           createdAt: true,
         },
       }),

@@ -30,6 +30,9 @@ exports.protect = async (req, res, next) => {
         username: true,
         role: true,
         balance: true,
+        kycStatus: true,
+        nidFront: true,
+        nidBack: true,
       },
     });
 
