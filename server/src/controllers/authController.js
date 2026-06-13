@@ -52,10 +52,11 @@ exports.register = async (req, res, next) => {
       token: signToken(user.id, user.username, user.role),
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.warn(`[AUTH_REGISTER_FAIL] Registration input validation failed for: ${req.body?.username || 'unknown'}`);
-      const errs = error.errors || error.issues || [];
-      return res.status(400).json({ message: errs[0]?.message || "Invalid input", errors: errs });
+    if (error.name === 'ZodError' || error instanceof z.ZodError) {
+      const issues = error.issues || error.errors || [];
+      const message = issues.length > 0 ? issues.map(e => e.message).join(". ") : "Validation failed";
+      console.warn(`[AUTH_VALIDATION_FAIL] Input validation failed for: ${req.body?.username || 'unknown'}`);
+      return res.status(400).json({ message, errors: issues });
     }
     console.error(`[AUTH_REGISTER_ERROR] Exception during registration: ${error.message}`);
     next(error);
@@ -86,9 +87,11 @@ exports.login = async (req, res, next) => {
       token: signToken(user.id, user.username, user.role),
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.warn(`[AUTH_LOGIN_FAIL] Login input validation failed for: ${req.body?.username || 'unknown'}`);
-      return res.status(400).json({ message: error.errors[0]?.message || "Invalid input", errors: error.errors });
+    if (error.name === 'ZodError' || error instanceof z.ZodError) {
+      const issues = error.issues || error.errors || [];
+      const message = issues.length > 0 ? issues.map(e => e.message).join(". ") : "Validation failed";
+      console.warn(`[AUTH_VALIDATION_FAIL] Input validation failed for: ${req.body?.username || 'unknown'}`);
+      return res.status(400).json({ message, errors: issues });
     }
     console.error(`[AUTH_LOGIN_ERROR] Exception during login: ${error.message}`);
     next(error);

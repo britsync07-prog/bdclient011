@@ -93,8 +93,12 @@ export default function LoginPage() {
         logClientAction("Login Success", { username });
         router.push("/");
       } else {
-        logClientAction("Login Fail", { username, error: data.message || "Login failed" });
-        setError(data.message || "Login failed");
+        let errMsg = data.message || "Login failed";
+        if (!data.message && data.errors && Array.isArray(data.errors)) {
+          errMsg = data.errors.map((e: any) => e.message).join(". ");
+        }
+        logClientAction("Login Fail", { username, error: errMsg });
+        setError(errMsg);
       }
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);

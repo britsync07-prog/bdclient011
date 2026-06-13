@@ -128,6 +128,7 @@ export default function RegisterPage() {
 
   const allFilled =
     username.trim().length >= 3 &&
+    username.trim().length <= 20 &&
     password.length >= 8 &&
     confirmPassword === password;
 
@@ -170,8 +171,12 @@ export default function RegisterPage() {
         logClientAction("Register Success", { username });
         router.push("/");
       } else {
-        logClientAction("Register Fail", { username, error: data.message || "Registration failed" });
-        setError(data.message || "Registration failed");
+        let errMsg = data.message || "Registration failed";
+        if (!data.message && data.errors && Array.isArray(data.errors)) {
+          errMsg = data.errors.map((e: any) => e.message).join(". ");
+        }
+        logClientAction("Register Fail", { username, error: errMsg });
+        setError(errMsg);
       }
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
@@ -391,9 +396,9 @@ export default function RegisterPage() {
                     aria-label="Choose a username"
                     required
                   />
-                  {username.length > 0 && username.length < 3 && (
+                  {username.length > 0 && (username.length < 3 || username.length > 20) && (
                     <p className="text-xs text-amber-500 mt-1 ml-1">
-                      Must be at least 3 characters
+                      Must be between 3 and 20 characters
                     </p>
                   )}
                 </div>
