@@ -92,7 +92,52 @@ export default function HomePage() {
   const { state, setSearchTerm, setCategory } = useGameStore();
   const { isFavorite, toggleFavorite } = useFavoritesContext();
   const filteredGames = useFilteredGames();
-  const t = TRANSLATIONS.EN;
+
+  const [lang, setLang] = useState<"BN" | "EN">("BN");
+
+  useEffect(() => {
+    const savedLang = localStorage.getItem("lang") as "BN" | "EN";
+    if (savedLang && (savedLang === "BN" || savedLang === "EN")) {
+      setLang(savedLang);
+    }
+  }, []);
+
+  const handleLanguageChange = useCallback((newLang: "BN" | "EN") => {
+    setLang(newLang);
+    localStorage.setItem("lang", newLang);
+  }, []);
+
+  const t = useMemo(() => TRANSLATIONS[lang], [lang]);
+
+  const getNavLabel = useCallback((key: string) => {
+    switch (key) {
+      case "home": return t.HOME;
+      case "casino": return t.CASINO;
+      case "sports": return t.SPORTS;
+      case "live": return (t as any).LIVE || "Live Dealer";
+      case "promotions": return t.PROMOTIONS;
+      case "vip": return t.VIP;
+      case "affiliate": return (t as any).REFERRAL || "Affiliate";
+      case "support": return (t as any).CONTACT || "Support";
+      default: return key;
+    }
+  }, [t]);
+
+  const getCategoryLabel = useCallback((key: string) => {
+    switch (key) {
+      case "home": return t.ALL_GAMES || "All Games";
+      case "slots": return t.SLOTS || "Slots";
+      case "live": return (t as any).LIVE || "Live Casino";
+      case "table": return t.TABLE || "Table Games";
+      case "cards": return t.CARDS || "Card Games";
+      case "crash": return t.CRASH || "Crash Games";
+      case "fishing": return t.FISHING || "Fishing";
+      case "arcade": return t.ARCADE || "Arcade";
+      case "lottery": return t.LOTTERY || "Lottery";
+      case "sports": return t.SPORTS || "Sports";
+      default: return key;
+    }
+  }, [t]);
 
   const [user, setUser] = useState<{ username: string; balance: number } | null>(null);
   const [activeNav, setActiveNav] = useState("casino");
@@ -207,7 +252,7 @@ export default function HomePage() {
                 }`}
               >
                 <item.icon className="h-5 w-5 mr-3" />
-                <span className="font-medium text-sm">{item.label}</span>
+                <span className="font-medium text-sm">{getNavLabel(item.key)}</span>
               </button>
             ))}
           </nav>
@@ -263,7 +308,7 @@ export default function HomePage() {
                     }`}
                   >
                     <item.icon className="h-5 w-5 mr-3" />
-                    <span className="font-medium text-sm">{item.label}</span>
+                    <span className="font-medium text-sm">{getNavLabel(item.key)}</span>
                   </button>
                 ))}
               </nav>
@@ -294,7 +339,7 @@ export default function HomePage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 className="w-full bg-[#1e293b]/50 border border-white/10 rounded-full py-2 pl-10 pr-10 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50 focus:bg-[#1e293b] transition-all"
-                placeholder="Search games or providers..."
+                placeholder={t.SEARCH_PLACEHOLDER || "Search games or providers..."}
                 type="text"
                 value={state.searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -310,8 +355,12 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex items-center gap-3 sm:gap-4">
-            <button className="hidden sm:flex items-center gap-1 text-slate-300 hover:text-white transition-colors">
+            <button
+              onClick={() => handleLanguageChange(lang === "BN" ? "EN" : "BN")}
+              className="flex items-center gap-1 text-slate-300 hover:text-white transition-colors"
+            >
               <Globe className="h-5 w-5" />
+              <span className="text-xs font-bold uppercase">{lang}</span>
               <ChevronDown className="h-4 w-4" />
             </button>
             <button className="text-slate-300 hover:text-white transition-colors relative">
@@ -331,16 +380,16 @@ export default function HomePage() {
                   onClick={(e) => { e.preventDefault(); handleLogout(); }}
                   className="blue-gradient-btn px-4 sm:px-6 py-2 rounded-full font-semibold text-sm tracking-wide"
                 >
-                  Logout
+                  {t.LOGOUT || "Logout"}
                 </Link>
               </div>
             ) : (
               <>
                 <Link href="/login" className="gold-gradient-btn px-4 sm:px-6 py-2 rounded-full font-semibold text-sm tracking-wide">
-                  Login
+                  {t.LOGIN || "Login"}
                 </Link>
                 <Link href="/register" className="blue-gradient-btn px-4 sm:px-6 py-2 rounded-full font-semibold text-sm tracking-wide">
-                  Sign Up
+                  {t.SIGNUP || "Sign Up"}
                 </Link>
               </>
             )}
@@ -355,7 +404,7 @@ export default function HomePage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
               className="w-full bg-[#1e293b]/50 border border-white/10 rounded-full py-2.5 pl-10 pr-10 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50 focus:bg-[#1e293b] transition-all"
-              placeholder="Search games..."
+              placeholder={t.SEARCH_PLACEHOLDER || "Search games..."}
               type="text"
               value={state.searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -389,14 +438,14 @@ export default function HomePage() {
                       onClick={() => setCategory("home")}
                       className="gold-gradient-btn px-8 py-3 rounded-full font-bold uppercase tracking-wider text-sm shadow-[0_0_20px_rgba(245,158,11,0.4)]"
                     >
-                      Play Now
+                      {t.PLAY_NOW || "Play Now"}
                     </button>
                   ) : (
                     <Link
                       href="/register"
                       className="gold-gradient-btn px-8 py-3 rounded-full font-bold uppercase tracking-wider text-sm shadow-[0_0_20px_rgba(245,158,11,0.4)] inline-block"
                     >
-                      Join Now
+                      {t.SIGNUP || "Join Now"}
                     </Link>
                   )}
                 </div>
@@ -408,8 +457,12 @@ export default function HomePage() {
             <div className="lg:col-span-6 xl:col-span-5 grid grid-cols-2 gap-4">
               <div className="rounded-2xl p-5 relative overflow-hidden bg-gradient-to-br from-rose-600 to-rose-900 border border-white/10 card-hover flex flex-col justify-between group">
                 <div className="relative z-10">
-                  <h3 className="text-xl font-bold text-white mb-1">VIP<br />Cashback</h3>
-                  <p className="text-xs text-rose-100/80">200% Match up to 5 BTC 100 free Spins</p>
+                  <h3 className="text-xl font-bold text-white mb-1">
+                    {t.LOBBY_CARD_VIP_CASHBACK || "VIP Cashback"}
+                  </h3>
+                  <p className="text-xs text-rose-100/80">
+                    {t.LOBBY_CARD_VIP_DESC || "200% Match up to 5 BTC & 100 free spins"}
+                  </p>
                 </div>
                 <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-xl group-hover:bg-white/20 transition-all"></div>
                 <Crown className="absolute bottom-4 right-4 h-12 w-12 text-rose-300 opacity-50" />
@@ -417,8 +470,12 @@ export default function HomePage() {
 
               <div className="rounded-2xl p-5 relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-900 border border-white/10 card-hover flex flex-col justify-between group">
                 <div className="relative z-10">
-                  <h3 className="text-xl font-bold text-white mb-1">Weekly Crypto<br />Raffle</h3>
-                  <p className="text-xs text-blue-100/80">Get the daily weekly crypto raffle</p>
+                  <h3 className="text-xl font-bold text-white mb-1">
+                    {t.LOBBY_CARD_RAFFLE || "Weekly Crypto Raffle"}
+                  </h3>
+                  <p className="text-xs text-blue-100/80">
+                    {t.LOBBY_CARD_RAFFLE_DESC || "Get the daily weekly crypto raffle"}
+                  </p>
                 </div>
                 <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-xl group-hover:bg-white/20 transition-all"></div>
                 <Bitcoin className="absolute bottom-4 right-4 h-12 w-12 text-blue-300 opacity-50" />
@@ -427,8 +484,12 @@ export default function HomePage() {
               <div className="col-span-2 rounded-2xl p-5 relative overflow-hidden bg-gradient-to-br from-slate-700 to-slate-900 border border-white/10 card-hover flex flex-col justify-center group h-28">
                 <div className="relative z-10 flex justify-between items-center w-full">
                   <div>
-                    <h3 className="text-xl font-bold text-amber-400 mb-1">High Roller Tournament</h3>
-                    <p className="text-xs text-slate-300">Offers for high roller tournament</p>
+                    <h3 className="text-xl font-bold text-amber-400 mb-1">
+                      {t.LOBBY_CARD_TOURNAMENT || "High Roller Tournament"}
+                    </h3>
+                    <p className="text-xs text-slate-300">
+                      {t.LOBBY_CARD_TOURNAMENT_DESC || "Offers for high roller tournament"}
+                    </p>
                   </div>
                   <Trophy className="h-10 w-10 text-amber-500 opacity-80 group-hover:scale-110 transition-transform" />
                 </div>
@@ -452,7 +513,7 @@ export default function HomePage() {
                     : "category-chip bg-[#1e293b]/80 hover:bg-[#1e293b] text-slate-300"
                 }`}
               >
-                {cat.icon} {cat.label}
+                {cat.icon} {getCategoryLabel(cat.key)}
               </button>
             ))}
 
@@ -476,13 +537,13 @@ export default function HomePage() {
           {state.searchTerm && (
             <div className="flex items-center justify-between">
               <p className="text-sm text-slate-400">
-                {filteredGames.length} games found for &ldquo;{state.searchTerm}&rdquo;
+                {(t.GAMES_FOUND || "{count} games found").replace("{count}", String(filteredGames.length))} {lang === "BN" ? "অনুসন্ধানের জন্য" : "for"} &ldquo;{state.searchTerm}&rdquo;
               </p>
               <button
                 onClick={() => setSearchTerm("")}
                 className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
               >
-                Clear search
+                {t.RESET_FILTERS || "Clear search"}
               </button>
             </div>
           )}
@@ -503,8 +564,12 @@ export default function HomePage() {
           ) : filteredGames.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <Search className="h-12 w-12 text-slate-600 mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">No games found</h3>
-              <p className="text-sm text-slate-400 mb-4">Try a different search or category</p>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                {t.NO_GAMES_FOUND || "No games found"}
+              </h3>
+              <p className="text-sm text-slate-400 mb-4">
+                {t.NO_GAMES_MESSAGE || "Try a different search or category"}
+              </p>
               <button
                 onClick={() => {
                   setSearchTerm("");
@@ -512,7 +577,7 @@ export default function HomePage() {
                 }}
                 className="blue-gradient-btn px-6 py-2 rounded-full font-semibold text-sm"
               >
-                Reset Filters
+                {t.RESET_FILTERS || "Reset Filters"}
               </button>
             </div>
           ) : (
@@ -521,10 +586,14 @@ export default function HomePage() {
                 <div key={game.id} className="glass-panel rounded-xl overflow-hidden group card-hover">
                   <div className="relative aspect-video overflow-hidden bg-slate-800">
                     {game.isNew && (
-                      <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase z-10">Live</div>
+                      <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase z-10">
+                        {t.NEW || "Live"}
+                      </div>
                     )}
                     {game.isPopular && (
-                      <div className="absolute top-2 left-2 bg-amber-500 text-black text-[10px] font-bold px-2 py-0.5 rounded uppercase z-10">Hot</div>
+                      <div className="absolute top-2 left-2 bg-amber-500 text-black text-[10px] font-bold px-2 py-0.5 rounded uppercase z-10">
+                        {t.HOT || "Hot"}
+                      </div>
                     )}
                     {game.thumbnail ? (
                       <img
@@ -547,7 +616,7 @@ export default function HomePage() {
                         {launchingGameId === game.id ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
-                          "PLAY"
+                          t.PLAY || "PLAY"
                         )}
                       </button>
                       <button
@@ -574,7 +643,7 @@ export default function HomePage() {
                 onClick={() => setShowMoreGames(true)}
                 className="blue-gradient-btn px-8 py-3 rounded-full font-semibold text-sm tracking-wide"
               >
-                Show All {filteredGames.length} Games
+                {t.SHOW_ALL || "Show All"} {filteredGames.length} {t.GAMES || "Games"}
               </button>
             </div>
           )}
@@ -592,10 +661,10 @@ export default function HomePage() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-white/5 text-slate-400 uppercase text-xs">
                   <tr>
-                    <th className="px-6 py-4 font-medium">Rank</th>
-                    <th className="px-6 py-4 font-medium">Player</th>
-                    <th className="px-6 py-4 font-medium">Game</th>
-                    <th className="px-6 py-4 font-medium text-right">Win Amount</th>
+                    <th className="px-6 py-4 font-medium">{t.LEADERBOARD_RANK || "Rank"}</th>
+                    <th className="px-6 py-4 font-medium">{t.LEADERBOARD_PLAYER || "Player"}</th>
+                    <th className="px-6 py-4 font-medium">{t.LEADERBOARD_GAME || "Game"}</th>
+                    <th className="px-6 py-4 font-medium text-right">{t.LEADERBOARD_WIN || "Win Amount"}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -645,8 +714,8 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-blue-500/20 blur-md rounded-full"></div>
                 <ShieldCheck className="w-full h-full text-blue-400 relative z-10" />
               </div>
-              <h4 className="text-lg font-bold text-white mb-1">RNG Certified</h4>
-              <p className="text-sm text-slate-400">&amp; Secure</p>
+              <h4 className="text-lg font-bold text-white mb-1">{t.RNG_CERTIFIED || "RNG Certified"}</h4>
+              <p className="text-sm text-slate-400">{t.SECURE || "& Secure"}</p>
             </div>
           </div>
 
@@ -666,7 +735,7 @@ export default function HomePage() {
                   <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Est. {currentYear - 1}</span>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Follow Us</p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">{t.FOLLOW_US || "Follow Us"}</p>
                   <div className="flex items-center gap-2">
                     <a href={settings.social_twitter || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-amber-400 hover:border-amber-400/30 transition-all">
                       <TwitterXIcon />
@@ -689,15 +758,15 @@ export default function HomePage() {
               {/* Games links */}
               <div>
                 <h4 className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">
-                  <Gamepad2 size={13} className="text-amber-400" /> Games
+                  <Gamepad2 size={13} className="text-amber-400" /> {t.GAMES || "Games"}
                 </h4>
                 <ul className="space-y-2.5">
                   {[
-                    { label: "Casino Games", cat: "home" as Category },
-                    { label: "Live Dealers", cat: "live" as Category },
-                    { label: "Slot Machines", cat: "slots" as Category },
-                    { label: "Table Games", cat: "table" as Category },
-                    { label: "Crash Games", cat: "crash" as Category },
+                    { label: t.HOME || "Casino Games", cat: "home" as Category },
+                    { label: (t as any).LIVE || "Live Dealers", cat: "live" as Category },
+                    { label: t.SLOTS || "Slot Machines", cat: "slots" as Category },
+                    { label: t.TABLE || "Table Games", cat: "table" as Category },
+                    { label: t.CRASH || "Crash Games", cat: "crash" as Category },
                   ].map((link) => (
                     <li key={link.label}>
                       <button
@@ -714,12 +783,17 @@ export default function HomePage() {
               {/* Company links */}
               <div>
                 <h4 className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">
-                  <Building2 size={13} className="text-amber-400" /> Company
+                  <Building2 size={13} className="text-amber-400" /> {lang === "BN" ? "কোম্পানি" : "Company"}
                 </h4>
                 <ul className="space-y-2.5">
-                  {["About Us", "Blog & News", "Careers", "Affiliate Program"].map((label) => (
-                    <li key={label}>
-                      <a href="#" className="text-sm text-slate-400 hover:text-amber-400 transition-colors font-medium">{label}</a>
+                  {[
+                    { label: t.ABOUT_US || "About Us", href: "#" },
+                    { label: lang === "BN" ? "ব্লগ ও খবর" : "Blog & News", href: "#" },
+                    { label: lang === "BN" ? "ক্যারিয়ার" : "Careers", href: "#" },
+                    { label: (t as any).REFERRAL || "Affiliate Program", href: "#" }
+                  ].map((link) => (
+                    <li key={link.label}>
+                      <a href={link.href} className="text-sm text-slate-400 hover:text-amber-400 transition-colors font-medium">{link.label}</a>
                     </li>
                   ))}
                 </ul>
@@ -728,12 +802,17 @@ export default function HomePage() {
               {/* Support links */}
               <div>
                 <h4 className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">
-                  <HeadphonesIcon size={13} className="text-amber-400" /> Support
+                  <HeadphonesIcon size={13} className="text-amber-400" /> {t.CONTACT || "Support"}
                 </h4>
                 <ul className="space-y-2.5">
-                  {["24/7 Live Support", "Play Responsibly", "Security Center", "FAQ Help"].map((label) => (
-                    <li key={label}>
-                      <a href="#" className="text-sm text-slate-400 hover:text-amber-400 transition-colors font-medium">{label}</a>
+                  {[
+                    { label: lang === "BN" ? "২৪/৭ লাইভ সাপোর্ট" : "24/7 Live Support", href: "#" },
+                    { label: t.RESPONSIBLE_GAMING || "Play Responsibly", href: "#" },
+                    { label: lang === "BN" ? "নিরাপত্তা কেন্দ্র" : "Security Center", href: "#" },
+                    { label: t.FAQ || "FAQ Help", href: "#" }
+                  ].map((link) => (
+                    <li key={link.label}>
+                      <a href={link.href} className="text-sm text-slate-400 hover:text-amber-400 transition-colors font-medium">{link.label}</a>
                     </li>
                   ))}
                 </ul>
@@ -742,7 +821,7 @@ export default function HomePage() {
               {/* Payment Methods & Partners */}
               <div className="col-span-1 md:col-span-2 lg:col-span-4 border-t border-white/5 pt-8 mt-4 space-y-6">
                 <div>
-                  <h5 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3.5">Payment Methods</h5>
+                  <h5 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3.5">{t.PAYMENT_METHODS || "Payment Methods"}</h5>
                   <div className="flex flex-wrap items-center gap-4 opacity-60 hover:opacity-100 transition-all duration-300">
                     {paymentLogos.map((logo, index) => (
                       <div key={index} className="bg-white/5 p-1.5 px-3 rounded-lg border border-white/10 shadow-sm flex items-center justify-center">
@@ -752,7 +831,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div>
-                  <h5 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3.5">Partners</h5>
+                  <h5 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3.5">{t.PARTNERS || "Partners"}</h5>
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-4 opacity-45 hover:opacity-100 transition-all duration-300">
                     {providerLogos.map((logo, index) => (
                       <img key={index} src={logo.src} alt={logo.alt} title={logo.alt} className="h-[22px] md:h-[24px] w-auto object-contain select-none" loading="lazy" />
@@ -770,22 +849,22 @@ export default function HomePage() {
                     <AlertTriangle size={16} className="text-amber-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-white mb-1">Play Responsibly</p>
+                    <p className="text-sm font-bold text-white mb-1">{t.PLAY_RESPONSIBLY || "Play Responsibly"}</p>
                     <p className="text-xs text-slate-400 leading-relaxed">
-                      Gaming should be for entertainment and fun. If you think you might have a gambling problem, please seek professional help immediately.
+                      {t.PLAY_RESPONSIBLY_DETAILS || "Gaming should be for entertainment and fun. If you think you might have a gambling problem, please seek professional help immediately."}
                     </p>
                     <div className="flex flex-wrap items-center gap-4 mt-3">
                       <div className="flex items-center gap-1.5">
                         <BadgeCheck size={13} className="text-amber-400 shrink-0" />
-                        <span className="text-[11px] font-semibold text-slate-300">18+ Only</span>
+                        <span className="text-[11px] font-semibold text-slate-300">{t.OVER18_ONLY || "18+ Only"}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <ShieldCheck size={13} className="text-blue-400 shrink-0" />
-                        <span className="text-[11px] font-semibold text-slate-300">Licensed &amp; Regulated</span>
+                        <span className="text-[11px] font-semibold text-slate-300">{t.LICENSED_REGULATED || "Licensed & Regulated"}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <ShieldCheck size={13} className="text-emerald-400 shrink-0" />
-                        <span className="text-[11px] font-semibold text-slate-300">Secure Gaming</span>
+                        <span className="text-[11px] font-semibold text-slate-300">{t.SECURE_GAMING || "Secure Gaming"}</span>
                       </div>
                     </div>
                   </div>
@@ -796,16 +875,20 @@ export default function HomePage() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <p className="text-sm text-slate-400 font-medium">
-                    © {currentYear} <span className="font-bold text-amber-400">PBBET</span> — Premium Crypto Casino
+                    © {currentYear} <span className="font-bold text-amber-400">PBBET</span> — {t.ROYAL_CASINO || "Premium Crypto Casino"}
                   </p>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Premium gaming experience powered by state-of-the-art technology
+                    {t.PREMIUM_GAMING_EXPERIENCE || "Premium gaming experience powered by state-of-the-art technology"}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-x-5 gap-y-1">
-                  {["Privacy Policy", "Terms & Conditions", "Responsible Gaming"].map((label) => (
-                    <a key={label} href="#" className="text-xs text-slate-500 hover:text-amber-400 transition-colors font-medium">
-                      {label}
+                  {[
+                    { label: t.PRIVACY || "Privacy Policy", href: "#" },
+                    { label: t.TERMS || "Terms & Conditions", href: "#" },
+                    { label: t.RESPONSIBLE_GAMING || "Responsible Gaming", href: "#" }
+                  ].map((link) => (
+                    <a key={link.label} href={link.href} className="text-xs text-slate-500 hover:text-amber-400 transition-colors font-medium">
+                      {link.label}
                     </a>
                   ))}
                 </div>
