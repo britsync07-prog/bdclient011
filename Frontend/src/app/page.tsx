@@ -193,6 +193,17 @@ export default function HomePage() {
   useEffect(() => {
     setVisibleCount(12);
   }, [state.selectedCategory, state.showFavoritesOnly]);
+
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [readNotifications, setReadNotifications] = useState<Record<number, boolean>>({});
+
+  const notifications = useMemo(() => [
+    { id: 1, text: t.NOTIFICATION_WELCOME || "Welcome to PBC88 Casino!", date: lang === "BN" ? "এইমাত্র" : "Just now", read: !!readNotifications[1] },
+    { id: 2, text: t.NOTIFICATION_KYC || "Your KYC Verification is Approved", date: lang === "BN" ? "২ ঘণ্টা আগে" : "2 hours ago", read: !!readNotifications[2] },
+    { id: 3, text: t.NOTIFICATION_DEPOSIT || "Deposit successful: ৳1,000 added to your wallet", date: lang === "BN" ? "১ দিন আগে" : "1 day ago", read: !!readNotifications[3] },
+  ], [t, lang, readNotifications]);
+
+  const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [depositAmount, setDepositAmount] = useState("");
   const [depositing, setDepositing] = useState(false);
@@ -554,10 +565,67 @@ export default function HomePage() {
               </button>
             </div>
             
-            <button className="text-slate-300 hover:text-white transition-colors relative">
-              <MessageSquare className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="text-slate-300 hover:text-white transition-colors relative p-1.5 rounded-full hover:bg-white/5"
+              >
+                <MessageSquare className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center animate-pulse">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {showNotifications && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)} />
+                  <div className="absolute right-0 mt-2 w-80 bg-[#0f172a]/95 border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-md">
+                    <div className="p-4 border-b border-white/10 flex justify-between items-center bg-[#1e293b]/50">
+                      <h3 className="text-sm font-bold text-white">{t.NOTIFICATIONS_TITLE || "Notifications"}</h3>
+                      {unreadCount > 0 && (
+                        <button 
+                          onClick={() => {
+                            const updated: Record<number, boolean> = {};
+                            notifications.forEach(item => {
+                              updated[item.id] = true;
+                            });
+                            setReadNotifications(updated);
+                          }}
+                          className="text-xs text-blue-400 hover:text-blue-300 font-semibold"
+                        >
+                          {t.MARK_ALL_READ || "Mark all as read"}
+                        </button>
+                      )}
+                    </div>
+                    <div className="max-h-64 overflow-y-auto divide-y divide-white/5">
+                      {notifications.length === 0 ? (
+                        <div className="p-8 text-center text-slate-500 text-xs">
+                          {t.NO_NOTIFICATIONS || "No notifications"}
+                        </div>
+                      ) : (
+                        notifications.map((n) => (
+                          <div 
+                            key={n.id} 
+                            onClick={() => {
+                              setReadNotifications(prev => ({ ...prev, [n.id]: true }));
+                            }}
+                            className={`p-4 hover:bg-white/5 transition-colors cursor-pointer flex gap-3 ${!n.read ? "bg-blue-500/5" : ""}`}
+                          >
+                            <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.read ? "bg-blue-500" : "bg-transparent"}`} />
+                            <div className="flex-1 space-y-1">
+                              <p className={`text-xs ${!n.read ? "text-white font-medium" : "text-slate-400"}`}>{n.text}</p>
+                              <span className="text-[10px] text-slate-500 block">{n.date}</span>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
             <div className="h-6 w-px bg-white/10 mx-2"></div>
             
             {user ? (
