@@ -5,7 +5,7 @@ export interface Game {
   gameCode?: string;
   name: string;
   provider: string;
-  category: "slots" | "table" | "live";
+  category: string;
   rating: number;
   isNew?: boolean;
   isPopular?: boolean;
@@ -13,7 +13,7 @@ export interface Game {
   vendorCode?: string;
 }
 
-export type Category = "home" | "all" | "slots" | "table" | "live" | "fishing" | "crash" | "lottery" | "arcade" | "megaways" | "cards";
+export type Category = "home" | "all" | "slots" | "table" | "live" | "fishing" | "crash" | "lottery" | "arcade" | "megaways" | "cards" | "sports";
 
 export interface FilterState {
   searchTerm: string;
