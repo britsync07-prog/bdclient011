@@ -131,6 +131,10 @@ export const TRANSLATIONS = {
     LIVE_SUPPORT: "২৪/৭ লাইভ সাপোর্ট",
     SECURITY_CENTER: "নিরাপত্তা কেন্দ্র",
     HERO_TITLE: "অত্যাধুনিক ক্রিকেট বেটিং এবং প্রিমিয়াম ক্যাসিনো লবি",
+    SEARCH_RESULTS_FOR: "অনুসন্ধানের জন্য",
+    MARQUEE_LEADERBOARD: "লাইভ লিডারবোর্ড আপডেট করা হয়েছে! আপনার র্যাংক পরীক্ষা করুন!",
+    ALERT_LAUNCH_FAIL: "গেম চালু করতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    ALERT_CONNECT_FAIL: "সার্ভারের সাথে সংযোগ করতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
   },
   EN: {
     HOME: "Home",
@@ -247,6 +251,10 @@ export const TRANSLATIONS = {
     LIVE_SUPPORT: "24/7 Live Support",
     SECURITY_CENTER: "Security Center",
     HERO_TITLE: "THE ULTIMATE CRYPTO CASINO EXPERIENCE",
+    SEARCH_RESULTS_FOR: "for",
+    MARQUEE_LEADERBOARD: "Live Leaderboard Updated! Check Your Rank!",
+    ALERT_LAUNCH_FAIL: "Failed to launch game. Please try again.",
+    ALERT_CONNECT_FAIL: "Failed to connect to server. Please try again.",
   }
 } as const;
 

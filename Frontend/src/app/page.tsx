@@ -62,6 +62,29 @@ const TelegramIcon = () => (
   </svg>
 );
 
+const BangladeshFlag = () => (
+  <svg viewBox="0 0 20 12" className="w-4 h-2.5 rounded-[1px] object-cover shrink-0 inline-block" xmlns="http://www.w3.org/2000/svg">
+    <rect width="20" height="12" fill="#006a4e"/>
+    <circle cx="9" cy="6" r="3.5" fill="#f42a41"/>
+  </svg>
+);
+
+const USFlag = () => (
+  <svg viewBox="0 0 20 12" className="w-4 h-2.5 rounded-[1px] object-cover shrink-0 inline-block" xmlns="http://www.w3.org/2000/svg">
+    <rect width="20" height="12" fill="#b22234"/>
+    <path d="M0,0.92h20v0.92H0zm0,1.84h20v0.92H0zm0,1.84h20v0.92H0zm0,1.84h20v0.92H0zm0,1.84h20v0.92H0zm0,1.84h20v0.92H0zm0,1.84h20v0.92H0zm0,1.84h20v0.92H0zm0,1.84h20v0.92H0zm0,1.84h20v0.92H0zm0,1.84h20v0.92H0zm0,1.84h20v0.92H0z" fill="#fff"/>
+    <rect width="8" height="6.4" fill="#3c3b6e"/>
+    <circle cx="2" cy="1.6" r="0.4" fill="#fff"/>
+    <circle cx="4" cy="1.6" r="0.4" fill="#fff"/>
+    <circle cx="6" cy="1.6" r="0.4" fill="#fff"/>
+    <circle cx="3" cy="3.2" r="0.4" fill="#fff"/>
+    <circle cx="5" cy="3.2" r="0.4" fill="#fff"/>
+    <circle cx="2" cy="4.8" r="0.4" fill="#fff"/>
+    <circle cx="4" cy="4.8" r="0.4" fill="#fff"/>
+    <circle cx="6" cy="4.8" r="0.4" fill="#fff"/>
+  </svg>
+);
+
 // ─── Category config ───
 const CATEGORIES: { key: Category; label: string; icon: React.ReactNode }[] = [
   { key: "home", label: "All Games", icon: <LayoutGrid className="h-4 w-4" /> },
@@ -198,14 +221,14 @@ export default function HomePage() {
       if (res.ok && data.launchUrl) {
         window.open(data.launchUrl, "_blank");
       } else {
-        alert(data.message || "Failed to launch game. Please try again.");
+        alert(data.message || t.ALERT_LAUNCH_FAIL || "Failed to launch game. Please try again.");
       }
     } catch {
-      alert("Failed to connect to server. Please try again.");
+      alert(t.ALERT_CONNECT_FAIL || "Failed to connect to server. Please try again.");
     } finally {
       setLaunchingGameId(null);
     }
-  }, []);
+  }, [t]);
 
   const handleNavClick = useCallback((key: string) => {
     setActiveNav(key);
@@ -355,14 +378,31 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex items-center gap-3 sm:gap-4">
-            <button
-              onClick={() => handleLanguageChange(lang === "BN" ? "EN" : "BN")}
-              className="flex items-center gap-1 text-slate-300 hover:text-white transition-colors"
-            >
-              <Globe className="h-5 w-5" />
-              <span className="text-xs font-bold uppercase">{lang}</span>
-              <ChevronDown className="h-4 w-4" />
-            </button>
+            {/* Language Selector */}
+            <div className="flex items-center gap-1 bg-[#0b1329] p-1 rounded-xl border border-slate-800 shrink-0">
+              <button
+                onClick={() => handleLanguageChange("BN")}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  lang === "BN"
+                    ? "bg-[#3b82f6] text-white"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <BangladeshFlag />
+                বাংলা
+              </button>
+              <button
+                onClick={() => handleLanguageChange("EN")}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  lang === "EN"
+                    ? "bg-[#3b82f6] text-white"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <USFlag />
+                EN
+              </button>
+            </div>
             <button className="text-slate-300 hover:text-white transition-colors relative">
               <MessageSquare className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
@@ -421,7 +461,7 @@ export default function HomePage() {
             <Star className="h-4 w-4 text-amber-400 fill-amber-400 flex-shrink-0" />
             <div className="flex-1 overflow-hidden relative">
               <p className="text-sm text-amber-100 whitespace-nowrap animate-[marquee_20s_linear_infinite]">
-                {settings.announcement || "Welcome to PBBET! Register now and get exclusive bonuses. Play 500+ casino games from top providers!"} <span className="mx-8 text-white/20">|</span> Live Leaderboard Updated! Check Your Rank!
+                {settings.announcement || "Welcome to PBBET! Register now and get exclusive bonuses. Play 500+ casino games from top providers!"} <span className="mx-8 text-white/20">|</span> {t.MARQUEE_LEADERBOARD || "Live Leaderboard Updated! Check Your Rank!"}
               </p>
             </div>
           </div>
@@ -537,7 +577,7 @@ export default function HomePage() {
           {state.searchTerm && (
             <div className="flex items-center justify-between">
               <p className="text-sm text-slate-400">
-                {(t.GAMES_FOUND || "{count} games found").replace("{count}", String(filteredGames.length))} {lang === "BN" ? "অনুসন্ধানের জন্য" : "for"} &ldquo;{state.searchTerm}&rdquo;
+                {(t.GAMES_FOUND || "{count} games found").replace("{count}", String(filteredGames.length))} {t.SEARCH_RESULTS_FOR || "for"} &ldquo;{state.searchTerm}&rdquo;
               </p>
               <button
                 onClick={() => setSearchTerm("")}
@@ -732,7 +772,7 @@ export default function HomePage() {
                   {settings.about_us || "PBBET is the ultimate crypto casino platform offering 500+ premium games from top providers. Licensed, secure, and trusted by players worldwide."}
                 </p>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 mb-6">
-                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Est. {currentYear - 1}</span>
+                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">{t.EST || "Est."} {currentYear - 1}</span>
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">{t.FOLLOW_US || "Follow Us"}</p>
