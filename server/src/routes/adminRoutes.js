@@ -7,6 +7,11 @@ const {
   approveFinancialRequest,
   setGameRTP,
   getDashboardStats,
+  getAdminGames,
+  updateAdminGame,
+  deleteAdminGame,
+  renameAdminProvider,
+  deleteAdminProvider,
 } = require('../controllers/adminController');
 const adminCmsController = require('../controllers/adminCmsController');
 const { protect, adminOnly } = require('../middleware/authMiddleware');
@@ -21,6 +26,12 @@ router.get('/financial-requests', getFinancialRequests);
 router.get('/dashboard-stats', getDashboardStats);
 router.post('/financial-requests/:transactionId/approve', approveFinancialRequest);
 router.post('/game/set-rtp', setGameRTP);
+
+router.get('/games', getAdminGames);
+router.patch('/games/:id', updateAdminGame);
+router.delete('/games/:id', deleteAdminGame);
+router.patch('/providers', renameAdminProvider);
+router.delete('/providers/:name', deleteAdminProvider);
 
 // CMS Routes
 router.get('/settings', adminCmsController.getSettings);

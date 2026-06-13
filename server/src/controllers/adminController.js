@@ -2,6 +2,7 @@ const prisma = require('../config/db');
 const { paginationSchema } = require('../utils/validation');
 const oroplayApi = require('../utils/oroplayApi');
 const { z } = require('zod');
+const gameCacheHelper = require('../utils/gameCacheHelper');
 
 // Validation schemas
 const updateKYCSchema = z.object({
@@ -310,6 +311,68 @@ exports.getDashboardStats = async (req, res, next) => {
         },
       },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getAdminGames = async (req, res, next) => {
+  try {
+    const games = await gameCacheHelper.getCachedGames();
+    res.json({ success: true, games });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateAdminGame = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { name, provider } = req.body;
+    
+    if (!name && !provider) {
+      return res.status(400).json({ success: false, message: 'Name or provider is required' });
+    }
+
+    const updates = {};
+    if (name) updates.name = name;
+    if (provider) updates.provider = provider;
+
+    await gameCacheHelper.updateGame(id, updates);
+    res.json({ success: true, message: 'Game updated successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.deleteAdminGame = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await gameCacheHelper.deleteGame(id);
+    res.json({ success: true, message: 'Game deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.renameAdminProvider = async (req, res, next) => {
+  try {
+    const { oldName, newName } = req.body;
+    if (!oldName || !newName) {
+      return res.status(400).json({ success: false, message: 'oldName and newName are required' });
+    }
+    await gameCacheHelper.renameProvider(oldName, newName);
+    res.json({ success: true, message: 'Provider renamed successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.deleteAdminProvider = async (req, res, next) => {
+  try {
+    const { name } = req.params;
+    await gameCacheHelper.deleteProvider(name);
+    res.json({ success: true, message: 'Provider and its games deleted successfully' });
   } catch (error) {
     next(error);
   }

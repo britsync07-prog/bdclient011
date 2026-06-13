@@ -29,6 +29,7 @@ import {
   Trash2,
   Edit,
   Search,
+  Building2,
 } from "lucide-react";
 
 import { logClientAction } from "@/lib/logger";
@@ -62,6 +63,19 @@ interface DBBanner {
   linkUrl: string | null;
   isActive: boolean;
   order: number;
+}
+
+interface AdminGame {
+  id: string;
+  gameCode?: string;
+  name: string;
+  provider: string;
+  category: string;
+  rating: number;
+  isNew?: boolean;
+  isPopular?: boolean;
+  thumbnail?: string;
+  vendorCode?: string;
 }
 
 type Tab = "dashboard" | "users" | "financial" | "games" | "settings";
@@ -106,6 +120,16 @@ export default function AdminDashboard() {
 
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [gamesList, setGamesList] = useState<AdminGame[]>([]);
+  const [providerSearchQuery, setProviderSearchQuery] = useState("");
+  const [gameSearchQuery, setGameSearchQuery] = useState("");
+  const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
+
+  // Renaming state
+  const [editingProviderName, setEditingProviderName] = useState<string | null>(null);
+  const [newProviderNameValue, setNewProviderNameValue] = useState("");
+  const [editingGameId, setEditingGameId] = useState<string | null>(null);
+  const [newGameNameValue, setNewGameNameValue] = useState("");
   const [transactions, setTransactions] = useState<FinancialRequest[]>([]);
   const [banners, setBanners] = useState<DBBanner[]>([]);
   const [loading, setLoading] = useState(true);
@@ -194,6 +218,12 @@ export default function AdminDashboard() {
       if (bannersJson.success) {
         setBanners(bannersJson.data || []);
       }
+
+      const gamesRes = await fetch(`${BACKEND_URL}/admin/games`, { headers });
+      const gamesJson = await gamesRes.json();
+      if (gamesJson.success) {
+        setGamesList(gamesJson.games || []);
+      }
     } catch (err) {
       console.error("Failed to fetch admin data", err);
     } finally {
@@ -242,6 +272,120 @@ export default function AdminDashboard() {
       showToast("Failed to update RTP", false);
     } finally {
       setRtpLoading(false);
+    }
+  };
+
+  const handleRenameProvider = async (oldName: string) => {
+    if (!newProviderNameValue.trim()) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${BACKEND_URL}/admin/providers`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ oldName, newName: newProviderNameValue.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message || "Provider renamed successfully", true);
+        setEditingProviderName(null);
+        setNewProviderNameValue("");
+        setGamesList((prev) =>
+          prev.map((g) =>
+            g.provider.toLowerCase() === oldName.toLowerCase()
+              ? { ...g, provider: newProviderNameValue.trim() }
+              : g
+          )
+        );
+        if (selectedProvider?.toLowerCase() === oldName.toLowerCase()) {
+          setSelectedProvider(newProviderNameValue.trim());
+        }
+      } else {
+        showToast(data.message || "Failed to rename provider", false);
+      }
+    } catch (err) {
+      showToast("Failed to rename provider", false);
+    }
+  };
+
+  const handleDeleteProvider = async (name: string) => {
+    if (!confirm(`Are you sure you want to delete ${name} and all its games?`)) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${BACKEND_URL}/admin/providers/${encodeURIComponent(name)}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message || "Provider deleted successfully", true);
+        setGamesList((prev) =>
+          prev.filter((g) => g.provider.toLowerCase() !== name.toLowerCase())
+        );
+        if (selectedProvider?.toLowerCase() === name.toLowerCase()) {
+          setSelectedProvider(null);
+        }
+      } else {
+        showToast(data.message || "Failed to delete provider", false);
+      }
+    } catch (err) {
+      showToast("Failed to delete provider", false);
+    }
+  };
+
+  const handleRenameGame = async (gameId: string) => {
+    if (!newGameNameValue.trim()) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${BACKEND_URL}/admin/games/${gameId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name: newGameNameValue.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message || "Game renamed successfully", true);
+        setEditingGameId(null);
+        setNewGameNameValue("");
+        setGamesList((prev) =>
+          prev.map((g) =>
+            g.id === gameId ? { ...g, name: newGameNameValue.trim() } : g
+          )
+        );
+      } else {
+        showToast(data.message || "Failed to rename game", false);
+      }
+    } catch (err) {
+      showToast("Failed to rename game", false);
+    }
+  };
+
+  const handleDeleteGame = async (gameId: string) => {
+    if (!confirm("Are you sure you want to delete this game?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${BACKEND_URL}/admin/games/${gameId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message || "Game deleted successfully", true);
+        setGamesList((prev) => prev.filter((g) => g.id !== gameId));
+      } else {
+        showToast(data.message || "Failed to delete game", false);
+      }
+    } catch (err) {
+      showToast("Failed to delete game", false);
     }
   };
 
@@ -767,7 +911,7 @@ export default function AdminDashboard() {
                           placeholder="Search username..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full bg-slate-50/50 hover:bg-slate-50 transition-colors"
+                          className="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full bg-slate-50/50 hover:bg-slate-50 transition-colors text-black"
                         />
                       </div>
                     </div>
@@ -941,101 +1085,384 @@ export default function AdminDashboard() {
               )}
 
               {/* ── Games / RTP Tab ── */}
-              {activeTab === "games" && (
-                <div className="max-w-xl">
-                  <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-[#E11D48]/10 rounded-xl flex items-center justify-center">
-                        <Sliders className="w-5 h-5 text-[#E11D48]" />
+              {activeTab === "games" && (() => {
+                const uniqueProviders = (() => {
+                  const map = new Map();
+                  gamesList.forEach((g) => {
+                    const prov = g.provider || "Unknown";
+                    map.set(prov, (map.get(prov) || 0) + 1);
+                  });
+                  return Array.from(map.entries()).map(([name, count]) => ({ name, count }));
+                })();
+
+                const filteredProviders = uniqueProviders.filter((p) =>
+                  p.name.toLowerCase().includes(providerSearchQuery.toLowerCase())
+                );
+
+                const filteredGamesList = selectedProvider
+                  ? gamesList.filter(
+                      (g) =>
+                        g.provider.toLowerCase() === selectedProvider.toLowerCase() &&
+                        g.name.toLowerCase().includes(gameSearchQuery.toLowerCase())
+                    )
+                  : [];
+
+                return (
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start w-full">
+                    {/* Left Pane (1/3 width): RTP Config & Providers */}
+                    <div className="lg:col-span-1 space-y-8">
+                      {/* RTP Config Card */}
+                      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                        <div className="flex items-center gap-3 mb-6">
+                          <div className="w-10 h-10 bg-[#E11D48]/10 rounded-xl flex items-center justify-center">
+                            <Sliders className="w-5 h-5 text-[#E11D48]" />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-[#0F172A] text-base">
+                              RTP Configuration
+                            </h3>
+                            <p className="text-xs text-slate-400">
+                              Set return-to-player percentage per vendor
+                            </p>
+                          </div>
+                        </div>
+
+                        <form onSubmit={handleSetRTP} className="space-y-4">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                              Target Player ID
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-[#0F172A] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D48]/30 focus:border-[#E11D48] transition-all placeholder:text-slate-300 text-black"
+                              placeholder="Enter username"
+                              value={rtpData.username}
+                              onChange={(e) =>
+                                setRtpData({ ...rtpData, username: e.target.value })
+                              }
+                              required
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                              Game Vendor
+                            </label>
+                            <select
+                              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-[#0F172A] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D48]/30 focus:border-[#E11D48] transition-all cursor-pointer text-black"
+                              value={rtpData.vendorCode}
+                              onChange={(e) =>
+                                setRtpData({ ...rtpData, vendorCode: e.target.value })
+                              }
+                            >
+                              <option value="slot-pragmatic">Pragmatic Play</option>
+                              <option value="mini-crash">Mini Crash</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <label className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+                                RTP Level
+                              </label>
+                              <div className="bg-[#E11D48]/10 text-[#E11D48] font-black text-base px-3 py-0.5 rounded-lg text-center">
+                                {rtpData.rtp}%
+                              </div>
+                            </div>
+                            <input
+                              type="range"
+                              min="30"
+                              max="99"
+                              className="w-full accent-[#E11D48] cursor-pointer h-2"
+                              value={rtpData.rtp}
+                              onChange={(e) =>
+                                setRtpData({
+                                  ...rtpData,
+                                  rtp: parseInt(e.target.value),
+                                })
+                              }
+                            />
+                            <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-medium">
+                              <span>30%</span>
+                              <span>99%</span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="submit"
+                            disabled={rtpLoading}
+                            aria-label="Apply RTP settings"
+                            className="w-full flex items-center justify-center gap-2 bg-[#E11D48] hover:bg-[#BE123C] disabled:opacity-60 text-white font-bold py-2.5 rounded-xl transition-all cursor-pointer text-xs shadow-sm shadow-rose-200 mt-2"
+                          >
+                            {rtpLoading ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <TrendingUp className="w-4 h-4" />
+                            )}
+                            {rtpLoading ? "Syncing…" : "Sync to Provider"}
+                          </button>
+                        </form>
                       </div>
-                      <div>
-                        <h3 className="font-bold text-[#0F172A] text-base">
-                          RTP Configuration
-                        </h3>
-                        <p className="text-xs text-slate-400">
-                          Set return-to-player percentage per vendor
-                        </p>
+
+                      {/* Providers Card */}
+                      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col h-[500px]">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2">
+                            <Building2 className="w-5 h-5 text-indigo-500" />
+                            <h3 className="font-bold text-[#0F172A] text-base">Providers</h3>
+                          </div>
+                          <span className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full">
+                            {uniqueProviders.length}
+                          </span>
+                        </div>
+
+                        {/* Provider Search Bar */}
+                        <div className="relative mb-4">
+                          <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                          <input
+                            type="text"
+                            placeholder="Search providers..."
+                            value={providerSearchQuery}
+                            onChange={(e) => setProviderSearchQuery(e.target.value)}
+                            className="pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full bg-slate-50/50 hover:bg-slate-50 transition-colors text-black"
+                          />
+                        </div>
+
+                        {/* Providers List Scrollable */}
+                        <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                          {filteredProviders.length === 0 ? (
+                            <div className="text-center py-8 text-xs text-slate-400 font-medium">No providers found.</div>
+                          ) : (
+                            filteredProviders.map((provider) => {
+                              const isSelected = selectedProvider?.toLowerCase() === provider.name.toLowerCase();
+                              const isEditing = editingProviderName === provider.name;
+
+                              return (
+                                <div
+                                  key={provider.name}
+                                  onClick={() => {
+                                    if (!isEditing) setSelectedProvider(provider.name);
+                                  }}
+                                  className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                                    isSelected
+                                      ? "bg-rose-50/80 border-rose-200 text-[#E11D48]"
+                                      : "bg-slate-50/50 border-slate-100 hover:bg-slate-50 text-slate-700"
+                                  }`}
+                                >
+                                  {isEditing ? (
+                                    <div className="flex items-center gap-1.5 w-full" onClick={(e) => e.stopPropagation()}>
+                                      <input
+                                        type="text"
+                                        value={newProviderNameValue}
+                                        onChange={(e) => setNewProviderNameValue(e.target.value)}
+                                        className="px-2 py-1 text-xs border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 text-black bg-white w-full"
+                                        placeholder="New name..."
+                                        autoFocus
+                                      />
+                                      <button
+                                        onClick={() => handleRenameProvider(provider.name)}
+                                        className="bg-emerald-500 hover:bg-emerald-600 text-white rounded p-1 text-[10px] font-bold"
+                                      >
+                                        Save
+                                      </button>
+                                      <button
+                                        onClick={() => {
+                                          setEditingProviderName(null);
+                                          setNewProviderNameValue("");
+                                        }}
+                                        className="bg-slate-300 hover:bg-slate-400 text-slate-700 rounded p-1 text-[10px] font-bold"
+                                      >
+                                        Cancel
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <div className="flex flex-col gap-0.5">
+                                        <span className="font-semibold text-xs truncate max-w-[120px]">{provider.name}</span>
+                                        <span className="text-[10px] text-slate-400 font-medium">{provider.count} games</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setEditingProviderName(provider.name);
+                                            setNewProviderNameValue(provider.name);
+                                          }}
+                                          aria-label={`Rename provider ${provider.name}`}
+                                          className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-white rounded transition-colors"
+                                        >
+                                          <Edit className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteProvider(provider.name);
+                                          }}
+                                          aria-label={`Delete provider ${provider.name}`}
+                                          className="p-1 text-slate-400 hover:text-red-600 hover:bg-white rounded transition-colors"
+                                        >
+                                          <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            })
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    <form onSubmit={handleSetRTP} className="space-y-5">
-                      <div>
-                        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
-                          Target Player ID
-                        </label>
-                        <input
-                          type="text"
-                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[#0F172A] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D48]/30 focus:border-[#E11D48] transition-all placeholder:text-slate-300"
-                          placeholder="Enter username"
-                          value={rtpData.username}
-                          onChange={(e) =>
-                            setRtpData({ ...rtpData, username: e.target.value })
-                          }
-                          required
-                        />
-                      </div>
+                    {/* Right Pane (2/3 width): Games Catalog */}
+                    <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col h-[770px]">
+                      {selectedProvider ? (
+                        <>
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4 gap-4 flex-wrap">
+                            <div className="flex flex-col gap-0.5">
+                              <h3 className="font-bold text-[#0F172A] text-base">
+                                Games by <span className="text-[#E11D48] font-extrabold">{selectedProvider}</span>
+                              </h3>
+                              <span className="text-[10px] text-slate-400 font-medium">
+                                Showing {filteredGamesList.length} of {gamesList.filter(g => g.provider.toLowerCase() === selectedProvider.toLowerCase()).length} games
+                              </span>
+                            </div>
 
-                      <div>
-                        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
-                          Game Vendor
-                        </label>
-                        <select
-                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[#0F172A] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D48]/30 focus:border-[#E11D48] transition-all cursor-pointer"
-                          value={rtpData.vendorCode}
-                          onChange={(e) =>
-                            setRtpData({ ...rtpData, vendorCode: e.target.value })
-                          }
-                        >
-                          <option value="slot-pragmatic">Pragmatic Play</option>
-                          <option value="mini-crash">Mini Crash</option>
-                        </select>
-                      </div>
+                            {/* Game Search Bar */}
+                            <div className="relative w-full sm:w-60">
+                              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                              <input
+                                type="text"
+                                placeholder="Search games..."
+                                value={gameSearchQuery}
+                                onChange={(e) => setGameSearchQuery(e.target.value)}
+                                className="pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full bg-slate-50/50 hover:bg-slate-50 transition-colors text-black"
+                              />
+                            </div>
+                          </div>
 
-                      <div>
-                        <div className="flex items-center justify-between mb-3">
-                          <label className="text-xs font-bold text-slate-600 uppercase tracking-wider">
-                            RTP Level
-                          </label>
-                          <div className="bg-[#E11D48]/10 text-[#E11D48] font-black text-lg px-4 py-1 rounded-xl min-w-[72px] text-center">
-                            {rtpData.rtp}%
+                          {/* Games Table List */}
+                          <div className="flex-1 overflow-y-auto pr-1">
+                            {filteredGamesList.length === 0 ? (
+                              <div className="text-center py-12 text-xs text-slate-400 font-medium">
+                                No games match your search criteria.
+                              </div>
+                            ) : (
+                              <div className="overflow-x-auto border border-slate-100 rounded-xl">
+                                <table className="w-full text-left text-xs">
+                                  <thead>
+                                    <tr className="bg-slate-50 text-slate-500 text-[10px] uppercase tracking-wider font-bold border-b border-slate-100">
+                                      <th className="px-4 py-3">Thumbnail</th>
+                                      <th className="px-4 py-3">Game Name</th>
+                                      <th className="px-4 py-3">Game Code</th>
+                                      <th className="px-4 py-3">Category</th>
+                                      <th className="px-4 py-3 text-right">Actions</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-slate-50">
+                                    {filteredGamesList.map((game) => {
+                                      const isEditing = editingGameId === game.id;
+                                      return (
+                                        <tr key={game.id} className="hover:bg-slate-50/30 transition-colors">
+                                          <td className="px-4 py-2.5">
+                                            {game.thumbnail ? (
+                                              <img
+                                                src={game.thumbnail}
+                                                alt={game.name}
+                                                className="w-10 h-7 rounded object-cover border border-slate-100"
+                                              />
+                                            ) : (
+                                              <div className="w-10 h-7 rounded bg-slate-100 border border-slate-100 flex items-center justify-center">
+                                                <Gamepad2 className="w-4 h-4 text-slate-400" />
+                                              </div>
+                                            )}
+                                          </td>
+                                          <td className="px-4 py-2.5 font-semibold text-slate-700">
+                                            {isEditing ? (
+                                              <div className="flex items-center gap-1.5 w-full">
+                                                <input
+                                                  type="text"
+                                                  value={newGameNameValue}
+                                                  onChange={(e) => setNewGameNameValue(e.target.value)}
+                                                  className="px-2 py-1 text-xs border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 text-black bg-white w-full"
+                                                  placeholder="New game name..."
+                                                  autoFocus
+                                                />
+                                                <button
+                                                  onClick={() => handleRenameGame(game.id)}
+                                                  className="bg-emerald-500 hover:bg-emerald-600 text-white rounded p-1 text-[10px] font-bold"
+                                                >
+                                                  Save
+                                                </button>
+                                                <button
+                                                  onClick={() => {
+                                                    setEditingGameId(null);
+                                                    setNewGameNameValue("");
+                                                  }}
+                                                  className="bg-slate-300 hover:bg-slate-400 text-slate-700 rounded p-1 text-[10px] font-bold"
+                                                >
+                                                  Cancel
+                                                </button>
+                                              </div>
+                                            ) : (
+                                              <span>{game.name}</span>
+                                            )}
+                                          </td>
+                                          <td className="px-4 py-2.5 font-mono text-[10px] text-slate-500">
+                                            {game.gameCode || "—"}
+                                          </td>
+                                          <td className="px-4 py-2.5">
+                                            <span className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full uppercase">
+                                              {game.category}
+                                            </span>
+                                          </td>
+                                          <td className="px-4 py-2.5 text-right">
+                                            {!isEditing && (
+                                              <div className="flex items-center justify-end gap-1.5">
+                                                <button
+                                                  onClick={() => {
+                                                    setEditingGameId(game.id);
+                                                    setNewGameNameValue(game.name);
+                                                  }}
+                                                  aria-label={`Rename game ${game.name}`}
+                                                  className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded transition-colors"
+                                                >
+                                                  <Edit className="w-3.5 h-3.5" />
+                                                </button>
+                                                <button
+                                                  onClick={() => handleDeleteGame(game.id)}
+                                                  aria-label={`Delete game ${game.name}`}
+                                                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-50 rounded transition-colors"
+                                                >
+                                                  <Trash2 className="w-3.5 h-3.5" />
+                                                </button>
+                                              </div>
+                                            )}
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="flex-1 flex flex-col items-center justify-center text-slate-400 space-y-3">
+                          <Gamepad2 className="w-12 h-12 text-slate-200" />
+                          <div className="text-center">
+                            <h4 className="font-semibold text-slate-600 text-sm">Select a Provider</h4>
+                            <p className="text-xs text-slate-400 mt-1 max-w-[240px]">
+                              Choose a provider from the directory on the left to review and manage its catalog of games.
+                            </p>
                           </div>
                         </div>
-                        <input
-                          type="range"
-                          min="30"
-                          max="99"
-                          className="w-full accent-[#E11D48] cursor-pointer h-2"
-                          value={rtpData.rtp}
-                          onChange={(e) =>
-                            setRtpData({
-                              ...rtpData,
-                              rtp: parseInt(e.target.value),
-                            })
-                          }
-                        />
-                        <div className="flex justify-between text-xs text-slate-400 mt-1 font-medium">
-                          <span>30%</span>
-                          <span>99%</span>
-                        </div>
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={rtpLoading}
-                        aria-label="Apply RTP settings"
-                        className="w-full flex items-center justify-center gap-2 bg-[#E11D48] hover:bg-[#BE123C] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl transition-all cursor-pointer text-sm shadow-sm shadow-rose-200 mt-2"
-                      >
-                        {rtpLoading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <TrendingUp className="w-4 h-4" />
-                        )}
-                        {rtpLoading ? "Syncing…" : "Sync to Provider"}
-                      </button>
-                    </form>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* ── Settings / CMS Tab ── */}
               {activeTab === "settings" && (
