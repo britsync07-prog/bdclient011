@@ -151,6 +151,9 @@ export const TRANSLATIONS = {
     NOTIFICATIONS_TITLE: "বিজ্ঞপ্তি",
     MARK_ALL_READ: "সব পঠিত হিসেবে চিহ্নিত করুন",
     NO_NOTIFICATIONS: "কোন নতুন বিজ্ঞপ্তি নেই",
+    KYC_VERIFIED: "কেওয়াইসি ভেরিফাইড",
+    KYC_PENDING: "কেওয়াইসি পেন্ডিং",
+    KYC_VERIFICATION: "কেওয়াইসি যাচাইকরণ",
   },
   EN: {
     HOME: "Home",
@@ -287,6 +290,9 @@ export const TRANSLATIONS = {
     NOTIFICATIONS_TITLE: "Notifications",
     MARK_ALL_READ: "Mark all as read",
     NO_NOTIFICATIONS: "No notifications",
+    KYC_VERIFIED: "KYC Verified",
+    KYC_PENDING: "KYC Pending",
+    KYC_VERIFICATION: "KYC Verification",
   }
 } as const;
 
