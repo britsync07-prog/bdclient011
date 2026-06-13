@@ -30,6 +30,7 @@ import {
   Edit,
   Search,
   Building2,
+  X,
 } from "lucide-react";
 
 import { logClientAction } from "@/lib/logger";
@@ -434,6 +435,9 @@ export default function AdminDashboard() {
       });
       if (res.ok) {
         logClientAction("Admin Update KYC Success", { userId, status });
+        setUsers((prevUsers) =>
+          prevUsers.map((u) => (u.id === userId ? { ...u, kycStatus: status } : u))
+        );
         fetchData();
         showToast(`KYC ${status.toLowerCase()} successfully`, true);
       } else {
@@ -2078,6 +2082,111 @@ export default function AdminDashboard() {
           )}
         </div>
       </main>
+
+      {/* KYC NID Inspection Modal */}
+      {activeKycViewerUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div
+            className="bg-white rounded-2xl max-w-4xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-slate-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div>
+                <h3 className="font-bold text-[#0F172A] text-lg">
+                  KYC Document Verification
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Reviewing documents for player: <span className="font-semibold text-indigo-600">{activeKycViewerUser.username}</span>
+                </p>
+              </div>
+              <button
+                onClick={() => setActiveKycViewerUser(null)}
+                className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body: Documents */}
+            <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50/50">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Front Photo */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                    NID Card Front Side
+                  </span>
+                  <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm flex items-center justify-center p-2 min-h-[250px]">
+                    {activeKycViewerUser.nidFront ? (
+                      <img
+                        src={activeKycViewerUser.nidFront.startsWith('/uploads') ? `${BACKEND_URL.replace('/api', '')}${activeKycViewerUser.nidFront}` : activeKycViewerUser.nidFront}
+                        alt="NID Front"
+                        className="max-h-[350px] object-contain rounded-lg w-full"
+                      />
+                    ) : (
+                      <span className="text-slate-400 text-sm italic">Front photo not uploaded</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Back Photo */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                    NID Card Back Side
+                  </span>
+                  <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm flex items-center justify-center p-2 min-h-[250px]">
+                    {activeKycViewerUser.nidBack ? (
+                      <img
+                        src={activeKycViewerUser.nidBack.startsWith('/uploads') ? `${BACKEND_URL.replace('/api', '')}${activeKycViewerUser.nidBack}` : activeKycViewerUser.nidBack}
+                        alt="NID Back"
+                        className="max-h-[350px] object-contain rounded-lg w-full"
+                      />
+                    ) : (
+                      <span className="text-slate-400 text-sm italic">Back photo not uploaded</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer: Action Buttons */}
+            <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50 gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-500">Current Status:</span>
+                <KycBadge status={activeKycViewerUser.kycStatus} />
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setActiveKycViewerUser(null)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-xl text-sm font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    await handleUpdateKYC(activeKycViewerUser.id, "REJECTED");
+                    setActiveKycViewerUser(null);
+                  }}
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
+                >
+                  <XCircle className="w-4 h-4" />
+                  Reject KYC
+                </button>
+                <button
+                  onClick={async () => {
+                    await handleUpdateKYC(activeKycViewerUser.id, "APPROVED");
+                    setActiveKycViewerUser(null);
+                  }}
+                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  Approve KYC
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
