@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Hexagon, Home, Coins, CircleDot, Users, Gift, Gem, Network, Headphones,
   Search, Globe, ChevronDown, MessageSquare, Star, Crown, Bitcoin, Trophy,
-  LayoutGrid, Cherry, Radio, Grid3x3, DollarSign, ChevronRight, User,
+  LayoutGrid, Cherry, Radio, Grid3x3, DollarSign, ChevronRight, ChevronLeft, User,
   HelpCircle, ShieldCheck, Heart, X, LogOut, Wallet, Menu, Loader2,
   Gamepad2, Building2, HeadphonesIcon, Mail, AlertTriangle, BadgeCheck,
   Spade, Ticket, Target,
@@ -88,15 +88,10 @@ const USFlag = () => (
 
 // ─── Category config ───
 const CATEGORIES: { key: Category; label: string; icon: React.ReactNode }[] = [
-  { key: "home", label: "All Games", icon: <LayoutGrid className="h-4 w-4" /> },
+  { key: "all", label: "Hot Games", icon: <LayoutDashboard className="h-4 w-4" /> },
   { key: "slots", label: "Slots", icon: <Cherry className="h-4 w-4" /> },
   { key: "live", label: "Live Casino", icon: <Radio className="h-4 w-4" /> },
-  { key: "table", label: "Table Games", icon: <Grid3x3 className="h-4 w-4" /> },
-  { key: "cards", label: "Card Games", icon: <Spade className="h-4 w-4" /> },
-  { key: "crash", label: "Crash Games", icon: <Bitcoin className="h-4 w-4" /> },
-  { key: "fishing", label: "Fishing", icon: <DollarSign className="h-4 w-4" /> },
-  { key: "arcade", label: "Arcade", icon: <Gamepad2 className="h-4 w-4" /> },
-  { key: "lottery", label: "Lottery", icon: <Ticket className="h-4 w-4" /> },
+  { key: "crash", label: "Crash Games", icon: <Zap className="h-4 w-4" /> },
   { key: "sports", label: "Sports", icon: <Target className="h-4 w-4" /> },
 ];
 
@@ -114,15 +109,15 @@ const NAV_ITEMS = [
 
 const SIDEBAR_ITEMS = [
   { key: "all", icon: LayoutDashboard },
-  { key: "casino", icon: Gamepad2 },
+  { key: "casino", icon: Radio },
   { key: "slots", icon: Cherry },
   { key: "megaways", icon: Sparkles },
   { key: "cards", icon: Spade },
-  { key: "table", icon: Spade },
+  { key: "table", icon: Grid3x3 },
   { key: "fishing", icon: Anchor },
   { key: "crash", icon: Zap },
   { key: "lottery", icon: Dices },
-  { key: "arcade", icon: Crown },
+  { key: "arcade", icon: Gamepad2 },
   { key: "promotions", icon: Gift },
   { key: "vip", icon: Crown },
   { key: "favorites", icon: Star },
@@ -171,7 +166,9 @@ export default function HomePage() {
   const getCategoryLabel = useCallback((key: string) => {
     switch (key) {
       case "home": return t.ALL_GAMES || "All Games";
+      case "all": return t.HOT_GAMES || "Hot Games";
       case "slots": return t.SLOTS || "Slots";
+      case "megaways": return t.MEGAWAYS || "Megaways";
       case "live": return t.LIVE || "Live Casino";
       case "table": return t.TABLE || "Table Games";
       case "cards": return t.CARDS || "Card Games";
@@ -187,6 +184,7 @@ export default function HomePage() {
   const [user, setUser] = useState<{ username: string; balance: number } | null>(null);
   const [activeNav, setActiveNav] = useState("casino");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [launchingGameId, setLaunchingGameId] = useState<string | null>(null);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [showMoreGames, setShowMoreGames] = useState(false);
@@ -350,20 +348,27 @@ export default function HomePage() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="h-screen flex overflow-hidden w-full bg-[#0b1329] text-slate-100 font-sans antialiased">
-      {/* Marquee animation keyframes */}
+    <div className="antialiased h-screen flex overflow-hidden bg-[#0b1329] text-[#f8fafc]">
+      {/* Marquee animation keyframes (from globals or inline) */}
       <style>{`
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
       `}</style>
 
       {/* BEGIN: Sidebar */}
-      <aside className="hidden lg:block shrink-0 bg-[#0f172a]/40 border-r border-slate-800/80 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto transition-all duration-300 w-64 p-4 z-20 flex flex-col">
-        <div className="space-y-6 flex-1">
-          <div className="flex items-center justify-between px-3">
-            <span className="text-lg font-black tracking-widest bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent select-none animate-pulse">PBBET</span>
-            <button className="p-1.5 rounded-[5px] border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer flex items-center justify-center w-8 h-8 font-extrabold text-sm">❮</button>
+      <aside className={`${isSidebarCollapsed ? "w-20" : "w-64"} transition-all duration-300 flex-shrink-0 border-r border-white/5 bg-[#0b1329] hidden md:flex flex-col z-20 relative`}>
+        <div className={`h-16 flex items-center ${isSidebarCollapsed ? "justify-center px-0" : "px-6 justify-between"} border-b border-white/5 shrink-0`}>
+          <div className="flex items-center gap-2" style={{ overflow: 'hidden' }}>
+            <Hexagon className="text-amber-500 fill-amber-500/20 h-6 w-6 shrink-0" />
+            {!isSidebarCollapsed && <span className="text-xl font-bold tracking-tight text-white whitespace-nowrap">PBBET</span>}
           </div>
-
+          <button 
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            className={`${isSidebarCollapsed ? "absolute -right-3 top-5 bg-[#0b1329] border border-white/10 rounded-full p-1 z-30" : "text-slate-400 hover:text-white"}`}
+          >
+            {isSidebarCollapsed ? <ChevronRight className="h-4 w-4 text-white" /> : <ChevronLeft className="h-5 w-5" />}
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto py-6 overflow-x-hidden">
           <nav className="space-y-1">
             {SIDEBAR_ITEMS.map((item) => {
               const active = isItemActive(item.key);
@@ -371,45 +376,46 @@ export default function HomePage() {
                 <button
                   key={item.key}
                   onClick={() => handleNavClick(item.key)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-xs font-extrabold uppercase tracking-wider transition-all duration-200 ${
+                  title={getNavLabel(item.key)}
+                  className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-0" : "px-6"} py-3 transition-colors ${
                     active
-                      ? "bg-blue-600/15 text-[#3b82f6] border-l-4 border-[#f59e0b]"
-                      : "text-slate-400 border-l-4 border-transparent hover:bg-slate-800/30 hover:text-white"
+                      ? "nav-item-active"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  <span className={active ? "text-white" : "text-slate-500"}>
-                    <item.icon className="w-[18px] h-[18px]" />
-                  </span>
-                  <span>{getNavLabel(item.key)}</span>
+                  <item.icon className={`h-5 w-5 ${isSidebarCollapsed ? "m-0" : "mr-3"} shrink-0`} />
+                  {!isSidebarCollapsed && <span className="font-medium text-sm whitespace-nowrap">{getNavLabel(item.key)}</span>}
                 </button>
               );
             })}
           </nav>
         </div>
-
-        {/* User info in sidebar when logged in */}
         {user && (
-          <div className="mt-auto pt-6 border-t border-slate-800/80 space-y-3">
-            <div className="flex items-center gap-3 px-3">
-              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+          <div className={`p-4 border-t border-white/5 space-y-3 bg-[#0b1329] shrink-0 flex flex-col ${isSidebarCollapsed ? "items-center" : ""}`}>
+            <div className={`flex items-center ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30 shrink-0">
                 <User className="h-4 w-4 text-blue-400" />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-white truncate">{user.username}</p>
-                <p className="text-xs text-amber-400 font-extrabold">৳{user.balance?.toLocaleString()}</p>
-              </div>
+              {!isSidebarCollapsed && (
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-white truncate">{user.username}</p>
+                  <p className="text-xs text-amber-400 font-extrabold">৳{user.balance?.toLocaleString()}</p>
+                </div>
+              )}
             </div>
             <button
               onClick={() => setShowDepositModal(true)}
-              className="w-full gold-gradient-btn py-2.5 rounded-[5px] text-center text-xs font-extrabold uppercase tracking-wider block shadow-lg"
+              title={t.DEPOSIT || "Deposit"}
+              className={`w-full gold-gradient-btn ${isSidebarCollapsed ? "p-2 aspect-square" : "py-2"} rounded-full text-center text-sm font-bold tracking-wide shadow-lg flex justify-center items-center`}
             >
-              {t.DEPOSIT || "Deposit"}
+              {isSidebarCollapsed ? <Wallet className="h-4 w-4" /> : (t.DEPOSIT || "Deposit")}
             </button>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-white text-xs py-2 rounded-[5px] hover:bg-slate-800/30 transition-all font-extrabold uppercase tracking-wider"
+              title={t.LOGOUT || "Logout"}
+              className={`w-full flex items-center justify-center ${isSidebarCollapsed ? "p-2" : "gap-2 py-2"} text-slate-400 hover:text-white text-xs rounded-full hover:bg-white/5 transition-all font-semibold uppercase tracking-wider`}
             >
-              <LogOut className="h-3.5 w-3.5" /> {t.LOGOUT || "Logout"}
+              <LogOut className="h-4 w-4" /> {!isSidebarCollapsed && (t.LOGOUT || "Logout")}
             </button>
           </div>
         )}
@@ -420,33 +426,32 @@ export default function HomePage() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-[#0b1329] border-r border-slate-800/80 flex flex-col p-4 overflow-y-auto">
-            <div className="flex items-center justify-between px-3 pb-6 border-b border-slate-800/80">
+          <aside className="absolute left-0 top-0 bottom-0 w-[80%] max-w-sm bg-[#0b1329] border-r border-white/5 flex flex-col overflow-y-auto">
+            <div className="h-16 flex items-center justify-between px-6 border-b border-white/5 shrink-0">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-black tracking-widest bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent select-none">PBBET</span>
+                <Hexagon className="text-amber-500 fill-amber-500/20 h-6 w-6" />
+                <span className="text-xl font-bold tracking-tight text-white">PBBET</span>
               </div>
-              <button onClick={() => setMobileMenuOpen(false)} className="text-slate-400 hover:text-white p-1.5 rounded-[5px] border border-slate-800">
-                <X className="h-4 w-4" />
+              <button onClick={() => setMobileMenuOpen(false)} className="text-slate-400 hover:text-white transition-colors">
+                <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex-1 py-6">
+            <div className="flex-1 overflow-y-auto py-6">
               <nav className="space-y-1">
                 {SIDEBAR_ITEMS.map((item) => {
                   const active = isItemActive(item.key);
                   return (
                     <button
                       key={item.key}
-                      onClick={() => handleNavClick(item.key)}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-xs font-extrabold uppercase tracking-wider transition-all duration-200 ${
+                      onClick={() => { handleNavClick(item.key); setMobileMenuOpen(false); }}
+                      className={`w-full flex items-center px-6 py-3 transition-colors ${
                         active
-                          ? "bg-blue-600/15 text-[#3b82f6] border-l-4 border-[#f59e0b]"
-                          : "text-slate-400 border-l-4 border-transparent hover:bg-slate-800/30 hover:text-white"
+                          ? "nav-item-active"
+                          : "text-slate-400 hover:text-white hover:bg-white/5"
                       }`}
                     >
-                      <span className={active ? "text-white" : "text-slate-500"}>
-                        <item.icon className="w-[18px] h-[18px]" />
-                      </span>
-                      <span>{getNavLabel(item.key)}</span>
+                      <item.icon className="h-5 w-5 mr-3 shrink-0" />
+                      <span className="font-medium text-sm">{getNavLabel(item.key)}</span>
                     </button>
                   );
                 })}
@@ -454,8 +459,8 @@ export default function HomePage() {
             </div>
             {/* User info in mobile sidebar when logged in */}
             {user && (
-              <div className="pt-6 border-t border-slate-800/80 space-y-3">
-                <div className="flex items-center gap-3 px-3">
+              <div className="p-6 border-t border-white/5 space-y-3 shrink-0">
+                <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
                     <User className="h-4 w-4 text-blue-400" />
                   </div>
@@ -469,7 +474,7 @@ export default function HomePage() {
                     setMobileMenuOpen(false);
                     setShowDepositModal(true);
                   }}
-                  className="w-full gold-gradient-btn py-2.5 rounded-[5px] text-center text-xs font-extrabold uppercase tracking-wider block shadow-lg"
+                  className="w-full gold-gradient-btn py-2 rounded-full text-center text-sm font-bold tracking-wide shadow-lg"
                 >
                   {t.DEPOSIT || "Deposit"}
                 </button>
@@ -478,7 +483,7 @@ export default function HomePage() {
                     setMobileMenuOpen(false);
                     handleLogout();
                   }}
-                  className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-white text-xs py-2 rounded-[5px] hover:bg-slate-800/30 transition-all font-extrabold uppercase tracking-wider"
+                  className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-white text-xs py-2 rounded-full hover:bg-white/5 transition-all font-semibold uppercase tracking-wider"
                 >
                   <LogOut className="h-3.5 w-3.5" /> {t.LOGOUT || "Logout"}
                 </button>
@@ -495,7 +500,7 @@ export default function HomePage() {
         <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
 
         {/* BEGIN: Header */}
-        <header className="h-16 glass-header sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between">
+        <header className="h-16 glass-header sticky top-0 z-30 px-6 flex items-center justify-between shrink-0">
           <div className="flex items-center flex-1 gap-3">
             {/* Mobile menu button */}
             <button
@@ -504,14 +509,12 @@ export default function HomePage() {
             >
               <Menu className="h-6 w-6" />
             </button>
-
-            {/* Search */}
             <div className="relative w-full max-w-md hidden sm:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <input
-                className="w-full bg-[#1e293b]/50 border border-white/10 rounded-full py-2 pl-10 pr-10 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50 focus:bg-[#1e293b] transition-all"
-                placeholder={t.SEARCH_PLACEHOLDER || "Search games or providers..."}
-                type="text"
+              <input 
+                className="w-full bg-[#1e293b]/50 border border-white/10 rounded-full py-2 pl-10 pr-10 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50 focus:bg-[#1e293b] transition-all" 
+                placeholder={t.SEARCH_PLACEHOLDER || "Search"} 
+                type="text" 
                 value={state.searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -525,74 +528,69 @@ export default function HomePage() {
               )}
             </div>
           </div>
-          <div className="flex items-center gap-3 sm:gap-4">
-            {/* Language Selector */}
-            <div className="flex items-center gap-1 bg-[#0b1329] p-1 rounded-xl border border-slate-800 shrink-0">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 bg-[#1e293b]/50 p-1 rounded-full border border-white/10">
               <button
                 onClick={() => handleLanguageChange("BN")}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  lang === "BN"
-                    ? "bg-[#3b82f6] text-white"
-                    : "text-slate-400 hover:text-slate-200"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  lang === "BN" ? "bg-blue-600 text-white shadow-md" : "text-slate-400 hover:text-white"
                 }`}
               >
-                <BangladeshFlag />
-                বাংলা
+                <BangladeshFlag /> BN
               </button>
               <button
                 onClick={() => handleLanguageChange("EN")}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  lang === "EN"
-                    ? "bg-[#3b82f6] text-white"
-                    : "text-slate-400 hover:text-slate-200"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  lang === "EN" ? "bg-blue-600 text-white shadow-md" : "text-slate-400 hover:text-white"
                 }`}
               >
-                <USFlag />
-                EN
+                <USFlag /> EN
               </button>
             </div>
+            
             <button className="text-slate-300 hover:text-white transition-colors relative">
               <MessageSquare className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
-            <div className="h-6 w-px bg-white/10 mx-1 sm:mx-2"></div>
-
+            <div className="h-6 w-px bg-white/10 mx-2"></div>
+            
             {user ? (
               <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-2 bg-[#1e293b]/50 border border-white/10 rounded-full px-4 py-2">
+                <div className="hidden sm:flex items-center gap-2 px-4 py-2">
                   <Wallet className="h-4 w-4 text-amber-400" />
                   <span className="text-sm font-semibold text-amber-400">৳{user.balance?.toLocaleString()}</span>
                 </div>
                 <button
                   onClick={() => setShowDepositModal(true)}
-                  className="gold-gradient-btn px-4 py-2 rounded-full font-semibold text-sm tracking-wide"
+                  className="gold-gradient-btn px-6 py-2 rounded-full font-semibold text-sm tracking-wide hidden sm:block"
                 >
                   {t.DEPOSIT || "Deposit"}
                 </button>
-                <Link
-                  href="#"
-                  onClick={(e) => { e.preventDefault(); handleLogout(); }}
-                  className="blue-gradient-btn px-4 sm:px-6 py-2 rounded-full font-semibold text-sm tracking-wide"
+                <button
+                  onClick={handleLogout}
+                  className="text-slate-400 hover:text-white px-2"
+                  title="Logout"
                 >
-                  {t.LOGOUT || "Logout"}
-                </Link>
+                  <LogOut className="h-5 w-5" />
+                </button>
               </div>
             ) : (
-              <>
+              <div className="flex items-center gap-2 sm:gap-4">
                 <Link href="/login" className="gold-gradient-btn px-4 sm:px-6 py-2 rounded-full font-semibold text-sm tracking-wide">
                   {t.LOGIN || "Login"}
                 </Link>
-                <Link href="/register" className="blue-gradient-btn px-4 sm:px-6 py-2 rounded-full font-semibold text-sm tracking-wide">
+                <Link href="/register" className="blue-gradient-btn px-4 sm:px-6 py-2 rounded-full font-semibold text-sm tracking-wide hidden sm:block">
                   {t.SIGNUP || "Sign Up"}
                 </Link>
-              </>
+              </div>
             )}
           </div>
         </header>
         {/* END: Header */}
 
         {/* BEGIN: Main Scrollable Content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 z-10 space-y-6">
+        {/* overflow-x-hidden ensures no horizontal page scrolling */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 z-10 space-y-6 min-w-0 max-w-full">
           {/* Mobile Search */}
           <div className="sm:hidden relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -614,234 +612,277 @@ export default function HomePage() {
           <div className="glass-panel rounded-full py-2 px-6 flex items-center gap-3 overflow-hidden border border-amber-500/20">
             <Star className="h-4 w-4 text-amber-400 fill-amber-400 flex-shrink-0" />
             <div className="flex-1 overflow-hidden relative">
-              <p className="text-sm text-amber-100 whitespace-nowrap animate-[marquee_20s_linear_infinite]">
-                {settings.announcement || "Welcome to PBBET! Register now and get exclusive bonuses. Play 500+ casino games from top providers!"} <span className="mx-8 text-white/20">|</span> {t.MARQUEE_LEADERBOARD || "Live Leaderboard Updated! Check Your Rank!"}
+              {/* Inline style for marquee to ensure animation works reliably without arbitrary tailwind classes */}
+              <p className="text-sm text-amber-100 whitespace-nowrap inline-block" style={{ animation: "marquee 20s linear infinite" }}>
+                {settings.announcement || "New Crypto Deposit Bonus! 200% Match up to 5 BTC + 100 Free Spins!"} <span className="mx-8 text-white/20">|</span> {t.MARQUEE_LEADERBOARD || "Live Leaderboard Updated! Check Your Rank!"}
               </p>
             </div>
           </div>
 
-          {/* Hero & Promo Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-            {/* Hero Banner */}
-            <div className="lg:col-span-6 xl:col-span-7 relative rounded-2xl overflow-hidden group card-hover min-h-[240px] sm:min-h-[280px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/80 to-transparent z-10 p-6 sm:p-8 flex flex-col justify-center">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 leading-tight max-w-md">{t.HERO_TITLE || "THE ULTIMATE CRYPTO CASINO EXPERIENCE"}</h1>
-                <div>
-                  {user ? (
-                    <button
-                      onClick={() => setCategory("home")}
-                      className="gold-gradient-btn px-8 py-3 rounded-full font-bold uppercase tracking-wider text-sm shadow-[0_0_20px_rgba(245,158,11,0.4)]"
-                    >
-                      {t.PLAY_NOW || "Play Now"}
-                    </button>
-                  ) : (
-                    <Link
-                      href="/register"
-                      className="gold-gradient-btn px-8 py-3 rounded-full font-bold uppercase tracking-wider text-sm shadow-[0_0_20px_rgba(245,158,11,0.4)] inline-block"
-                    >
-                      {t.SIGNUP || "Join Now"}
-                    </Link>
-                  )}
-                </div>
-              </div>
-              <img alt="Hero Background" className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-luminosity group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjFThcWaQapjh4o8aL7LCv-70xeQLuO1jAiaGDQjPrpuEBQ67HSBopHhrfNqsQU6SathaRyRnXD0bDoIfZRVki3PCrlrUgazS4pvDVdsyg9A21JCghjG6d9XFv79G4wSE3yU34hvywc9_XP3XEullHWQw40wk48ypYE6CFzjF6FZtjRwvul0uvK_fM2gNyC6DMLh4xcMrb0avvg2d5fMbBfpInUp-X_AFYccrR1GvGpB8PwHdGWJW-U4tQFnZXCx3V2E3G8U2Hkq0" />
-            </div>
-
-            {/* Promo Tiles */}
-            <div className="lg:col-span-6 xl:col-span-5 grid grid-cols-2 gap-4">
-              <div className="rounded-2xl p-5 relative overflow-hidden bg-gradient-to-br from-rose-600 to-rose-900 border border-white/10 card-hover flex flex-col justify-between group">
-                <div className="relative z-10">
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    {t.LOBBY_CARD_VIP_CASHBACK || "VIP Cashback"}
-                  </h3>
-                  <p className="text-xs text-rose-100/80">
-                    {t.LOBBY_CARD_VIP_DESC || "200% Match up to 5 BTC & 100 free spins"}
-                  </p>
-                </div>
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-xl group-hover:bg-white/20 transition-all"></div>
-                <Crown className="absolute bottom-4 right-4 h-12 w-12 text-rose-300 opacity-50" />
-              </div>
-
-              <div className="rounded-2xl p-5 relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-900 border border-white/10 card-hover flex flex-col justify-between group">
-                <div className="relative z-10">
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    {t.LOBBY_CARD_RAFFLE || "Weekly Crypto Raffle"}
-                  </h3>
-                  <p className="text-xs text-blue-100/80">
-                    {t.LOBBY_CARD_RAFFLE_DESC || "Get the daily weekly crypto raffle"}
-                  </p>
-                </div>
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-xl group-hover:bg-white/20 transition-all"></div>
-                <Bitcoin className="absolute bottom-4 right-4 h-12 w-12 text-blue-300 opacity-50" />
-              </div>
-
-              <div className="col-span-2 rounded-2xl p-5 relative overflow-hidden bg-gradient-to-br from-slate-700 to-slate-900 border border-white/10 card-hover flex flex-col justify-center group h-28">
-                <div className="relative z-10 flex justify-between items-center w-full">
-                  <div>
-                    <h3 className="text-xl font-bold text-amber-400 mb-1">
-                      {t.LOBBY_CARD_TOURNAMENT || "High Roller Tournament"}
-                    </h3>
-                    <p className="text-xs text-slate-300">
-                      {t.LOBBY_CARD_TOURNAMENT_DESC || "Offers for high roller tournament"}
-                    </p>
+          {activeNav === 'vip' ? (
+            <div className="py-8">
+              <div className="rounded-3xl bg-gradient-to-br from-amber-500/20 via-[#0b1329] to-slate-900 border border-amber-500/30 p-8 md:p-12 relative overflow-hidden flex flex-col items-center text-center">
+                <Crown className="w-20 h-20 text-amber-500 mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
+                <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">{t.VIP_CLUB_TITLE || "VIP Club"}</h2>
+                <p className="text-slate-300 max-w-2xl mb-8 leading-relaxed">
+                  Join the elite PBBET VIP Club and unlock a world of exclusive benefits, higher limits, and a dedicated personal manager just for you.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
+                  <div className="glass-panel p-6 rounded-xl border border-white/5">
+                    <User className="h-10 w-10 text-amber-400 mb-4 mx-auto" />
+                    <h3 className="text-lg font-bold text-white mb-2">{t.PERSONAL_MANAGER || "Personal Manager"}</h3>
+                    <p className="text-sm text-slate-400">{t.PERSONAL_MANAGER_DESC || "24/7 dedicated support tailored to your needs."}</p>
                   </div>
-                  <Trophy className="h-10 w-10 text-amber-500 opacity-80 group-hover:scale-110 transition-transform" />
-                </div>
-                <div className="absolute top-1/2 -translate-y-1/2 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl"></div>
-              </div>
-            </div>
-          </div>
-
-          {/* Categories Navigation */}
-          <div className="flex items-center gap-3 overflow-x-auto pb-2 -mx-2 px-2 snap-x no-scrollbar">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.key}
-                onClick={() => {
-                  setCategory(cat.key);
-                  setShowMoreGames(false);
-                }}
-                className={`px-5 py-2.5 rounded-full flex items-center gap-2 text-sm font-medium whitespace-nowrap snap-start transition-all ${
-                  state.selectedCategory === cat.key
-                    ? "category-chip active"
-                    : "category-chip bg-[#1e293b]/80 hover:bg-[#1e293b] text-slate-300"
-                }`}
-              >
-                {cat.icon} {getCategoryLabel(cat.key)}
-              </button>
-            ))}
-
-            <button className="ml-auto bg-white/5 hover:bg-white/10 p-2 rounded-full transition-colors flex-shrink-0">
-              <ChevronRight className="h-5 w-5 text-slate-400" />
-            </button>
-          </div>
-
-          {/* Games count */}
-          {state.searchTerm && (
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-slate-400">
-                {(t.GAMES_FOUND || "{count} games found").replace("{count}", String(filteredGames.length))} {t.SEARCH_RESULTS_FOR || "for"} &ldquo;{state.searchTerm}&rdquo;
-              </p>
-              <button
-                onClick={() => setSearchTerm("")}
-                className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
-              >
-                {t.RESET_FILTERS || "Clear search"}
-              </button>
-            </div>
-          )}
-
-          {/* Game Grid */}
-          {state.isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="glass-panel rounded-xl overflow-hidden animate-pulse">
-                  <div className="aspect-video bg-slate-800/50"></div>
-                  <div className="p-3 space-y-2">
-                    <div className="h-4 bg-slate-700/50 rounded w-3/4"></div>
-                    <div className="h-3 bg-slate-700/30 rounded w-1/2"></div>
+                  <div className="glass-panel p-6 rounded-xl border border-white/5">
+                    <Zap className="h-10 w-10 text-amber-400 mb-4 mx-auto" />
+                    <h3 className="text-lg font-bold text-white mb-2">{t.HIGHER_LIMITS || "Higher Limits"}</h3>
+                    <p className="text-sm text-slate-400">{t.HIGHER_LIMITS_DESC || "Enjoy increased withdrawal and betting limits."}</p>
+                  </div>
+                  <div className="glass-panel p-6 rounded-xl border border-white/5">
+                    <Gift className="h-10 w-10 text-amber-400 mb-4 mx-auto" />
+                    <h3 className="text-lg font-bold text-white mb-2">{t.EXCLUSIVE_EVENTS || "Exclusive Events"}</h3>
+                    <p className="text-sm text-slate-400">{t.EXCLUSIVE_EVENTS_DESC || "Invitations to VIP-only tournaments and real-world events."}</p>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          ) : filteredGames.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <Search className="h-12 w-12 text-slate-600 mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">
-                {t.NO_GAMES_FOUND || "No games found"}
-              </h3>
-              <p className="text-sm text-slate-400 mb-4">
-                {t.NO_GAMES_MESSAGE || "Try a different search or category"}
-              </p>
-              <button
-                onClick={() => {
-                  setSearchTerm("");
-                  setCategory("home");
-                }}
-                className="blue-gradient-btn px-6 py-2 rounded-full font-semibold text-sm"
-              >
-                {t.RESET_FILTERS || "Reset Filters"}
-              </button>
+          ) : activeNav === 'promotions' ? (
+            <div className="py-4">
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2"><Gift className="text-rose-500 h-6 w-6"/> {t.PROMOTIONS_TITLE || "Promotions"}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br from-rose-600/90 to-rose-900 border border-white/10 card-hover flex flex-col justify-between min-h-[200px]">
+                  <div className="relative z-10">
+                    <h3 className="text-2xl font-bold text-white mb-2">{t.LOBBY_CARD_VIP_CASHBACK || "VIP Cashback"}</h3>
+                    <p className="text-sm text-rose-100/80 mb-6">{t.LOBBY_CARD_VIP_DESC || "200% Match up to 5 BTC + 100 Free Spins"}</p>
+                    <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">{t.READ_MORE || "Read More"}</button>
+                  </div>
+                  <Crown className="absolute -bottom-4 -right-4 h-32 w-32 text-rose-300 opacity-20" />
+                </div>
+                <div className="rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br from-blue-600/90 to-indigo-900 border border-white/10 card-hover flex flex-col justify-between min-h-[200px]">
+                  <div className="relative z-10">
+                    <h3 className="text-2xl font-bold text-white mb-2">{t.LOBBY_CARD_RAFFLE || "Weekly Crypto Raffle"}</h3>
+                    <p className="text-sm text-blue-100/80 mb-6">{t.LOBBY_CARD_RAFFLE_DESC || "Get the daily weekly crypto raffle"}</p>
+                    <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">{t.READ_MORE || "Read More"}</button>
+                  </div>
+                  <Bitcoin className="absolute -bottom-4 -right-4 h-32 w-32 text-blue-300 opacity-20" />
+                </div>
+                <div className="rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br from-slate-700/90 to-slate-900 border border-amber-500/30 card-hover flex flex-col justify-between min-h-[200px]">
+                  <div className="relative z-10">
+                    <h3 className="text-2xl font-bold text-amber-400 mb-2">{t.LOBBY_CARD_TOURNAMENT || "High Roller Tournament"}</h3>
+                    <p className="text-sm text-slate-300 mb-6">{t.LOBBY_CARD_TOURNAMENT_DESC || "Special offers for high roller tournaments"}</p>
+                    <button className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 px-4 py-2 rounded-lg text-sm font-semibold transition-colors border border-amber-500/50">{t.READ_MORE || "Read More"}</button>
+                  </div>
+                  <Trophy className="absolute -bottom-4 -right-4 h-32 w-32 text-amber-500 opacity-10" />
+                </div>
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
-              {displayedGames.map((game) => (
-                <div key={game.id} className="glass-panel rounded-xl overflow-hidden group card-hover">
-                  <div className="relative aspect-video overflow-hidden bg-slate-800">
-                    {game.isNew && (
-                      <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase z-10">
-                        {t.NEW || "New"}
-                      </div>
-                    )}
-                    {game.isPopular && (
-                      <div className="absolute top-2 left-2 bg-amber-500 text-black text-[10px] font-bold px-2 py-0.5 rounded uppercase z-10">
-                        {t.HOT || "Hot"}
-                      </div>
-                    )}
-                    {game.thumbnail ? (
-                      <img
-                        alt={game.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        src={game.thumbnail}
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900">
-                        <Gamepad2 className="h-8 w-8 text-slate-600" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => handleLaunchGame(game.id, game.vendorCode, game.gameCode)}
-                        className="gold-gradient-btn px-6 py-2 rounded-full font-bold text-sm"
-                        disabled={launchingGameId === game.id}
-                      >
-                        {launchingGameId === game.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          t.PLAY || "PLAY"
-                        )}
-                      </button>
-                      <button
-                        onClick={() => toggleFavorite(game.id)}
-                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                      >
-                        <Heart className={`h-4 w-4 ${isFavorite(game.id) ? "text-red-500 fill-red-500" : "text-white"}`} />
-                      </button>
+            <>
+              {/* Hero & Promo Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Hero Banner */}
+                <div className="lg:col-span-6 xl:col-span-7 relative rounded-2xl overflow-hidden group card-hover min-h-[280px]">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/80 to-transparent z-10 p-8 flex flex-col justify-center">
+                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight max-w-md">{t.HERO_TITLE || "THE ULTIMATE CRYPTO CASINO EXPERIENCE"}</h1>
+                    <div>
+                      {user ? (
+                        <button
+                          onClick={() => setCategory("slots")}
+                          className="gold-gradient-btn px-8 py-3 rounded-full font-bold uppercase tracking-wider text-sm shadow-[0_0_20px_rgba(245,158,11,0.4)]"
+                        >
+                          {t.PLAY_NOW || "Claim Now"}
+                        </button>
+                      ) : (
+                        <Link
+                          href="/register"
+                          className="gold-gradient-btn px-8 py-3 rounded-full font-bold uppercase tracking-wider text-sm shadow-[0_0_20px_rgba(245,158,11,0.4)] inline-block"
+                        >
+                          {t.SIGNUP || "Claim Now"}
+                        </Link>
+                      )}
                     </div>
                   </div>
-                  <div className="p-3">
-                    <h4 className="text-white font-medium truncate text-sm">{game.name}</h4>
-                    <p className="text-xs text-slate-400">{game.provider}</p>
+                  <img alt="Hero Background" className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-luminosity group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjFThcWaQapjh4o8aL7LCv-70xeQLuO1jAiaGDQjPrpuEBQ67HSBopHhrfNqsQU6SathaRyRnXD0bDoIfZRVki3PCrlrUgazS4pvDVdsyg9A21JCghjG6d9XFv79G4wSE3yU34hvywc9_XP3XEullHWQw40wk48ypYE6CFzjF6FZtjRwvul0uvK_fM2gNyC6DMLh4xcMrb0avvg2d5fMbBfpInUp-X_AFYccrR1GvGpB8PwHdGWJW-U4tQFnZXCx3V2E3G8U2Hkq0" />
+                </div>
+                
+                {/* Promo Tiles */}
+                <div className="lg:col-span-6 xl:col-span-5 grid grid-cols-2 gap-4">
+                  {/* Promo 1 */}
+                  <div className="rounded-2xl p-5 relative overflow-hidden bg-gradient-to-br from-rose-600 to-rose-900 border border-white/10 card-hover flex flex-col justify-between group">
+                    <div className="relative z-10">
+                      <h3 className="text-xl font-bold text-white mb-1">{t.LOBBY_CARD_VIP_CASHBACK || "VIP Cashback"}</h3>
+                      <p className="text-xs text-rose-100/80">{t.LOBBY_CARD_VIP_DESC || "200% Match up to 5 BTC 100 free Spins"}</p>
+                    </div>
+                    <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-xl group-hover:bg-white/20 transition-all"></div>
+                    <Crown className="absolute bottom-4 right-4 h-12 w-12 text-rose-300 opacity-50" />
+                  </div>
+                  
+                  {/* Promo 2 */}
+                  <div className="rounded-2xl p-5 relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-900 border border-white/10 card-hover flex flex-col justify-between group">
+                    <div className="relative z-10">
+                      <h3 className="text-xl font-bold text-white mb-1">{t.LOBBY_CARD_RAFFLE || "Weekly Crypto Raffle"}</h3>
+                      <p className="text-xs text-blue-100/80">{t.LOBBY_CARD_RAFFLE_DESC || "Get the daily weekly crypto raffle"}</p>
+                    </div>
+                    <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-xl group-hover:bg-white/20 transition-all"></div>
+                    <Bitcoin className="absolute bottom-4 right-4 h-12 w-12 text-blue-300 opacity-50" />
+                  </div>
+                  
+                  {/* Promo 3 */}
+                  <div className="col-span-2 rounded-2xl p-5 relative overflow-hidden bg-gradient-to-br from-slate-700 to-slate-900 border border-white/10 card-hover flex flex-col justify-center group h-28">
+                    <div className="relative z-10 flex justify-between items-center w-full">
+                      <div>
+                        <h3 className="text-xl font-bold text-amber-400 mb-1">{t.LOBBY_CARD_TOURNAMENT || "High Roller Tournament"}</h3>
+                        <p className="text-xs text-slate-300">{t.LOBBY_CARD_TOURNAMENT_DESC || "Offers for high roller tournament"}</p>
+                      </div>
+                      <Trophy className="h-10 w-10 text-amber-500 opacity-80 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div className="absolute top-1/2 -translate-y-1/2 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl"></div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
 
-          {/* Show More */}
-          {!showMoreGames && filteredGames.length > 12 && (
-            <div className="flex justify-center">
-              <button
-                onClick={() => setShowMoreGames(true)}
-                className="blue-gradient-btn px-8 py-3 rounded-full font-semibold text-sm tracking-wide"
-              >
-                {t.SHOW_ALL || "Show All"} {filteredGames.length} {t.GAMES || "Games"}
-              </button>
-            </div>
-          )}
+              {/* Categories Navigation */}
+              <div className="flex items-center gap-1 md:gap-3 overflow-hidden pb-4 pt-2 w-full max-w-full justify-between">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.key}
+                    onClick={() => {
+                      setCategory(cat.key);
+                      setActiveNav(cat.key);
+                      setShowMoreGames(false);
+                    }}
+                    className={`${!isSidebarCollapsed ? "px-2 py-1.5 text-[10px]" : "px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm"} rounded-full flex items-center justify-center gap-1 md:gap-2 font-medium whitespace-nowrap shrink min-w-0 flex-1 ${
+                      state.selectedCategory === cat.key
+                        ? "category-chip active"
+                        : "category-chip bg-[#1e293b]/80 hover:bg-[#1e293b] text-slate-300"
+                    }`}
+                  >
+                    <div className="shrink-0">{cat.icon}</div> <span className="truncate">{getCategoryLabel(cat.key)}</span>
+                  </button>
+                ))}
 
-          {/* Section Indicator */}
+              </div>
+
+              {/* Category Title */}
+              <div className="mb-4 mt-2">
+                <h2 className="text-2xl font-bold text-white capitalize flex items-center gap-2">
+                   {state.showFavoritesOnly ? (t.FAVORITES || "Favorites") : getCategoryLabel(state.selectedCategory)}
+                </h2>
+              </div>
+
+              {/* Game Grid */}
+              {state.isLoading ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="glass-panel rounded-xl overflow-hidden animate-pulse">
+                      <div className="aspect-video bg-slate-800/50"></div>
+                      <div className="p-3 space-y-2">
+                        <div className="h-4 bg-slate-700/50 rounded w-3/4"></div>
+                        <div className="h-3 bg-slate-700/30 rounded w-1/2"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : filteredGames.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  <Search className="h-12 w-12 text-slate-600 mb-4" />
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    {t.NO_GAMES_FOUND || "No games found"}
+                  </h3>
+                  <p className="text-sm text-slate-400 mb-4">
+                    {t.NO_GAMES_MESSAGE || "Try a different search or category"}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSearchTerm("");
+                      setCategory("slots");
+                    }}
+                    className="blue-gradient-btn px-6 py-2 rounded-full font-semibold text-sm"
+                  >
+                    {t.RESET_FILTERS || "Reset Filters"}
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
+                  {displayedGames.map((game) => (
+                    <div key={game.id} className="glass-panel rounded-xl overflow-hidden group card-hover">
+                      <div className="relative aspect-video overflow-hidden bg-slate-800">
+                        {game.isNew && (
+                          <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase z-10">
+                            {t.NEW || "New"}
+                          </div>
+                        )}
+                        {game.isPopular && (
+                          <div className="absolute top-2 left-2 bg-amber-500 text-black text-[10px] font-bold px-2 py-0.5 rounded uppercase z-10">
+                            {t.HOT || "Hot"}
+                          </div>
+                        )}
+                        {game.thumbnail ? (
+                          <img
+                            alt={game.name}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            src={game.thumbnail}
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900">
+                            <Gamepad2 className="h-8 w-8 text-slate-600" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => handleLaunchGame(game.id, game.vendorCode, game.gameCode)}
+                            className="gold-gradient-btn px-6 py-2 rounded-full font-bold text-sm"
+                            disabled={launchingGameId === game.id}
+                          >
+                            {launchingGameId === game.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              t.PLAY || "PLAY"
+                            )}
+                          </button>
+                          <button
+                            onClick={() => toggleFavorite(game.id)}
+                            className="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 hover:bg-white/20 transition-colors"
+                          >
+                            <Heart className={`h-4 w-4 ${isFavorite(game.id) ? "text-red-500 fill-red-500" : "text-white"}`} />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <h4 className="text-white font-medium truncate text-sm">{game.name}</h4>
+                        <p className="text-xs text-slate-400">{game.provider}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Show More */}
+              {!showMoreGames && filteredGames.length > 12 && (
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setShowMoreGames(true)}
+                    className="blue-gradient-btn px-8 py-3 rounded-full font-semibold text-sm tracking-wide"
+                  >
+                    {t.SHOW_ALL || "Show All"} {filteredGames.length} {t.GAMES || "Games"}
+                  </button>
+                </div>
+              )}
+            </>
+          )}          {/* Section Indicator */}
           <div className="flex justify-center gap-2 mb-4">
             <div className="w-8 h-1 rounded-full bg-amber-500"></div>
             <div className="w-8 h-1 rounded-full bg-white/20"></div>
           </div>
 
           {/* Bottom Section: Leaderboard & Badges */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 pb-12">
             {/* Leaderboard */}
             <div className="lg:col-span-3 glass-panel rounded-2xl overflow-hidden">
-              <table className="w-full text-left text-sm">
+              {/* Added overflow-x-auto wrapper around table to prevent clipping on small screens */}
+              <div className="overflow-x-auto w-full">
+                <table className="w-full text-left text-sm min-w-[500px]">
                 <thead className="bg-white/5 text-slate-400 uppercase text-xs">
                   <tr>
                     <th className="px-6 py-4 font-medium">{t.LEADERBOARD_RANK || "Rank"}</th>
@@ -886,6 +927,7 @@ export default function HomePage() {
                   </tr>
                 </tbody>
               </table>
+              </div>
             </div>
 
             {/* Trust Badge */}
@@ -901,10 +943,11 @@ export default function HomePage() {
               <p className="text-sm text-slate-400">{t.SECURE || "& Secure"}</p>
             </div>
           </div>
-
-          {/* ═══════ FOOTER ═══════ */}
+          
+          {/* Footer - preserving it as it was but matching styling */}
           <footer className="border-t border-white/5 pt-12 pb-8 mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+            {/* Adjusted gap for responsive grids to prevent overflow */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 mb-10">
               {/* Brand column */}
               <div className="lg:col-span-1">
                 <div className="flex items-center gap-2 mb-3">
@@ -1024,57 +1067,26 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Responsible Gaming Notice */}
-            <div className="border-t border-white/5 pt-8 space-y-6">
-              <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-5">
-                <div className="flex items-start gap-3">
-                  <div className="shrink-0 w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                    <AlertTriangle size={16} className="text-amber-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-white mb-1">{t.PLAY_RESPONSIBLY || "Play Responsibly"}</p>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      {t.PLAY_RESPONSIBLY_DETAILS || "Gaming should be for entertainment and fun. If you think you might have a gambling problem, please seek professional help immediately."}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-4 mt-3">
-                      <div className="flex items-center gap-1.5">
-                        <BadgeCheck size={13} className="text-amber-400 shrink-0" />
-                        <span className="text-[11px] font-semibold text-slate-300">{t.OVER18_ONLY || "18+ Only"}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <ShieldCheck size={13} className="text-blue-400 shrink-0" />
-                        <span className="text-[11px] font-semibold text-slate-300">{t.LICENSED_REGULATED || "Licensed & Regulated"}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <ShieldCheck size={13} className="text-emerald-400 shrink-0" />
-                        <span className="text-[11px] font-semibold text-slate-300">{t.SECURE_GAMING || "Secure Gaming"}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            {/* Copyright */}
+            <div className="border-t border-white/5 pt-8 mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <p className="text-sm text-slate-400 font-medium">
+                  © {currentYear} <span className="font-bold text-amber-400">PBBET</span> — {t.ROYAL_CASINO || "Premium Crypto Casino"}
+                </p>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {t.PREMIUM_GAMING_EXPERIENCE || "Premium gaming experience powered by state-of-the-art technology"}
+                </p>
               </div>
-
-              {/* Copyright */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <p className="text-sm text-slate-400 font-medium">
-                    © {currentYear} <span className="font-bold text-amber-400">PBBET</span> — {t.ROYAL_CASINO || "Premium Crypto Casino"}
-                  </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {t.PREMIUM_GAMING_EXPERIENCE || "Premium gaming experience powered by state-of-the-art technology"}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-x-5 gap-y-1">
-                  {[
-                    { label: t.PRIVACY || "Privacy Policy", href: "#" },
-                    { label: t.TERMS || "Terms & Conditions", href: "#" },
-                    { label: t.RESPONSIBLE_GAMING || "Responsible Gaming", href: "#" }
-                  ].map((link) => (
-                    <a key={link.label} href={link.href} className="text-xs text-slate-500 hover:text-amber-400 transition-colors font-medium">
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-x-5 gap-y-1">
+                {[
+                  { label: t.PRIVACY || "Privacy Policy", href: "#" },
+                  { label: t.TERMS || "Terms & Conditions", href: "#" },
+                  { label: t.RESPONSIBLE_GAMING || "Responsible Gaming", href: "#" }
+                ].map((link) => (
+                  <a key={link.label} href={link.href} className="text-xs text-slate-500 hover:text-amber-400 transition-colors font-medium">
+                    {link.label}
+                  </a>
+                ))}
               </div>
             </div>
           </footer>
@@ -1083,6 +1095,7 @@ export default function HomePage() {
       </div>
       {/* END: Main Content Area */}
 
+      {/* Deposit Modal */}
       {showDepositModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
           <div className="bg-[#151f38] border border-white/10 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
@@ -1119,7 +1132,6 @@ export default function HomePage() {
                   />
                 </div>
               </div>
-              {/* Quick select amounts */}
               <div className="grid grid-cols-3 gap-2">
                 {[500, 1000, 2000, 5000, 10000].map((amt) => (
                   <button
