@@ -109,6 +109,7 @@ const NAV_ITEMS = [
 
 const SIDEBAR_ITEMS = [
   { key: "all", icon: LayoutDashboard },
+  { key: "sports", icon: Target },
   { key: "casino", icon: Radio },
   { key: "slots", icon: Cherry },
   { key: "megaways", icon: Sparkles },
@@ -311,6 +312,8 @@ export default function HomePage() {
       }
     } else if (key === "all") {
       setCategory("all");
+    } else if (key === "sports") {
+      setCategory("sports");
     } else if (key === "casino") {
       setCategory("live");
     } else if (key === "slots") {
