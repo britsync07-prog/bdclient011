@@ -10,23 +10,27 @@ dns.lookup = function(hostname, options, callback) {
     callback = options;
     options = {};
   }
-  options = options || {};
+  let dnsOpts = {};
   if (typeof options === 'number') {
-    options = { family: options };
+    dnsOpts = { family: options };
+  } else if (options) {
+    dnsOpts = { ...options };
   }
-  options.family = 4;
-  return originalLookup(hostname, options, callback);
+  dnsOpts.family = 4;
+  return originalLookup(hostname, dnsOpts, callback);
 };
 
 const originalPromisesLookup = dns.promises ? dns.promises.lookup : null;
 if (dns.promises && typeof dns.promises.lookup === 'function') {
   dns.promises.lookup = function(hostname, options) {
-    options = options || {};
+    let dnsOpts = {};
     if (typeof options === 'number') {
-      options = { family: options };
+      dnsOpts = { family: options };
+    } else if (options) {
+      dnsOpts = { ...options };
     }
-    options.family = 4;
-    return originalPromisesLookup.call(dns.promises, hostname, options);
+    dnsOpts.family = 4;
+    return originalPromisesLookup.call(dns.promises, hostname, dnsOpts);
   };
 }
 

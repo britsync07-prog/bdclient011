@@ -191,12 +191,21 @@ export default function AdminDashboard() {
       }
 
       const headers = { Authorization: `Bearer ${token}` };
-
       const usersRes = await fetch(`${BACKEND_URL}/admin/users?limit=10000`, { headers });
+      if (usersRes.status === 401 || usersRes.status === 403) {
+        localStorage.removeItem("token");
+        router.push("/admin/login");
+        return;
+      }
       const usersData = await usersRes.json();
       setUsers(usersData.users || []);
 
       const statsRes = await fetch(`${BACKEND_URL}/admin/dashboard-stats`, { headers });
+      if (statsRes.status === 401 || statsRes.status === 403) {
+        localStorage.removeItem("token");
+        router.push("/admin/login");
+        return;
+      }
       const statsJson = await statsRes.json();
       if (statsJson.success) {
         setDashboardStats(statsJson.data);
