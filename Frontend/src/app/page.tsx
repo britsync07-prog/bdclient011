@@ -335,6 +335,12 @@ export default function HomePage() {
     setMobileMenuOpen(false);
   }, [state.showFavoritesOnly, toggleFavoritesOnly, setCategory]);
 
+  const isItemActive = useCallback((key: string) => {
+    if (key === "favorites") return state.showFavoritesOnly;
+    if (key === "promotions" || key === "vip") return activeNav === key;
+    return state.selectedCategory === (key === "casino" ? "live" : key) && !state.showFavoritesOnly;
+  }, [state.selectedCategory, state.showFavoritesOnly, activeNav]);
+
   // Display games - limit to 12 unless show more
   const displayedGames = useMemo(() => {
     if (showMoreGames) return filteredGames;
@@ -351,55 +357,59 @@ export default function HomePage() {
       `}</style>
 
       {/* BEGIN: Sidebar */}
-      <aside className="w-64 flex-shrink-0 border-r border-white/5 bg-[#0b1329] hidden md:flex flex-col z-20">
-        <div className="h-16 flex items-center px-6 border-b border-white/5">
-          <div className="flex items-center gap-2">
-            <Hexagon className="text-amber-500 fill-amber-500/20 h-6 w-6" />
-            <span className="text-xl font-bold tracking-tight text-white">PBBET</span>
+      <aside className="hidden lg:block shrink-0 bg-[#0f172a]/40 border-r border-slate-800/80 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto transition-all duration-300 w-64 p-4 z-20 flex flex-col">
+        <div className="space-y-6 flex-1">
+          <div className="flex items-center justify-between px-3">
+            <span className="text-lg font-black tracking-widest bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent select-none animate-pulse">PBBET</span>
+            <button className="p-1.5 rounded-[5px] border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer flex items-center justify-center w-8 h-8 font-extrabold text-sm">❮</button>
           </div>
-        </div>
-        <div className="flex-1 overflow-y-auto py-6">
+
           <nav className="space-y-1">
-            {NAV_ITEMS.map((item) => (
-              <button
-                key={item.key}
-                onClick={() => handleNavClick(item.key)}
-                className={`w-full flex items-center px-6 py-3 transition-colors ${
-                  activeNav === item.key
-                    ? "nav-item-active"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <item.icon className="h-5 w-5 mr-3" />
-                <span className="font-medium text-sm">{getNavLabel(item.key)}</span>
-              </button>
-            ))}
+            {SIDEBAR_ITEMS.map((item) => {
+              const active = isItemActive(item.key);
+              return (
+                <button
+                  key={item.key}
+                  onClick={() => handleNavClick(item.key)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-xs font-extrabold uppercase tracking-wider transition-all duration-200 ${
+                    active
+                      ? "bg-blue-600/15 text-[#3b82f6] border-l-4 border-[#f59e0b]"
+                      : "text-slate-400 border-l-4 border-transparent hover:bg-slate-800/30 hover:text-white"
+                  }`}
+                >
+                  <span className={active ? "text-white" : "text-slate-500"}>
+                    <item.icon className="w-[18px] h-[18px]" />
+                  </span>
+                  <span>{getNavLabel(item.key)}</span>
+                </button>
+              );
+            })}
           </nav>
         </div>
 
         {/* User info in sidebar when logged in */}
         {user && (
-          <div className="p-4 border-t border-white/5 space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center">
-                <User className="h-4 w-4 text-amber-400" />
+          <div className="mt-auto pt-6 border-t border-slate-800/80 space-y-3">
+            <div className="flex items-center gap-3 px-3">
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+                <User className="h-4 w-4 text-blue-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">{user.username}</p>
-                <p className="text-xs text-amber-400 font-semibold">৳{user.balance?.toLocaleString()}</p>
+                <p className="text-sm font-bold text-white truncate">{user.username}</p>
+                <p className="text-xs text-amber-400 font-extrabold">৳{user.balance?.toLocaleString()}</p>
               </div>
             </div>
             <button
               onClick={() => setShowDepositModal(true)}
-              className="w-full gold-gradient-btn py-2.5 rounded-xl text-center text-sm font-semibold block shadow-lg"
+              className="w-full gold-gradient-btn py-2.5 rounded-[5px] text-center text-xs font-extrabold uppercase tracking-wider block shadow-lg"
             >
               {t.DEPOSIT || "Deposit"}
             </button>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-white text-xs py-2 rounded-lg hover:bg-white/5 transition-colors"
+              className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-white text-xs py-2 rounded-[5px] hover:bg-slate-800/30 transition-all font-extrabold uppercase tracking-wider"
             >
-              <LogOut className="h-3 w-3" /> {t.LOGOUT || "Logout"}
+              <LogOut className="h-3.5 w-3.5" /> {t.LOGOUT || "Logout"}
             </button>
           </div>
         )}
@@ -410,34 +420,70 @@ export default function HomePage() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-[#0b1329] border-r border-white/5 flex flex-col">
-            <div className="h-16 flex items-center justify-between px-6 border-b border-white/5">
+          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-[#0b1329] border-r border-slate-800/80 flex flex-col p-4 overflow-y-auto">
+            <div className="flex items-center justify-between px-3 pb-6 border-b border-slate-800/80">
               <div className="flex items-center gap-2">
-                <Hexagon className="text-amber-500 fill-amber-500/20 h-6 w-6" />
-                <span className="text-xl font-bold text-white">PBBET</span>
+                <span className="text-lg font-black tracking-widest bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent select-none">PBBET</span>
               </div>
-              <button onClick={() => setMobileMenuOpen(false)} className="text-slate-400 hover:text-white">
-                <X className="h-5 w-5" />
+              <button onClick={() => setMobileMenuOpen(false)} className="text-slate-400 hover:text-white p-1.5 rounded-[5px] border border-slate-800">
+                <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto py-6">
+            <div className="flex-1 py-6">
               <nav className="space-y-1">
-                {NAV_ITEMS.map((item) => (
-                  <button
-                    key={item.key}
-                    onClick={() => handleNavClick(item.key)}
-                    className={`w-full flex items-center px-6 py-3 transition-colors ${
-                      activeNav === item.key
-                        ? "nav-item-active"
-                        : "text-slate-400 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    <item.icon className="h-5 w-5 mr-3" />
-                    <span className="font-medium text-sm">{getNavLabel(item.key)}</span>
-                  </button>
-                ))}
+                {SIDEBAR_ITEMS.map((item) => {
+                  const active = isItemActive(item.key);
+                  return (
+                    <button
+                      key={item.key}
+                      onClick={() => handleNavClick(item.key)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-xs font-extrabold uppercase tracking-wider transition-all duration-200 ${
+                        active
+                          ? "bg-blue-600/15 text-[#3b82f6] border-l-4 border-[#f59e0b]"
+                          : "text-slate-400 border-l-4 border-transparent hover:bg-slate-800/30 hover:text-white"
+                      }`}
+                    >
+                      <span className={active ? "text-white" : "text-slate-500"}>
+                        <item.icon className="w-[18px] h-[18px]" />
+                      </span>
+                      <span>{getNavLabel(item.key)}</span>
+                    </button>
+                  );
+                })}
               </nav>
             </div>
+            {/* User info in mobile sidebar when logged in */}
+            {user && (
+              <div className="pt-6 border-t border-slate-800/80 space-y-3">
+                <div className="flex items-center gap-3 px-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+                    <User className="h-4 w-4 text-blue-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-white truncate">{user.username}</p>
+                    <p className="text-xs text-amber-400 font-extrabold">৳{user.balance?.toLocaleString()}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setShowDepositModal(true);
+                  }}
+                  className="w-full gold-gradient-btn py-2.5 rounded-[5px] text-center text-xs font-extrabold uppercase tracking-wider block shadow-lg"
+                >
+                  {t.DEPOSIT || "Deposit"}
+                </button>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-white text-xs py-2 rounded-[5px] hover:bg-slate-800/30 transition-all font-extrabold uppercase tracking-wider"
+                >
+                  <LogOut className="h-3.5 w-3.5" /> {t.LOGOUT || "Logout"}
+                </button>
+              </div>
+            )}
           </aside>
         </div>
       )}
