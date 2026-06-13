@@ -751,7 +751,7 @@ export default function HomePage() {
                       setActiveNav(cat.key);
                       setShowMoreGames(false);
                     }}
-                    className={`${!isSidebarCollapsed ? "px-2 py-1.5 text-[10px]" : "px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm"} rounded-full flex items-center justify-center gap-1 md:gap-2 font-medium whitespace-nowrap shrink min-w-0 flex-1 ${
+                    className={`${!isSidebarCollapsed ? "px-1.5 py-1.5 text-[10px] sm:text-xs" : "px-2 md:px-4 py-1.5 md:py-2 text-xs md:text-sm"} rounded-full flex items-center justify-center gap-1 md:gap-1.5 font-medium whitespace-nowrap shrink min-w-0 flex-auto ${
                       state.selectedCategory === cat.key
                         ? "category-chip active"
                         : "category-chip bg-[#1e293b]/80 hover:bg-[#1e293b] text-slate-300"

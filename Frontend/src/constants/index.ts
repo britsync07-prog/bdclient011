@@ -135,6 +135,16 @@ export const TRANSLATIONS = {
     MARQUEE_LEADERBOARD: "লাইভ লিডারবোর্ড আপডেট করা হয়েছে! আপনার র্যাংক পরীক্ষা করুন!",
     ALERT_LAUNCH_FAIL: "গেম চালু করতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
     ALERT_CONNECT_FAIL: "সার্ভারের সাথে সংযোগ করতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    VIP_CLUB_TITLE: "ভিআইপি ক্লাব",
+    VIP_CLUB_DESC: "এলিট PBBET ভিআইপি ক্লাবে যোগ দিন এবং একচেটিয়া সুবিধা, উচ্চতর লিমিট এবং শুধুমাত্র আপনার জন্য একটি ডেডিকেটেড পার্সোনাল ম্যানেজার আনলক করুন।",
+    PERSONAL_MANAGER: "পার্সোনাল ম্যানেজার",
+    PERSONAL_MANAGER_DESC: "আপনার নিজস্ব ডেডিকেটেড অ্যাকাউন্ট ম্যানেজার, ২৪/৭ উপলব্ধ।",
+    HIGHER_LIMITS: "উচ্চতর লিমিট",
+    HIGHER_LIMITS_DESC: "উচ্চতর ডিপোজিট এবং উইথড্রয়াল লিমিট উপভোগ করুন।",
+    EXCLUSIVE_EVENTS: "একচেটিয়া ইভেন্ট",
+    EXCLUSIVE_EVENTS_DESC: "ভিআইপি-অনলি টুর্নামেন্ট এবং বাস্তব-বিশ্বের ইভেন্টগুলিতে আমন্ত্রণ।",
+    PROMOTIONS_TITLE: "প্রমোশন ও অফার",
+    READ_MORE: "আরও পড়ুন",
   },
   EN: {
     HOME: "Home",
@@ -255,6 +265,16 @@ export const TRANSLATIONS = {
     MARQUEE_LEADERBOARD: "Live Leaderboard Updated! Check Your Rank!",
     ALERT_LAUNCH_FAIL: "Failed to launch game. Please try again.",
     ALERT_CONNECT_FAIL: "Failed to connect to server. Please try again.",
+    VIP_CLUB_TITLE: "VIP Club",
+    VIP_CLUB_DESC: "Join the elite PBBET VIP Club and unlock a world of exclusive benefits, higher limits, and a dedicated personal manager just for you.",
+    PERSONAL_MANAGER: "Personal Manager",
+    PERSONAL_MANAGER_DESC: "Your own dedicated account manager available 24/7.",
+    HIGHER_LIMITS: "Higher Limits",
+    HIGHER_LIMITS_DESC: "Enjoy higher deposit and withdrawal limits.",
+    EXCLUSIVE_EVENTS: "Exclusive Events",
+    EXCLUSIVE_EVENTS_DESC: "Invitations to VIP-only tournaments and real-world events.",
+    PROMOTIONS_TITLE: "Promotions & Offers",
+    READ_MORE: "Read More",
   }
 } as const;
 

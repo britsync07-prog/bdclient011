@@ -41,7 +41,7 @@ interface GameStoreContextType {
 const initialState: GameState = {
   games: [],
   searchTerm: "",
-  selectedCategory: "home",
+  selectedCategory: "all",
   showFavoritesOnly: false,
   isLoading: true,
 };
