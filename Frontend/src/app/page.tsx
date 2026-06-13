@@ -167,7 +167,7 @@ export default function HomePage() {
     if (key === "home") setCategory("home");
     else if (key === "casino") setCategory("home");
     else if (key === "live") setCategory("live");
-    else if (key === "sports") setCategory("home");
+    else if (key === "sports") setCategory("sports");
     setMobileMenuOpen(false);
   }, [setCategory]);
 

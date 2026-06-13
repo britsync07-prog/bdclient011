@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @layer base {
@@ -11,37 +11,47 @@
     --blue-cta-hover: #1D4ED8;
     --gold: #F59E0B;
     --gold-light: #FCD34D;
-    --bg-main: #020617;
-    --bg-card: #0f172a;
+    --bg-main: #0b1329;
+    --bg-card: #151f38;
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --border: #1e293b;
+    --text-muted: #94a3b8;
+    --border: rgba(255, 255, 255, 0.05);
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1);
     --shadow-md: 0 4px 6px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
     --shadow-lg: 0 10px 25px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.3);
-    --shadow-rose: 0 8px 25px rgba(59, 130, 246, 0.25);
-    --shadow-blue: 0 8px 25px rgba(37, 99, 235, 0.25);
+    --shadow-rose: 0 8px 25px rgba(59, 130, 246, 0.15);
+    --shadow-blue: 0 8px 25px rgba(37, 99, 235, 0.15);
+
+    /* Design Variables - exact match to HTML */
+    --bg-dark: #0b1329;
+    --bg-surface: #151f38;
+    --bg-surface-light: #1e293b;
+    --accent-gold: #f59e0b;
+    --accent-gold-light: #fbbf24;
+    --accent-blue: #3b82f6;
+    --accent-blue-light: #60a5fa;
+    --text-main: #f8fafc;
   }
 
   html {
     scroll-behavior: smooth;
-    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   body {
-    background-color: var(--bg-main);
-    color: var(--text-primary);
+    background-color: var(--bg-dark);
+    color: var(--text-main);
     min-height: 100vh;
-    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--text-main);
   }
 
   ::-webkit-scrollbar {
@@ -49,14 +59,14 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #0b1329;
+    background: var(--bg-dark);
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 100px;
+    background: var(--bg-surface-light);
+    border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-dark);
+    background: var(--text-muted);
   }
 
   * {
@@ -75,11 +85,76 @@
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .glass-card:hover {
-    background: rgba(15, 23, 42, 0.75);
-    border-color: rgba(59, 130, 246, 0.3);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.2);
-    transform: translateY(-3px);
+  .glass-panel {
+    background: rgba(21, 31, 56, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .glass-header {
+    background: rgba(11, 19, 41, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .gold-gradient-text {
+    background: linear-gradient(to right, var(--accent-gold-light), var(--accent-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .gold-gradient-btn {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #0b1329;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+  }
+  
+  .gold-gradient-btn:hover {
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .blue-gradient-btn {
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+  }
+
+  .blue-gradient-btn:hover {
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .nav-item-active {
+    background: linear-gradient(90deg, rgba(245,158,11,0.1) 0%, rgba(245,158,11,0) 100%);
+    border-left: 3px solid var(--accent-gold);
+    color: var(--accent-gold-light);
+  }
+
+  .card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.2);
+  }
+
+  .category-chip {
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .category-chip.active {
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    color: white;
   }
 
   /* Premium button - blue */
@@ -227,22 +302,22 @@
   /* Stat card variants */
   .stat-rose {
     border-left: 4px solid #3b82f6;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, #0f172a 100%);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, #f8fafc 100%);
   }
 
   .stat-blue {
     border-left: 4px solid #2563EB;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, #0f172a 100%);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, #f8fafc 100%);
   }
 
   .stat-amber {
     border-left: 4px solid #F59E0B;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, #0f172a 100%);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, #f8fafc 100%);
   }
 
   .stat-emerald {
     border-left: 4px solid #10B981;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, #0f172a 100%);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, #f8fafc 100%);
   }
 
   /* Custom Casino classes */
@@ -341,7 +416,8 @@ input, textarea, select {
 
 /* Table styles */
 .table-light thead {
-  background: #0b1329;
+  background: #f1f5f9;
+  color: #334155;
 }
 
 .table-light tbody tr:hover {

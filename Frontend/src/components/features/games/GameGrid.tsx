@@ -53,17 +53,17 @@ export const GameGrid: React.FC<GameGridProps> = ({
   return (
     <div className="space-y-4">
       {games.length > 0 && (
-        <div className="bg-[#192243]/50 rounded-xl px-4 py-2 border border-slate-700/50 flex items-center justify-between">
+        <div className="bg-slate-100 rounded-xl px-4 py-2 border border-slate-200 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Gamepad2 className="w-4 h-4 text-blue-400" />
-            <span className="text-slate-400 text-xs font-bold">
+            <Gamepad2 className="w-4 h-4 text-blue-600" />
+            <span className="text-slate-600 text-xs font-bold">
               {gamesFoundText}
             </span>
           </div>
           {games.length !== totalGames && (
             <button
               onClick={onClearFilters}
-              className="text-blue-400 hover:text-blue-300 text-xs font-bold transition-colors cursor-pointer"
+              className="text-blue-600 hover:text-blue-300 text-xs font-bold transition-colors cursor-pointer"
             >
               {t.RESET_FILTERS}
             </button>
@@ -91,13 +91,13 @@ export const GameGrid: React.FC<GameGridProps> = ({
       </div>
 
       {games.length > visibleCount && (
-        <div className="flex justify-center pt-6 pb-2">
+        <div className="flex justify-center pt-8 pb-4">
           <button
             onClick={loadMoreGames}
             disabled={loadingMore}
-            className="px-8 py-2.5 bg-[#263668] hover:bg-[#32457a] text-white font-bold text-xs rounded-lg transition-all cursor-pointer disabled:opacity-50"
+            className="px-12 py-3.5 bg-slate-100 text-[#3b82f6] rounded-2xl font-black text-xs uppercase border border-[#3b82f6]/20 hover:bg-[#3b82f6] hover:text-white transition-all duration-300 cursor-pointer disabled:opacity-50"
           >
-            {loadingMore ? t.LOADING : t.SHOW_MORE}
+            {loadingMore ? t.LOADING : (lang === "BN" ? "আরো গেম দেখুন" : "Show More Games")}
           </button>
         </div>
       )}

@@ -4,6 +4,7 @@ const config = require('../../../src/config');
 
 jest.mock('../../../src/config', () => ({
   jwtSecret: 'test-secret',
+  jwtExpiresIn: '30d',
 }));
 
 describe('JWT Utility', () => {

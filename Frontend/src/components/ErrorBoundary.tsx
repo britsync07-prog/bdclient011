@@ -30,18 +30,18 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         this.props.fallback || (
-          <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex items-center justify-center">
             <div className="text-center p-8">
               <div className="text-6xl mb-4">🎰</div>
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2 className="text-2xl font-bold text-slate-800 mb-2">
                 {ERROR_BOUNDARY_MESSAGES.SOMETHING_WENT_WRONG}
               </h2>
-              <p className="text-gray-300 mb-4">
+              <p className="text-slate-600 mb-4">
                 {ERROR_BOUNDARY_MESSAGES.SOMETHING_UNEXPECTED_HAPPENED}
               </p>
               <button
                 onClick={() => window.location.reload()}
-                className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-xl font-medium hover:from-purple-600 hover:to-blue-600 transition-all duration-300"
+                className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 cursor-pointer"
               >
                 {ERROR_BOUNDARY_MESSAGES.RELOAD_PAGE}
               </button>

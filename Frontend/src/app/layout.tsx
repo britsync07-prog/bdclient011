@@ -1,24 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import { AppProviders } from "@/contexts/AppProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import "./globals.css";
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-dm-sans",
-  weight: ["300", "400", "500", "600", "700", "800"],
-  style: ["normal", "italic"],
+  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "PBBET | Premium iGaming Platform",
-  description: "Experience the future of live casino and premium slots with PBBET — the next-generation iGaming platform.",
-  keywords: "casino, games, slots, live casino, blackjack, roulette, pbbet, igaming, online gaming, live dealers",
+  title: "PBBET | Premium Crypto Casino",
+  description: "Experience the ultimate crypto casino with PBBET — premium slots, live casino, sports betting & more.",
+  keywords: "casino, crypto casino, slots, live casino, blackjack, roulette, pbbet, igaming, online gaming, bitcoin casino",
   openGraph: {
-    title: "PBBET | Premium iGaming Platform",
-    description: "Experience the future of live casino and premium slots with PBBET.",
+    title: "PBBET | Premium Crypto Casino",
+    description: "Experience the ultimate crypto casino with PBBET.",
     type: "website",
   },
 };
@@ -29,7 +28,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#3b82f6",
+  themeColor: "#0b1329",
 };
 
 export default function RootLayout({
@@ -38,8 +37,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="bn" className={dmSans.variable}>
-      <body suppressHydrationWarning={true} className="bg-[#020617] text-slate-100 font-sans">
+    <html lang="en" className={inter.variable}>
+      <body suppressHydrationWarning={true} className="bg-[#0b1329] text-slate-100 font-sans antialiased">
         <ErrorBoundary>
           <AppProviders>{children}</AppProviders>
         </ErrorBoundary>

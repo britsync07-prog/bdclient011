@@ -32,36 +32,36 @@ export const FooterBottomSection: React.FC<FooterBottomSectionProps> = ({
   return (
     <>
       {/* Divider */}
-      <div className="border-t border-slate-800 pt-8 space-y-6">
+      <div className="border-t border-slate-200 pt-8 space-y-6">
         {/* Responsible Gaming Notice */}
-        <div className="rounded-2xl bg-[#0f172a] border border-slate-800 p-5">
+        <div className="rounded-2xl bg-slate-100 border border-slate-200 p-5">
           <div className="flex items-start gap-3">
-            <div className="shrink-0 w-8 h-8 rounded-lg bg-[#1e293b] flex items-center justify-center">
+            <div className="shrink-0 w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center">
               <AlertTriangle size={16} className="text-[#3b82f6]" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white mb-1">
+              <p className="text-sm font-bold text-slate-800 mb-1">
                 {t.PLAY_RESPONSIBLY}
               </p>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 {t.PLAY_RESPONSIBLY_DETAILS}
               </p>
               <div className="flex flex-wrap items-center gap-4 mt-3">
                 <div className="flex items-center gap-1.5">
                   <BadgeCheck size={13} className="text-[#3b82f6] shrink-0" />
-                  <span className="text-[11px] font-semibold text-slate-300">
+                  <span className="text-[11px] font-semibold text-slate-700">
                     {t.OVER18_ONLY}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck size={13} className="text-[#3b82f6] shrink-0" />
-                  <span className="text-[11px] font-semibold text-slate-300">
+                  <span className="text-[11px] font-semibold text-slate-700">
                     {t.LICENSED_REGULATED}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck size={13} className="text-[#3b82f6] shrink-0" />
-                  <span className="text-[11px] font-semibold text-slate-300">
+                  <span className="text-[11px] font-semibold text-slate-700">
                     {t.SECURE_GAMING}
                   </span>
                 </div>
@@ -73,7 +73,7 @@ export const FooterBottomSection: React.FC<FooterBottomSectionProps> = ({
         {/* Bottom row: copyright + legal links */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p className="text-sm text-slate-400 font-medium">
+            <p className="text-sm text-slate-600 font-medium">
               © <span id="copyright-year">{currentYear}</span>{" "}
               <span className="font-bold text-[#3b82f6]">PBBET</span>
               {" "}— {t.ROYAL_CASINO_CRAFTED}
@@ -88,7 +88,7 @@ export const FooterBottomSection: React.FC<FooterBottomSectionProps> = ({
               <button
                 key={legal.label}
                 onClick={() => onOpenPolicy(legal.label, legal.key)}
-                className="text-xs text-slate-400 hover:text-[#3b82f6] cursor-pointer transition-colors duration-200 font-medium hover:underline underline-offset-2 bg-transparent border-none p-0"
+                className="text-xs text-slate-600 hover:text-[#3b82f6] cursor-pointer transition-colors duration-200 font-medium hover:underline underline-offset-2 bg-transparent border-none p-0"
               >
                 {legal.label}
               </button>

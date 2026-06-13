@@ -91,8 +91,10 @@ export const GameStoreProvider: React.FC<GameStoreProviderProps> = ({
         const headers: Record<string, string> = {};
         if (token) headers["Authorization"] = `Bearer ${token}`;
         
-        const res = await fetch(`${BACKEND_URL}/user/games`, { headers });
+        // Initial fast fetch: limited games for immediate page render
+        const res = await fetch(`${BACKEND_URL}/user/games?category=home&limit=6`, { headers });
         const data = await res.json();
+        
         if (data.games) {
           const mappedGames = data.games.map((g: any) => ({
             id: `${g.vendorCode}_${g.gameCode}`,
@@ -107,9 +109,33 @@ export const GameStoreProvider: React.FC<GameStoreProviderProps> = ({
           }));
           dispatch({ type: "SET_GAMES", payload: mappedGames });
         }
+        dispatch({ type: "SET_LOADING", payload: false });
+
+        // Delay the background fetch to ensure the main thread is completely free for the initial render
+        setTimeout(() => {
+          fetch(`${BACKEND_URL}/user/games`, { headers })
+            .then(fullRes => fullRes.json())
+            .then(fullData => {
+              if (fullData.games) {
+                const fullMappedGames = fullData.games.map((g: any) => ({
+                  id: `${g.vendorCode}_${g.gameCode}`,
+                  gameCode: g.gameCode,
+                  name: g.name || g.gameName || "",
+                  provider: g.provider,
+                  category: g.category || "slots",
+                  isPopular: g.isPopular === true,
+                  rating: g.rating || 4.5,
+                  thumbnail: g.thumbnail,
+                  vendorCode: g.vendorCode,
+                }));
+                dispatch({ type: "SET_GAMES", payload: fullMappedGames });
+              }
+            })
+            .catch(err => console.error("Background games fetch failed:", err));
+        }, 1500); // 1.5 second delay
+
       } catch (err) {
-        console.error(err);
-      } finally {
+        console.error("Initial games fetch failed:", err);
         dispatch({ type: "SET_LOADING", payload: false });
       }
     }

@@ -36,12 +36,12 @@ export const Header: React.FC<HeaderProps> = () => {
   }, []);
 
   return (
-    <header className="bg-[#192243] border-b border-slate-700/50 sticky top-0 z-30 hidden lg:block">
+    <header className="bg-slate-50 border-b border-slate-200 sticky top-0 z-30 hidden lg:block">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 bg-[#263668] px-3 py-1.5 rounded-lg border border-slate-700/50">
+          <div className="flex items-center gap-2 bg-slate-200/50 px-3 py-1.5 rounded-lg border border-slate-200">
              <Wallet size={18} className="text-yellow-500" />
-             <span className="text-sm font-bold text-white">
+             <span className="text-sm font-bold text-slate-800">
                {user ? parseFloat(String(user.balance)).toFixed(2) : "0.00"} ৳
              </span>
           </div>
@@ -61,18 +61,18 @@ export const Header: React.FC<HeaderProps> = () => {
              </>
            ) : (
              <div className="flex items-center gap-4">
-                <span className="text-sm font-bold text-slate-300">{user.username}</span>
-                <button className="p-2 text-slate-400 hover:text-white transition-colors">
+                <span className="text-sm font-bold text-slate-700">{user.username}</span>
+                <button className="p-2 text-slate-500 hover:text-slate-800 transition-colors">
                    <User size={20} />
                 </button>
              </div>
            )}
 
-           <div className="h-8 w-px bg-slate-700/50 mx-2"></div>
+           <div className="h-8 w-px bg-slate-300 mx-2"></div>
 
-           <button className="p-2 text-slate-400 hover:text-white transition-colors relative">
+           <button className="p-2 text-slate-500 hover:text-slate-800 transition-colors relative">
               <Bell size={20} />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#192243]"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-slate-50"></span>
            </button>
         </div>
       </div>

@@ -68,7 +68,7 @@ const SocialLink: React.FC<SocialLinkProps> = ({ href, label, icon }) => (
     aria-label={label}
     target="_blank"
     rel="noopener noreferrer"
-    className="w-9 h-9 rounded-xl bg-[#0f172a] border border-slate-800 flex items-center justify-center text-slate-400 hover:text-[#3b82f6] hover:border-[#3b82f6]/30 hover:shadow-md cursor-pointer transition-all duration-200"
+    className="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 hover:text-[#3b82f6] hover:border-[#3b82f6]/30 hover:shadow-md cursor-pointer transition-all duration-200"
   >
     {icon}
   </a>
@@ -87,7 +87,7 @@ const FooterLinkColumn: React.FC<FooterLinkColumnProps> = ({
   onOpenPolicy,
 }) => (
   <div>
-    <h4 className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest mb-4">
+    <h4 className="flex items-center gap-2 text-xs font-bold text-slate-800 uppercase tracking-widest mb-4">
       <span className="text-[#3b82f6]">{icon}</span>
       {title}
     </h4>
@@ -97,14 +97,14 @@ const FooterLinkColumn: React.FC<FooterLinkColumnProps> = ({
           {key ? (
             <button
               onClick={() => onOpenPolicy(label, key)}
-              className="text-sm text-slate-400 hover:text-[#3b82f6] cursor-pointer transition-colors duration-200 font-medium bg-transparent border-none p-0 text-left"
+              className="text-sm text-slate-600 hover:text-[#3b82f6] cursor-pointer transition-colors duration-200 font-medium bg-transparent border-none p-0 text-left"
             >
               {label}
             </button>
           ) : (
             <a
               href={href || "#"}
-              className="text-sm text-slate-400 hover:text-[#3b82f6] cursor-pointer transition-colors duration-200 font-medium"
+              className="text-sm text-slate-600 hover:text-[#3b82f6] cursor-pointer transition-colors duration-200 font-medium"
             >
               {label}
             </a>
@@ -200,7 +200,7 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
         </div>
 
         {/* Tagline */}
-        <p className="text-sm text-slate-400 leading-relaxed mb-4">
+        <p className="text-sm text-slate-600 leading-relaxed mb-4">
           {settings.about_us || t.PREMIUM_GAMING_EXCELLENCE}
         </p>
 
@@ -213,7 +213,7 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
 
         {/* Social links */}
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">
+          <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-3">
             {lang === "BN" ? "আমাদের অনুসরণ করুন" : "Follow Us"}
           </p>
           <div className="flex items-center gap-2">
@@ -267,15 +267,15 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
       />
 
       {/* Payment Partners & Game Providers Section */}
-      <div className="col-span-1 md:col-span-2 lg:col-span-4 border-t border-slate-800 pt-8 mt-4 space-y-6">
+      <div className="col-span-1 md:col-span-2 lg:col-span-4 border-t border-slate-200 pt-8 mt-4 space-y-6">
         {/* Payment Methods */}
         <div>
-          <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5">
+          <h5 className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-3.5">
             {lang === "BN" ? "মুল্য পরিশোধ পদ্ধতি" : "Payment Methods"}
           </h5>
           <div className="flex flex-wrap items-center gap-4 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
             {paymentLogos.map((logo, index) => (
-              <div key={index} className="bg-[#0f172a] p-1.5 px-3 rounded-lg border border-slate-800 shadow-sm flex items-center justify-center">
+              <div key={index} className="bg-slate-100 p-1.5 px-3 rounded-lg border border-slate-200 shadow-sm flex items-center justify-center">
                 <img
                   src={logo.src}
                   alt={logo.alt}
@@ -290,7 +290,7 @@ export const FooterMainContent: React.FC<FooterMainContentProps> = ({
 
         {/* Game Providers */}
         <div>
-          <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5">
+          <h5 className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-3.5">
             {lang === "BN" ? "পার্টনার" : "Partners"}
           </h5>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-4 grayscale opacity-45 hover:grayscale-0 hover:opacity-100 transition-all duration-300">

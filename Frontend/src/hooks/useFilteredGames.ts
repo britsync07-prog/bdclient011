@@ -42,9 +42,16 @@ export const useFilteredGames = () => {
               (kw) => game.name.toLowerCase().includes(kw)
             )
         );
+      } else if (selectedCategory === "slots") {
+        filtered = filtered.filter(
+          (game) => game.category === "slots" || game.category === "megaways"
+        );
       } else {
         filtered = filtered.filter((game) => (game.category as string) === selectedCategory);
       }
+    } else if (selectedCategory === "all") {
+      // Hot Games category: show only popular games
+      filtered = filtered.filter((game) => game.isPopular);
     }
 
     return filtered;

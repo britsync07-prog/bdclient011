@@ -83,7 +83,7 @@ describe('Category Helpers', () => {
   });
 
   it('getCategoryColor should return correct color class for valid category', () => {
-    expect(getCategoryColor('slots')).toContain('bg-indigo-500/20');
+    expect(getCategoryColor('slots')).toContain('bg-blue-500/20');
   });
 
   it('getCategoryColor should return default color for invalid category', () => {

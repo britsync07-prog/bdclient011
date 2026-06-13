@@ -657,7 +657,7 @@ export default function AdminDashboard() {
                               "bg-blue-100 text-blue-600",
                               "bg-emerald-100 text-emerald-600",
                               "bg-amber-100 text-amber-600",
-                              "bg-violet-100 text-violet-600",
+                              "bg-cyan-100 text-cyan-600",
                             ];
                             const avatarColor = colors[i % colors.length];
                             return (

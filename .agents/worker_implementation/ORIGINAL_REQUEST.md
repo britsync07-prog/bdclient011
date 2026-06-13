@@ -1,40 +1,41 @@
-## 2026-06-07T14:55:49Z
-You are the Implementation Track Worker. Your working directory is `/home/saimon/grp/gamble/.agents/worker_implementation`.
-Your task is to implement the Frontend Redesign, Backend/API integration alignments, and Admin panel Banner CRUD setup for the PBBET platform overhaul, according to `/home/saimon/grp/gamble/PROJECT.md` and the explorer findings located at:
-- `/home/saimon/grp/gamble/.agents/explorer_frontend_redesign/analysis.md`
-- `/home/saimon/grp/gamble/.agents/explorer_api_alignment/analysis.md`
-- `/home/saimon/grp/gamble/.agents/explorer_banner_crud/analysis.md`
+## 2026-06-13T04:20:02Z
 
-Specifically, you must:
-1. **Align Seamless Wallet APIs**:
-   Rewrite Next.js routes under `Frontend/src/app/api/seamless/` (`balance/route.ts`, `transaction/route.ts`, `batch-transactions/route.ts`) to forward incoming POST requests directly to the backend Express server endpoints (using `process.env.NEXT_PUBLIC_BACKEND_URL` which defaults to `http://localhost:5000/api`) by fetching:
-   - `POST ${process.env.NEXT_PUBLIC_BACKEND_URL}/balance`
-   - `POST ${process.env.NEXT_PUBLIC_BACKEND_URL}/transaction`
-   - `POST ${process.env.NEXT_PUBLIC_BACKEND_URL}/batch-transactions`
-   Make sure to forward the headers (specifically `Authorization` Basic Auth header) and payload, and return the backend's response directly, bypassing the local memory store `seamless-store.ts`.
+Your mission is to complete the Frontend-Backend integration and style overhaul for the PBBET iGaming platform, ensuring the E2E tests pass and the frontend compiles successfully.
 
-2. **Transition Frontend to Light Theme**:
-   Overhaul Next.js CSS variables, layout, headers, footers, pages, and components to apply a bright/vibrant light theme. Eliminate all black/dark background colors and purple/indigo styling.
-   - In `globals.css`: Update root color variables to light theme shades (bg-slate-50 background, white container, slate-900 high-contrast text, slate-500 muted text, light scrollbar track, light frosted glass for `.liquid-glass` cards, amber/gold gradients for buttons and glows).
-   - In `layout.tsx`, update body background styling classes.
-   - Update user registration (`register/page.tsx`), login (`login/page.tsx`), and admin login (`admin/login/page.tsx`) to white/slate-100 backgrounds with high-contrast text.
-   - Update game lobby (`CasinoGameLobby.tsx`), search bars (`SearchBar.tsx`), and layout headers/footers to light colors, avoiding any dark slate or black classes.
-   - Replace the indigo/purple categories style configurations and gradients (e.g. slots header gradients, category configs in helpers) with vibrant gold, amber, and orange colors.
-   - Update toast elements to gold/amber instead of purple/blue.
+Please perform the following tasks:
 
-3. **Resolve Admin Dashboard Contract Mismatches**:
-   In `Frontend/src/app/admin/page.tsx`:
-   - Change set RTP endpoint to POST `${BACKEND_URL}/admin/game/set-rtp`.
-   - Update RTP payload keys so `username` maps to the user code input (`username: rtpData.userCode`).
-   - Update KYC update patch payload keys to send `{ kycStatus: status }`.
-   - Fix the financial transactions requests list mapping by setting the transaction list state using: `Array.isArray(transData) ? transData : transData.requests || []`.
+1. Frontend-Backend Integration:
+   a. In `Frontend/src/components/features/games/CasinoGameLobby.tsx`, integrate the Deposit Request submission with the backend:
+      - Call `POST /api/user/deposit-request` with the deposit amount and JWT auth header (`Authorization: Bearer <token>`).
+      - Show success toast on success, close modal, and trigger a refresh of personal logs.
+   b. In `Frontend/src/components/features/games/CasinoGameLobby.tsx`, integrate personal transaction history:
+      - Implement `fetchPersonalBets()` to fetch player transaction history from `GET /api/user/transactions?page=1&limit=20`.
+      - Map the returned transactions to the `BetLog` format:
+        - `id`: transactionCode or id
+        - `game`: transaction type (e.g. "BET", "WIN", "DEPOSIT", "WITHDRAWAL")
+        - `user`: player username
+        - `time`: transaction createdAt formatted
+        - `amount`: absolute amount
+        - `multiplier`: 1 for wins, 0 otherwise
+        - `payout`: amount for wins/deposits, 0 otherwise
+        - `isWin`: true if amount > 0
+      - Set `personalBets` state to mapped values.
+      - Fetch these logs when `activeLeaderboardTab === "personal"` or after making a successful deposit.
+   c. Make the home page (`Frontend/src/app/page.tsx`) dynamic by rendering the `<CasinoGameLobby />` component instead of static mockup HTML.
 
-4. **Dynamic Game Categories & Ratings**:
-   In `Frontend/src/contexts/GameStoreContext.tsx`, dynamically determine game categories based on name keywords (e.g. "live" if it includes live/lobby/dealer, "table" if it includes table/blackjack/roulette/baccarat/poker/hold'em/holdem/sic bo/craps, and fallback to "slots"), and generate a dynamic rating instead of hardcoding slots and 4.5.
+2. Design Style & Theme Overhaul:
+   Overhaul the entire Next.js frontend to use a bright, vibrant light theme, strictly avoiding black, dark, or purple/indigo colors:
+   a. Update `Frontend/src/app/globals.css` root variables:
+      - Change `--bg-main` to `#f8fafc`, `--bg-card` to `#ffffff`, `--bg-dark` to `#f1f5f9`, `--bg-surface` to `#ffffff`, `--bg-surface-light` to `#f8fafc`, `--text-primary` to `#0f172a`, `--text-secondary` to `#475569`, `--text-muted` to `#64748b`, `--border` to `#e2e8f0`.
+      - Adjust `.glass-card`, `.glass-panel`, `.glass-header` classes to have light translucent backgrounds, dark shadows, and dark texts.
+   b. Modify `CasinoGameLobby.tsx`, `page.tsx`, `login/page.tsx`, `register/page.tsx`, and `admin/page.tsx`:
+      - Remove or replace dark tailwind background classes (like `bg-[#0b1329]`, `bg-[#0f172a]`, `bg-[#020617]`, `bg-slate-900`, `bg-blue-950`, `bg-slate-950`, etc.) with light backgrounds (like `bg-white`, `bg-slate-50`, `bg-slate-100`, `bg-slate-200/50`).
+      - Replace dark borders like `border-slate-800` or `border-slate-900` with light borders like `border-slate-200` or `border-slate-300`.
+      - Replace text classes like `text-white` with `text-slate-900` or `text-slate-800` when on light backgrounds.
+      - Replace purple/indigo elements (like `bg-indigo-600`, `text-indigo-400`, `bg-purple-900`, etc.) with blue or amber/gold colors (e.g. `bg-blue-600` or `bg-amber-500`).
 
-5. **Banner CRUD Setup**:
-   In `Frontend/src/app/admin/page.tsx`, add Banners state variables, Sidebar navigation tab trigger ("Banner CMS"), deployment and deletion CRUD request methods connecting to backend `/api/admin/banners`, and the complete CRUD form/grid UI panel (as specified in Section 4 of `explorer_frontend_redesign/analysis.md`).
+3. Verification & Verification command:
+   a. Run the E2E integration test suite using `node tests/e2e/run-tests.js` and ensure it runs and passes cleanly.
+   b. Compile the frontend by running `npm run build` in the `Frontend` directory and ensure it completes without any compilation or TypeScript errors.
 
-6. **Verify and Compile**:
-   Ensure both the Express backend and the Next.js frontend compile cleanly without syntax, linting, or TypeScript errors:
-   - Navigate to `Frontend` and run `npm run build` to verify compilation.
+Write your changes report to `changes.md` and handoff report to `handoff.md` in your working directory `/home/saimon/grp/gamble/.agents/worker_implementation`.

@@ -4,7 +4,7 @@ import { PLACEHOLDER_MESSAGES } from "@/constants";
 const CATEGORY_CONFIG = {
   slots: {
     icon: "🎰",
-    color: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+    color: "bg-blue-500/20 text-blue-600 border-blue-500/30",
     label: "Slots",
   },
   table: {
@@ -31,6 +31,31 @@ const CATEGORY_CONFIG = {
     icon: "⚡",
     color: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
     label: "Crash Games",
+  },
+  cards: {
+    icon: "🃏",
+    color: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+    label: "Card Games",
+  },
+  sports: {
+    icon: "🎯",
+    color: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+    label: "Sports",
+  },
+  lottery: {
+    icon: "🎫",
+    color: "bg-pink-500/20 text-pink-300 border-pink-500/30",
+    label: "Lottery",
+  },
+  arcade: {
+    icon: "🕹️",
+    color: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+    label: "Arcade",
+  },
+  megaways: {
+    icon: "💎",
+    color: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+    label: "Megaways",
   },
 } as const;
 
@@ -124,8 +149,8 @@ export const renderGameErrorToWindow = (
     doc.body.removeChild(doc.body.firstChild);
   }
 
-  doc.body.style.backgroundColor = "#0b1329";
-  doc.body.style.color = "#f8fafc";
+  doc.body.style.backgroundColor = "#f8fafc";
+  doc.body.style.color = "#0f172a";
   doc.body.style.margin = "0";
   doc.body.style.fontFamily = "system-ui, sans-serif";
 

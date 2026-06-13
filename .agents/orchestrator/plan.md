@@ -1,45 +1,53 @@
-# PBBET Overhaul Plan
+# PBBET Frontend-Backend Integration Plan
 
 ## Goal
-Coordinate the project execution to overhaul the iGaming platform.
-1. Frontend redesign: Bright colors only, strictly avoiding dark/purple/black, using `stitch` MCP tools.
-2. Backend & API Integration: Remove dummy data, integrate real OroPlay APIs.
-3. Admin Panel Setup: Provide dynamic placeholders (social media links, about sections).
-4. Testing and Documentation: Mock API suite for OroPlay transactions, output `briefing.txt` detailing system structure, APIs, signup process, and admin features.
+Integrate the PBBET frontend with the Express/Prisma/MySQL backend endpoints and OroPlay mocks. All client-facing interactive components must be fully functional, the E2E test suite must pass cleanly, and the frontend must compile/build successfully.
+
+## Verification & Build Criteria
+- Running `node tests/e2e/run-tests.js` passes all tests cleanly.
+- Running `npm run build` in the `Frontend` directory completes without compilation or TypeScript errors.
 
 ## Step-by-Step Execution Plan
 
-### Step 1: Workspace Analysis & Detailed Exploration
-- Dispatch a teamwork_preview_explorer agent to do a comprehensive code analysis.
-- Understand the existing database configuration, the user table, dynamic settings table, and how frontend communicates with the backend.
-- Identify the exact files in the frontend that currently have dark/purple/black styling.
-- Check if the stitch MCP tools or npm commands are available in the workspace.
+### Step 1: Detailed Workspace & Integration Analysis
+- **Role**: `teamwork_preview_explorer`
+- **Objective**:
+  1. Inspect the Next.js `Frontend` components (auth, balance, games list, launching games) to identify where dummy data or mocked local states are used instead of API calls.
+  2. Inspect the Express `server` backend endpoints (registration, login, profile, settings, banners, game list, launch, and wallet callbacks) to verify implementation state and database schemas.
+  3. Verify availability of build scripts and node packages.
+  4. Output a detailed analysis report outlining the specific integration gaps.
 
-### Step 2: Implement E2E Mock Test Suite & Mock Server (Milestone 1)
-- Dispatch a teamwork_preview_worker to build an E2E Mock Server simulating all 20 OroPlay integration APIs.
-- The mock server will run locally, responding to authentication, games list, launch URL, RTP adjustments, deposits, withdrawals, etc.
-- Verify the mock server can simulate transaction callbacks (bets and wins) to the backend.
-- Write a programmatic validation test script to verify that transactions run correctly and balances update in the database without hitting rate limits.
+### Step 2: Implementation of Frontend-Backend Integration
+- **Role**: `teamwork_preview_worker`
+- **Objective**:
+  1. Complete auth integration (login, registration) on the Next.js client, storing/fetching JWT tokens and checking authentication status.
+  2. Complete live balance fetching and updating, linking user wallet info with backend `/api/user/profile`.
+  3. Complete game selection, listing, and game launching (fetching real games from `/api/user/games` and launch URLs from `/api/user/launch`).
+  4. Ensure backend controllers correctly implement Express logic and prisma MySQL queries.
+  5. Run build and tests iteratively, fixing errors.
 
-### Step 3: Backend & Integration Alignment (Milestone 2)
-- Dispatch a teamwork_preview_worker to align Next.js seamless wallet APIs with the Express backend APIs.
-- Ensure that the Next.js API endpoints for seamless wallet (`/api/balance`, `/api/transaction`, `/api/batch-transactions`) do not use memory stores (`seamless-store.ts`), but instead forward requests to the Express backend or direct database.
-- Ensure that backend endpoints are properly protected where needed, and public where appropriate (e.g. `/games` endpoint).
-- Run database migrations or seeds as needed.
+### Step 3: Admin CMS & Theme Adherence
+- **Role**: `teamwork_preview_worker`
+- **Objective**:
+  1. Verify the Admin panel's CMS settings and banner CRUD actions update the database correctly.
+  2. Ensure the public site dynamically updates values from the admin panel settings/banners.
+  3. Perform style checks to ensure the frontend strictly avoids black, dark, or purple/indigo colors, maintaining a bright/vibrant palette.
 
-### Step 4: Frontend Overhaul with Bright Colors (Milestone 3)
-- Dispatch a teamwork_preview_worker to perform the Next.js UI overhaul.
-- Using `stitch` or direct manual CSS/component editing, rewrite all styles to be bright and vibrant (white background, emerald green/amber buttons, slate-800 text, gold accents, etc.).
-- Ensure that NO dark backgrounds (`slate-950`, `bg-[#0c0a09]`, etc.), black, or purple colors are used anywhere on the main page, login page, register page, admin pages, or modals.
+### Step 4: Verification, Building & Hardening
+- **Role**: `teamwork_preview_challenger`
+- **Objective**:
+  1. Run the E2E test runner: `node tests/e2e/run-tests.js`.
+  2. Execute `npm run build` in the `Frontend` directory.
+  3. Identify and fix any compiler, lint, or test failures.
 
-### Step 5: Admin Panel & CMS Integration (Milestone 4)
-- Dispatch a teamwork_preview_worker to wire up the Admin Dashboard Settings tab to update the database.
-- Ensure that updating settings (e.g., twitter link, contact email, about us) in the admin panel programmatically updates the public page footer and details.
-- Wire up the Admin Dashboard banner management to dynamic backend APIs, and make sure banners on the homepage update accordingly.
+### Step 5: Integrity Audit
+- **Role**: `teamwork_preview_auditor`
+- **Objective**:
+  1. Run the Forensic Auditor to check for hardcoded test results, facade implementations, or circumvented behavior.
+  2. Ensure strict compliance with code layout.
 
-### Step 6: E2E Testing, Audit & Briefing (Milestone 5)
-- Dispatch a teamwork_preview_challenger to run adversarial tests and verify that changing data in the admin panel updates public pages, that game launch URLs work, and that transaction logic is correct.
-- Dispatch a teamwork_preview_auditor to perform forensic integrity audits.
-- Review all implementation changes.
-- Generate the final `briefing.txt` in the workspace root.
-- Report completion to the caller agent.
+### Step 6: Documentation & Completion
+- **Role**: `teamwork_preview_orchestrator` (Successor or Current)
+- **Objective**:
+  1. Verify/generate `briefing.txt` in the workspace root summarizing the system.
+  2. Report completion to the Sentinel.

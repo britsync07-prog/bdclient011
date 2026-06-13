@@ -23,6 +23,10 @@ const CATEGORY_TRANSLATIONS = {
     fishing: "ফিসিং",
     crash: "ক্র্যাশ",
     arcade: "আর্কেড",
+    cards: "কার্ড গেমস",
+    lottery: "লটারী",
+    sports: "স্পোর্টস",
+    megaways: "মেগাওয়েজ",
   },
   EN: {
     slots: "Slots",
@@ -31,6 +35,10 @@ const CATEGORY_TRANSLATIONS = {
     fishing: "Fishing",
     crash: "Crash",
     arcade: "Arcade",
+    cards: "Card Games",
+    lottery: "Lottery",
+    sports: "Sports",
+    megaways: "Megaways",
   }
 } as const;
 
@@ -75,7 +83,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
   }, [game.category, lang]);
 
   return (
-    <div className="relative aspect-square w-full overflow-hidden bg-slate-900 border-b border-slate-800">
+    <div className="relative aspect-square w-full overflow-hidden bg-slate-50 border-b border-slate-100">
       {/* Game background */}
       {game.thumbnail && !imageError ? (
         <img
@@ -92,7 +100,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
           aria-label={`${game.name} ${game.category} game icon`}
         >
           <div
-            className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-black/20"
+            className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-slate-500/10"
             aria-hidden="true"
           />
           <div className="relative z-10 drop-shadow-2xl" aria-hidden="true">
@@ -103,7 +111,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
 
       {/* Overlay gradient for text readability */}
       <div
-        className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"
+        className="absolute inset-0 bg-gradient-to-t from-slate-500/10 via-transparent to-transparent"
         aria-hidden="true"
       />
 
@@ -115,7 +123,7 @@ export const GameCardHeader: React.FC<GameCardHeaderProps> = ({
         className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all duration-200 z-20 cursor-pointer border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-1 ${
           isFavorite
             ? "bg-blue-600 border-blue-500 shadow-lg text-white"
-            : "bg-slate-950/80 border-slate-800 hover:bg-blue-950 hover:border-blue-900 text-slate-400 hover:text-blue-500"
+            : "bg-white/80 border-slate-200 hover:bg-blue-50 hover:border-blue-200 text-slate-500 hover:text-blue-600"
         }`}
         aria-label={favoriteAriaLabel}
         aria-pressed={isFavorite}

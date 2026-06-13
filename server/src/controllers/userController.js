@@ -162,11 +162,14 @@ setTimeout(updateGamesCache, 5000);
 
 exports.getGames = async (req, res, next) => {
   try {
+    const limit = parseInt(req.query.limit, 10) || 0;
+    const requestedCategory = req.query.category;
+
     if (!cachedGames) await updateGamesCache();
     else if (Date.now() - lastCacheFetchTime > CACHE_TTL) updateGamesCache();
 
     // Secondary runtime classification pass to clean up any remaining mismatched slots
-    const classifiedGames = (cachedGames || []).map(game => {
+    let classifiedGames = (cachedGames || []).map(game => {
       const name = (game.name || '').toLowerCase();
       const code = (game.gameCode || '').toLowerCase();
       const provider = (game.provider || '').toLowerCase();
@@ -229,6 +232,29 @@ exports.getGames = async (req, res, next) => {
         isPopular: game.isPopular === true
       };
     });
+
+    // Apply filtering based on requested category
+    if (requestedCategory && requestedCategory !== 'all' && requestedCategory !== 'home') {
+      classifiedGames = classifiedGames.filter(g => g.category === requestedCategory);
+    } else if (requestedCategory === 'all') {
+      classifiedGames = classifiedGames.filter(g => g.isPopular);
+    }
+
+    // Apply limiting logic
+    if (requestedCategory === 'home' && limit > 0) {
+      const categoryMap = {};
+      const limitedHomeGames = [];
+      for (const game of classifiedGames) {
+        if (!categoryMap[game.category]) categoryMap[game.category] = 0;
+        if (categoryMap[game.category] < limit) {
+          limitedHomeGames.push(game);
+          categoryMap[game.category]++;
+        }
+      }
+      classifiedGames = limitedHomeGames;
+    } else if (limit > 0) {
+      classifiedGames = classifiedGames.slice(0, limit);
+    }
 
     res.json({ games: classifiedGames });
   } catch (error) {

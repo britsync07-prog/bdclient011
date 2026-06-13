@@ -1,7 +1,7 @@
-# BRIEFING — 2026-06-07T20:27:09+06:00
+# BRIEFING — 2026-06-13T04:40:00+06:00
 
 ## Mission
-Coordinate Next.js frontend redesign (bright colors only), backend API integration (OroPlay seamless wallet/balance transfer), admin panel setup, and simulated API testing.
+Make the full PBBET front-end website functional, integrating client-facing interactive components (login, registration, live balance fetching/updating, game selection, launching games, and transaction integration) with the Express/Prisma/MySQL backend endpoints and OroPlay mocks, passing all tests, and building successfully.
 
 ## 🔒 My Identity
 - Archetype: teamwork_preview_orchestrator
@@ -25,11 +25,14 @@ Coordinate Next.js frontend redesign (bright colors only), backend API integrati
    - Escalate: report to parent (sub-orchestrators only, last resort)
 4. **Succession**: Self-succeed at 16 spawns. Write handoff.md, spawn successor, and exit.
 - **Work items**:
-  1. Workspace analysis [done]
-  2. E2E Testing track [in-progress]
-  3. Implementation milestones [in-progress]
+  1. Step 1: Detailed Workspace & Integration Analysis [done]
+  2. Step 2: Implementation of Frontend-Backend Integration [done]
+  3. Step 3: Admin CMS & Theme Adherence [done]
+  4. Step 4: Verification, Building & Hardening [done]
+  5. Step 5: Integrity Audit [in-progress]
+  6. Step 6: Documentation & Completion [pending]
 - **Current phase**: 2
-- **Current focus**: Parallel Tracks Execution
+- **Current focus**: Step 5: Integrity Audit (Remediation verification)
 
 ## 🔒 Key Constraints
 - Bright colors only, strictly avoid dark/purple/black.
@@ -41,28 +44,35 @@ Coordinate Next.js frontend redesign (bright colors only), backend API integrati
 - Never reuse a subagent after it has delivered its handoff — always spawn fresh.
 
 ## Current Parent
-- Conversation ID: 87a7a91f-fb7b-44ae-9087-56b810948542
-- Updated: not yet
+- Conversation ID: 671fe4db-5bc8-48b4-9b27-9bf92be3357d
+- Updated: 2026-06-13T04:40:00+06:00
 
 ## Key Decisions Made
-- None yet.
+- Rolled back to Step 2/3 due to Forensic Audit failure.
+- Dispatched explorer_2 (5700f5b6-e942-4ce9-b86b-02ec5a6577c3) to formulate a remediation strategy.
+- Dispatched worker_2 (51cf040c-5c69-41b7-93e5-1fa906cf61cb) to execute all color overrides and mock jwt unit test fixes.
+- Verified successful completion of remediation updates.
+- Dispatched auditor_2 (7abc5f07-2151-44df-aa29-4bb96ebde16f) to perform a fresh forensic integrity audit.
 
 ## Team Roster
 | Agent | Type | Work Item | Status | Conv ID |
 |-------|------|-----------|--------|---------|
-| explorer_1 | teamwork_preview_explorer | Workspace analysis | completed | fa135350-e4a1-44b0-bae7-70bd1494c091 |
-| e2e_orch_1 | self | E2E Testing Track | in-progress | 582e897d-7439-4dc2-9e55-1977d88102a3 |
-| impl_orch_1 | self | Implementation Track | in-progress | b72b6d9d-5505-4483-8c86-cb5bdd121b28 |
+| explorer_1 | teamwork_preview_explorer | Detailed Workspace & Integration Analysis | completed | 0dab130a-c9f4-47ad-93fe-f12674b8326a |
+| worker_1 | teamwork_preview_worker | Frontend Integration and Theme Overhaul | completed | c7533304-88b7-4614-89c7-4940deee4783 |
+| auditor_1 | teamwork_preview_auditor | Forensic Integrity Audit | failed | 49802eaa-2648-4b9b-a6f5-89529d1b09e8 |
+| explorer_2 | teamwork_preview_explorer | Remediation Strategy formulation | completed | 5700f5b6-e942-4ce9-b86b-02ec5a6577c3 |
+| worker_2 | teamwork_preview_worker | Remediation Execution | completed | 51cf040c-5c69-41b7-93e5-1fa906cf61cb |
+| auditor_2 | teamwork_preview_auditor | Remediation Forensic Integrity Audit | in-progress | 7abc5f07-2151-44df-aa29-4bb96ebde16f |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 3 / 16
-- Pending subagents: 582e897d-7439-4dc2-9e55-1977d88102a3, b72b6d9d-5505-4483-8c86-cb5bdd121b28
+- Spawn count: 6 / 16
+- Pending subagents: 7abc5f07-2151-44df-aa29-4bb96ebde16f
 - Predecessor: none
 - Successor: not yet spawned
 
 ## Active Timers
-- Heartbeat cron: task-19
+- Heartbeat cron: task-63
 - Safety timer: none
 - On succession: kill all timers before spawning successor
 - On context truncation: run `manage_task(Action="list")` — re-create if missing

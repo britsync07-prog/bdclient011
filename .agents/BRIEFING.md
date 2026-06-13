@@ -1,12 +1,12 @@
-# BRIEFING — 2026-06-07T14:26:46Z
+# BRIEFING — 2026-06-12T22:13:09Z
 
 ## Mission
-Redesign the full Next.js frontend of the iGaming platform, integrate backend/OroPlay APIs, set up an admin panel, and output a system architecture brief.
+Make the full PBBET front-end website functional, integrating it with the Express/Prisma/MySQL backend endpoints and OroPlay mocks, passing E2E tests and frontend build.
 
 ## 🔒 My Identity
 - Archetype: sentinel
 - Working directory: /home/saimon/grp/gamble/.agents
-- Orchestrator: 80bd9b1a-a715-4236-838a-85861b7059f1
+- Orchestrator: 62bc3019-dd25-4b73-9332-28fe2cc07d83
 - Victory Auditor: TBD
 
 ## 🔒 Key Constraints
@@ -14,9 +14,9 @@ Redesign the full Next.js frontend of the iGaming platform, integrate backend/Or
 - Victory Audit is MANDATORY before reporting completion
 
 ## User Context
-- **Last user request**: Redesign Next.js frontend (bright colors, no dark/purple), integrate OroPlay APIs, set up admin panel, build mock API test suite, and output briefing.txt.
-- **Pending clarifications**: [none]
-- **Delivered results**: [none]
+- **Last user request**: Make the full PBBET front-end website functional, integrating it with the Express/Prisma/MySQL backend endpoints and OroPlay mocks. E2E tests and frontend build must pass.
+- **Pending clarifications**: none
+- **Delivered results**: none
 
 ## Project Status
 - **Phase**: in progress

@@ -39,16 +39,16 @@ export const MobileNav: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-[#192243] border-t border-slate-700/50 flex items-center justify-around px-2 py-2 lg:hidden z-[50] shadow-[0_-4px_20px_rgba(0,0,0,0.4)]">
+    <nav className="fixed bottom-0 left-0 right-0 bg-slate-50 border-t border-slate-200 flex items-center justify-around px-2 py-2 lg:hidden z-[50] shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
       {navItems.map((item, idx) => (
         <Link
           key={idx}
           href={item.href}
           className={`flex flex-col items-center justify-center gap-1 min-w-[64px] ${
-            item.highlight ? "text-blue-400" : "text-slate-400 active:text-white"
+            item.highlight ? "text-blue-600" : "text-slate-500 active:text-slate-900"
           }`}
         >
-          <div className={`p-1.5 ${item.highlight ? "bg-blue-500/10 rounded-xl" : ""}`}>
+          <div className={`p-1.5 ${item.highlight ? "bg-blue-100 rounded-xl" : ""}`}>
             {item.icon}
           </div>
           <span className="text-[10px] font-bold">{item.label}</span>

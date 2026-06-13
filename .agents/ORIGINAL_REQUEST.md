@@ -34,3 +34,24 @@ Set up a mock API server or simulated test suite that safely simulates OroPlay t
 - [ ] All games, betting histories, and wallet balances fetch data from the backend APIs rather than static placeholders.
 - [ ] Modifying data in the admin panel programmatically updates the public-facing site values.
 - [ ] `briefing.txt` exists in the workspace root and accurately documents the system workflow.
+
+## Follow-up Request — 2026-06-12T22:13:09Z
+
+Make the full PBBET front-end website functional, integrating it with the Express/Prisma/MySQL backend endpoints and OroPlay mocks.
+
+Working directory: /home/saimon/grp/gamble
+Integrity mode: development
+
+## Requirements
+
+### R1. Frontend-Backend Integration
+Integrate all client-facing interactive components of the website (login, registration, live balance fetching/updating, game selection, launching games, and transaction integration) with the backend API endpoints.
+
+### R2. Verification Suite Execution
+Ensure the existing E2E integration test suite runs and passes cleanly.
+
+## Acceptance Criteria
+
+### Verification & Build
+- [ ] Running `node tests/e2e/run-tests.js` passes all tests cleanly.
+- [ ] Running `npm run build` in the `Frontend` directory completes without any compilation or TypeScript errors.

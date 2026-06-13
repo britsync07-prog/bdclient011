@@ -14,3 +14,16 @@ Your role includes:
 - Reporting completion when all milestones are fully accomplished.
 
 Please begin by analyzing the project and updating your plan.md.
+
+## Follow-up — 2026-06-12T22:13:09Z
+
+Make the full PBBET front-end website functional, integrating it with the Express/Prisma/MySQL backend endpoints and OroPlay mocks.
+
+Requirements:
+R1. Frontend-Backend Integration: Integrate all client-facing interactive components of the website (login, registration, live balance fetching/updating, game selection, launching games, and transaction integration) with the backend API endpoints.
+R2. Verification Suite Execution: Ensure the existing E2E integration test suite runs and passes cleanly.
+
+Acceptance Criteria:
+Verification & Build:
+- [ ] Running `node tests/e2e/run-tests.js` passes all tests cleanly.
+- [ ] Running `npm run build` in the `Frontend` directory completes without any compilation or TypeScript errors.
