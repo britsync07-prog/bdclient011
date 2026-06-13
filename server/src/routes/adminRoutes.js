@@ -6,6 +6,7 @@ const {
   getFinancialRequests,
   approveFinancialRequest,
   setGameRTP,
+  getDashboardStats,
 } = require('../controllers/adminController');
 const adminCmsController = require('../controllers/adminCmsController');
 const { protect, adminOnly } = require('../middleware/authMiddleware');
@@ -17,6 +18,7 @@ router.use(adminOnly);
 router.get('/users', getUsers);
 router.patch('/users/:userId/kyc', updateUserKYC);
 router.get('/financial-requests', getFinancialRequests);
+router.get('/dashboard-stats', getDashboardStats);
 router.post('/financial-requests/:transactionId/approve', approveFinancialRequest);
 router.post('/game/set-rtp', setGameRTP);
 
